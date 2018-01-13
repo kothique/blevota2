@@ -13,8 +13,8 @@ mongoose.Promise = global.Promise
 
 let db = mongoose.connection
 
-db.on('error', () => {
-  console.log('Failed to connect to MongoDB server')
+db.on('error', (err) => {
+  console.log(err.stack)
 })
 
 db.once('open', () => {
@@ -43,7 +43,7 @@ db.once('open', () => {
     }
   })
 
-  app.get('/login', (req, res) => {
+  app.get('/login', auth.ifUser({ redirect: '/' }), (req, res) => {
     let username = req.query.u || '',
         password = req.query.p || ''
 
@@ -58,16 +58,10 @@ db.once('open', () => {
     })
   })
 
-  app.get('/logout', (req, res) => {
+  app.get('/logout', auth.ifGuest({ redirect: '/' }), (req, res) => {
     req.auth.logout()
     res.redirect('/')
   })
-
-  /*app.get('/bootstrap', async (req, res) => {
-    await auth.createUser('kothique', 'pass')
-
-    res.redirect('/')
-  })*/
 
   app.listen(3000, () => {
     console.log('Server is listening on port 3000')

@@ -128,3 +128,35 @@ module.exports.middleware = () => (request, response, next) => {
     next()
   }
 }
+
+module.exports.ifGuest = (options = {}) => (request, response, next) => {
+  if (!request.session.userId) {
+    if (options.redirect) {
+      response.redirect(options.redirect)
+    } else if (options.error) {
+      response.status(401).send('Unauthorized')
+    } else {
+      throw new Error('No redirect or error options provided')
+    }
+
+    return
+  }
+
+  next()
+}
+
+module.exports.ifUser = (options = {}) => (request, response, next) => {
+  if (request.session.userId) {
+    if (options.redirect) {
+      response.redirect(options.redirect)
+    } else if (options.error) {
+      response.status(403).send('Forbidden')
+    } else {
+      throw new Error('No redirect or error options provided')
+    }
+
+    return
+  }
+
+  next()
+}
