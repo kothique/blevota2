@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "scripts": {
-    "client": "echo hi!",
+    "client": "yarn run flow-node client/app.js",
     "server": "yarn run flow-node server/index.js",
     "build-client": "yarn run webpack",
     "build-server": "echo hi!"
@@ -21,9 +21,11 @@
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "flow-node": "^1.2.3",
+    "http-proxy-middleware": "^0.17.4",
     "lodash": "^4.17.4",
     "mongodb": "^3.0.1",
     "mongoose": "^4.13.9",
+    "pug": "^2.0.0-rc.4",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "webpack": "^3.10.0"

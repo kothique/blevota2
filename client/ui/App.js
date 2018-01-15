@@ -5,7 +5,7 @@ import React from 'react'
 type Props = {}
 
 class App extends React.Component<Props> {
-  render = ()  => {
+  render = () => {
     return <h3>Hi there!</h3>
   }
 }

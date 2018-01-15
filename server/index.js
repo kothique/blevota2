@@ -70,7 +70,7 @@ db.once('open', (): void => {
     }
   )
 
-  app.listen(3000, (): void => {
-    console.log('Server is listening on port 3000')
+  app.listen(3001, (): void => {
+    console.log('Server is listening on port 3001')
   })
 })
