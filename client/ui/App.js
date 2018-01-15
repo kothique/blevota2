@@ -1,7 +1,13 @@
+// @flow
+
 import React from 'react'
 
-class App extends React.Component {
-  render = () => <h3>Hi there!</h3>
+type Props = {}
+
+class App extends React.Component<Props> {
+  render = ()  => {
+    return <h3>Hi there!</h3>
+  }
 }
 
 export default App

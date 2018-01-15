@@ -3,8 +3,10 @@
   "version": "0.0.1",
   "description": "",
   "scripts": {
-    "run-server": "node server/index.js",
-    "build": "npx webpack"
+    "client": "echo hi!",
+    "server": "yarn run flow-node server/index.js",
+    "build-client": "yarn run webpack",
+    "build-server": "echo hi!"
   },
   "author": "Kothique Félixx",
   "license": "UNLICENSED",
@@ -18,11 +20,16 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
+    "flow-node": "^1.2.3",
     "lodash": "^4.17.4",
     "mongodb": "^3.0.1",
     "mongoose": "^4.13.9",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "webpack": "^3.10.0"
+  },
+  "devDependencies": {
+    "babel-preset-flow": "^6.23.0",
+    "flow-bin": "^0.63.1"
   }
 }
