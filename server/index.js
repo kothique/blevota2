@@ -32,21 +32,22 @@ db.once('open', (): void => {
   }))
   app.use(auth.middleware())
 
-  app.get('/', (req: Object, res: Object): void => {
-    if (req.auth.user) {
-      const user = req.auth.user
+  app.get('/',
+    (req: Request & Object, res: Response & Object): void => {
+      if (req.auth.user) {
+        const user = req.auth.user
 
-      let body = `Hi, ${_.escape(user.username)}!`
+        let body = `Hi, ${_.escape(user.username)}!`
 
-      res.send(body)
-    } else {
-      res.send('Unauthorized<br /><small>Go to /login</small>')
-    }
-  })
+        res.send(body)
+      } else {
+        res.send('Unauthorized<br /><small>Go to /login</small>')
+      }
+    })
 
   app.get('/login',
     auth.ifUser({ redirect: '/' }),
-    (req: Object, res: Object): void => {
+    (req: Request & Object, res: Response & Object): void => {
       let username = req.query.u || '',
           password = req.query.p || ''
 
@@ -64,7 +65,7 @@ db.once('open', (): void => {
 
   app.get('/logout',
     auth.ifGuest({ redirect: '/' }),
-    (req: Object, res: Object) => {
+    (req: Request & Object, res: Response & Object) => {
       req.auth.logout()
       res.redirect('/')
     }
