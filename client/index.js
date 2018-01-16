@@ -1,32 +1,11 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { createStore } from 'redux'
-import { Provider } from 'react-redux'
+import store from './store'
 
 // @flow
-import App from './ui/App'
-
-type State = {
-  greeting: string
-}
-
-const defaultState: State = {
-  greeting: 'Hi here!'
-}
-
-// action type
-const // TODO...
-
-let store = createStore((state: State = defaultState, action) => {
-  switch (action.type) {
-  default:
-    return state
-  }
-})
+import Root from './components/Root'
 
 render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
+  <Root store={store} />,
   document.getElementById('root')
 )
