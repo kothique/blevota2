@@ -4,7 +4,7 @@ module.exports = {
   entry: './index.js',
   output: {
     path: path.resolve(__dirname, 'client'),
-    filename: 'bundle.js'
+    filename: 'public/bundle.js'
   },
   context: path.resolve(__dirname, 'client'),
   module: {
@@ -15,5 +15,8 @@ module.exports = {
         loader: 'babel-loader'
       }
     ]
+  },
+  watchOptions: {
+
   }
 }
