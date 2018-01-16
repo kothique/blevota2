@@ -19,7 +19,7 @@ app.use('/api', proxy({
 app.set('view engine', 'pug')
 app.set('views', __dirname)
 
-app.get('/', (req: Object, res: Object): void => {
+app.get('/*', (req: Object, res: Object): void => {
   res.render('index')
 })
 

@@ -1,13 +1,16 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 // @flow
 type Props = {
-  greeting: string
+  greeting: string,
+  params: {
+    word?: string
+  }
 }
 
-class App extends React.Component<Props> {
-  render = () => {
+class App extends Component<Props> {
+  render() {
     const { greeting } = this.props
 
     return <h3>{greeting}</h3>
@@ -16,6 +19,6 @@ class App extends React.Component<Props> {
 
 export default connect(
   state => ({
-    greeting: state.greeting
+    greeting: state.app.greeting
   })
 )(App)
