@@ -1,24 +1,29 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { Provider } from 'react-redux'
 import { BrowserRouter, Route } from 'react-router'
 import { ConnectedRouter } from 'react-router-redux'
+import { object } from 'prop-types'
 
-// @flow
-import App from './App'
-
-type Props = {
-  store: Object,
-  history: Object
-}
+import WelcomePage from './WelcomePage'
+import LoginPage from './LoginPage'
+//import RegistrationPage from './RegistrationPage'
 
 class Root extends Component<Props> {
+  static propTypes = {
+    store: object.isRequired,
+    history: object.isRequired
+  }
+
   render() {
     const { store, history } = this.props
 
     return (
       <Provider store={store}>
         <ConnectedRouter history={history}>
-          <Route path="/" component={App} />
+          <Fragment>
+            <Route exact path="/" component={WelcomePage} />
+            <Route path="/login" component={LoginPage} />
+          </Fragment>
         </ConnectedRouter>
       </Provider>
     )

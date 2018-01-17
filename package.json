@@ -7,8 +7,8 @@
     "client": "yarn run concurrently 'yarn run build:client --watch --config webpack.client.config.js' 'yarn run run:client'",
     "server": "yarn run concurrently 'yarn run build:server' 'yarn run run:server'",
     "run:both": "yarn run concurrently 'yarn run run:client' 'yarn run run:server'",
-    "run:client": "yarn run flow-node client/app.js",
-    "run:server": "yarn run flow-node server/index.js",
+    "run:client": "node client/app.js",
+    "run:server": "node server/index.js",
     "build:both": "yarn run concurrently 'yarn run build:client' 'yarn run build:server'",
     "build:client": "yarn run webpack",
     "build:server": "echo Server built yo!"
@@ -26,12 +26,12 @@
     "concurrently": "^3.5.1",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
-    "flow-node": "^1.2.3",
     "history": "^4.7.2",
     "http-proxy-middleware": "^0.17.4",
     "lodash": "^4.17.4",
     "mongodb": "^3.0.1",
     "mongoose": "^4.13.9",
+    "prop-types": "^15.6.0",
     "pug": "^2.0.0-rc.4",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -41,8 +41,5 @@
     "redux": "^3.7.2",
     "webpack": "^3.10.0"
   },
-  "devDependencies": {
-    "babel-preset-flow": "^6.23.0",
-    "flow-bin": "^0.63.1"
-  }
+  "devDependencies": {}
 }
