@@ -1,24 +1,17 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux'
-import { routerReducer, routerMiddleware } from 'react-router-redux'
+import compose from 'redux/src/compose'
+import thunk from 'redux-thunk'
+import { routerReducer, routerMiddleware, routerActions } from 'react-router-redux'
 
-const defaultState = {
+import reducers from './reducers'
 
-}
-
-const reducer = (state = defaultState, action) => {
-  switch (action.type) {
-  default:
-    return state
-  }
-}
-
-export default history => createStore(
+export default (history) => createStore(
   combineReducers({
-    app: reducer,
+    ...reducers,
     router: routerReducer
   }),
-  {
-    app: defaultState
-  },
-  applyMiddleware(routerMiddleware(history)),
+  applyMiddleware(
+    thunk,
+    routerMiddleware(history)
+  )
 )

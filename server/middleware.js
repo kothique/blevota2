@@ -1,10 +1,12 @@
+const express = require('express')
 const session = require('express-session')
 const auth = require('./auth')
-const bodyParser = require('body-parser')
 
 module.exports = (app) => {
-  app.use(bodyParser.json())
-  app.use(bodyParser.urlencoded({ extended: false }))
+  app.use(express.json())
+  app.use(express.urlencoded({
+    extended: true
+  }))
   app.use(session({
     secret: 'my wonderful secret',
     resave: false,

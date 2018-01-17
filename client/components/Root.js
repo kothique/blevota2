@@ -8,7 +8,7 @@ import WelcomePage from './WelcomePage'
 import LoginPage from './LoginPage'
 //import RegistrationPage from './RegistrationPage'
 
-class Root extends Component<Props> {
+class Root extends Component {
   static propTypes = {
     store: object.isRequired,
     history: object.isRequired

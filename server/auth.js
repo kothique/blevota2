@@ -138,7 +138,7 @@ module.exports.ifGuest = (options) =>
     if (options.redirect) {
       res.redirect(options.redirect)
     } else if (options.error) {
-      res.status(401).send('Unauthorized')
+      res.status(401).send({ error: 'Unauthorized' })
     } else {
       throw new Error('No redirect or error options provided')
     }
@@ -155,7 +155,7 @@ module.exports.ifUser = (options) =>
     if (options.redirect) {
       res.redirect(options.redirect)
     } else if (options.error) {
-      res.status(403).send('Forbidden')
+      res.status(403).send({ error: 'Must not be logged in' })
     } else {
       throw new Error('No redirect or error options provided')
     }

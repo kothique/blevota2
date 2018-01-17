@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
 
-// @flow
-
 let userSchema = new mongoose.Schema({
   username: {
     type: String,

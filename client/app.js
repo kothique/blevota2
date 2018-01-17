@@ -11,7 +11,10 @@ app.use('/api', proxy({
   changeOrigin: true,
   ws: true,
   pathRewrite: {
-    '^/api': '/'
+    '^/api': ''
+  },
+  onError: (err, req, res) => {
+    res.status(500).send({ error: 'Internal server error' })
   }
 }))
 

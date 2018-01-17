@@ -1,22 +1,36 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { push } from 'react-router-redux'
+import { shape, bool, string, func } from 'prop-types'
+
+import { login } from '../reducers/login'
 
 class LoginPage extends Component {
+  static propTypes = {
+    login: shape({
+      isFetching: bool.isRequired,
+      error: string
+    }).isRequired,
+    onSubmit: func.isRequired
+  }
+
   state = {
     username: '',
     password: ''
   }
 
-  onSubmit = event => {
-    event.preventDefault()
-  }
-
   render() {
     const { username, password } = this.state
+    const { login, onSubmit } = this.props
 
     return (
       <main id="login-page">
-        <form onSubmit={this.onSubmit}>
+        {login.isFetching
+          ? 'Fetching...'
+          : (login.error
+            ? login.error
+            : '') }
+        <form onSubmit={onSubmit(username, password)}>
           <input
             type="text"
             value={username}
@@ -36,4 +50,22 @@ class LoginPage extends Component {
   }
 }
 
-export default connect()(LoginPage)
+export default connect(
+  (state) => ({
+    login: state.login
+  }),
+  (dispatch) => ({
+    onSubmit: (username, password) => (event) => {
+      event.preventDefault()
+
+      dispatch(login(username, password))
+        .then(
+          () => {
+            dispatch(push('/'))
+          },
+          (error) => {
+
+          })
+    }
+  })
+)(LoginPage)

@@ -1,35 +1,46 @@
+const omit = require('lodash/omit')
+
 const { ifUser, ifGuest, AuthError } = require('./auth')
 
-module.exports = app => {
-  app.get('/', (req, res) => {
-    if (req.auth.user) {
-      const user = req.auth.user
+module.exports = (app) => {
+  app.post('/login', ifUser({ error: true }), (req, res) => {
+    let username = req.body.username,
+        password = req.body.password
 
-      let body = `Hi, ${escape(user.username)}!`
-
-      res.send(body)
-    } else {
-      res.send('Unauthorized<br /><small>Go to /login</small>')
+    if (!username) {
+      res.status(400).send({ error: 'Username can\'t be empty' })
+      return
     }
-  })
 
-  app.get('/login', ifUser({ redirect: '/' }), (req, res) => {
-    let username = req.query.u || '',
-        password = req.query.p || ''
+    if (!password) {
+      res.status(400).send({ error: 'Password can\'t be empty' })
+      return
+    }
 
     req.auth.login(username, password).then(() => {
-      res.redirect('/')
-    }, err => {
+      res.status(202).end()
+    }, (err) => {
       if (err instanceof AuthError) {
-        res.status(401).send(err.message)
+        res.status(403).send({ error: err.message })
       } else {
         res.status(500).end()
       }
     })
   })
 
-  app.get('/logout', ifGuest({ redirect: '/' }), (req, res) => {
+  app.post('/logout', ifGuest({ error: true }), (req, res) => {
     req.auth.logout()
-    res.redirect('/')
+
+    if (Math.random() > 0.5) {
+      res.status(418).send({ error: 'I\'m a teapot, man' })
+    } else {
+      res.end()
+    }
+  })
+
+  app.get('/user', ifGuest({ error: true }), (req, res) => {
+    let user = omit(req.auth.user, 'password')
+
+    res.send(user)
   })
 }
