@@ -1,69 +1,67 @@
 const bcrypt = require('bcryptjs')
 
-// @flow
 const User = require('./db/user')
 
 class AuthError extends Error {
-  constructor(...params: Array<mixed>) {
+  constructor(...params) {
     super(...params)
   }
 }
 
 module.exports.AuthError = AuthError
 
-module.exports.createUser =
-  (username: string, password: string): Promise<User> =>
-    new Promise((resolve, reject) => {
-      User.findOne({ username }, (err, user) => {
-        if (err) {
-          reject(err)
-          return
-        }
+module.exports.createUser = (username, password) =>
+new Promise((resolve, reject) => {
+  User.findOne({ username }, (err, user) => {
+    if (err) {
+      reject(err)
+      return
+    }
 
-        if (user) {
-          reject(new AuthError(`User "${username}" already exists`))
-          return
-        }
+    if (user) {
+      reject(new AuthError(`User "${username}" already exists`))
+      return
+    }
 
-        let newUser = new User({
-          username,
-          password: bcrypt.hashSync(password, 8)
-        })
-
-        newUser.save(err => {
-          if (err) {
-            reject(err)
-            return
-          }
-
-          console.log(`New user created(${newUser._id})`)
-          resolve(newUser)
-        })
-      })
+    let newUser = new User({
+      username,
+      password: bcrypt.hashSync(password, 8)
     })
 
-module.exports.removeUser = (username: string): Promise<void> =>
-  new Promise((resolve, reject) => {
-    User.remove({ username }, err => {
+    newUser.save(err => {
       if (err) {
         reject(err)
         return
       }
 
-      resolve()
+      console.log(`New user created(${newUser._id})`)
+      resolve(newUser)
     })
   })
+})
 
-function authenticate(request, user) {
-  if (request.session.userId) {
-    logout(request)
+module.exports.removeUser = (username) =>
+new Promise((resolve, reject) => {
+  User.remove({ username }, err => {
+    if (err) {
+      reject(err)
+      return
+    }
+
+    resolve()
+  })
+})
+
+function authenticate(req, user) {
+  if (req.session.userId) {
+    logout(req)
   }
 
-  request.session.userId = user._id
+  req.session.userId = user._id
   console.log(`User logged in (${user._id})`)
 }
 
-function login(request, username, password) {
+function login(req, username, password) {
   return new Promise((resolve, reject) => {
     User.findOne({ username }, (err, user) => {
       if (err) return reject(err)
@@ -73,32 +71,32 @@ function login(request, username, password) {
         return
       }
 
-      authenticate(request, user)
+      authenticate(req, user)
       resolve()
     })
   })
 }
 
-function logout(request) {
-  const id = request.session.userId
+function logout(req) {
+  const id = req.session.userId
 
   if (id) {
-    delete request.session.userId
+    delete req.session.userId
     console.log(`User disconnected (${id})`)
   }
 }
 
-function check(request) {
-  return typeof request.session.userId != 'undefined'
+function check(req) {
+  return typeof req.session.userId != 'undefined'
 }
 
-function guest(request) {
-  return !check(request)
+function guest(req) {
+  return !check(req)
 }
 
-async function user(request) {
-  if (check(request)) {
-    let user = await User.findOne({ _id: request.session.userId })
+async function user(req) {
+  if (check(req)) {
+    let user = await User.findOne({ _id: req.session.userId })
 
     return user
   }
@@ -107,63 +105,63 @@ async function user(request) {
 }
 
 module.exports.middleware = () =>
-  (request: Object, response: Object, next: () => void) => {
-    request.auth = {
-      authenticate: authenticate.bind(null, request),
-      login: login.bind(null, request),
-      logout: logout.bind(null, request),
-      check: check.bind(null, request),
-      guest: guest.bind(null, request)
-    }
-
-    if (request.session.userId) {
-      User.findById(request.session.userId, (err, user) => {
-        if (err || !user) {
-          delete request.session.userId
-          delete request.auth.user
-          delete request.auth.userId
-        } else {
-          request.auth.user = user
-          request.auth.userId = request.session.userId
-        }
-
-        next()
-      })
-    } else {
-      next()
-    }
+(req, res, next) => {
+  req.auth = {
+    authenticate: authenticate.bind(null, req),
+    login: login.bind(null, req),
+    logout: logout.bind(null, req),
+    check: check.bind(null, req),
+    guest: guest.bind(null, req)
   }
 
-module.exports.ifGuest = (options: Object = {}) =>
-  (request: Object, response: Object, next: Function) => {
-    if (!request.session.userId) {
-      if (options.redirect) {
-        response.redirect(options.redirect)
-      } else if (options.error) {
-        response.status(401).send('Unauthorized')
+  if (req.session.userId) {
+    User.findById(req.session.userId, (err, user) => {
+      if (err || !user) {
+        delete req.session.userId
+        delete req.auth.user
+        delete req.auth.userId
       } else {
-        throw new Error('No redirect or error options provided')
+        req.auth.user = user
+        req.auth.userId = req.session.userId
       }
 
-      return
-    }
-
+      next()
+    })
+  } else {
     next()
+  }
 }
 
-module.exports.ifUser = (options: Object = {}) =>
-  (request: Object, response: Object, next: Function) => {
-    if (request.session.userId) {
-      if (options.redirect) {
-        response.redirect(options.redirect)
-      } else if (options.error) {
-        response.status(403).send('Forbidden')
-      } else {
-        throw new Error('No redirect or error options provided')
-      }
-
-      return
+module.exports.ifGuest = (options) =>
+(req, res, next) => {
+  if (!req.session.userId) {
+    if (options.redirect) {
+      res.redirect(options.redirect)
+    } else if (options.error) {
+      res.status(401).send('Unauthorized')
+    } else {
+      throw new Error('No redirect or error options provided')
     }
 
-    next()
+    return
   }
+
+  next()
+}
+
+module.exports.ifUser = (options) =>
+(req, res, next) => {
+  if (req.session.userId) {
+    if (options.redirect) {
+      res.redirect(options.redirect)
+    } else if (options.error) {
+      res.status(403).send('Forbidden')
+    } else {
+      throw new Error('No redirect or error options provided')
+    }
+
+    return
+  }
+
+  next()
+}
