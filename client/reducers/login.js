@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+import { fetchUser } from './user'
+
 const defaultState = {
   isFetching: false,
   error: undefined
@@ -59,12 +61,14 @@ export const login = (username, password) => (dispatch) => {
     .then(
       () => {
         dispatch(successLogin())
+        dispatch(fetchUser())
       },
       (error) => {
         if (error.response) {
           const message = error.response.data.error
 
           dispatch(failureLogin(message))
+          dispatch(fetchUser())
 
           throw new Error(message)
         }

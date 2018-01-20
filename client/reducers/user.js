@@ -10,10 +10,16 @@ const requestUser = () => ({
   type: REQUEST_USER
 })
 
-export const RECEIVE_USER = 'RECEIVE_USER'
-const receiveUser = (user) => ({
-  type: RECEIVE_USER,
+export const SUCCESS_USER = 'SUCCESS_USER'
+const successUser = (user) => ({
+  type: SUCCESS_USER,
   user
+})
+
+export const FAILURE_USER = 'FAILURE_USER'
+const failureUser = (error) => ({
+  type: FAILURE_USER,
+  error
 })
 
 export const userReducer = (state = defaultState, action) => {
@@ -23,11 +29,19 @@ export const userReducer = (state = defaultState, action) => {
         ...state,
         isFetching: true
       }
-    case RECEIVE_USER:
+    case SUCCESS_USER:
       return {
         ...state,
         isFetching: false,
-        user: action.user
+        user: action.user,
+        error: undefined
+      }
+    case FAILURE_USER:
+      return {
+        ...state,
+        isFetching: false,
+        user: undefined,
+        error: action.error
       }
     default:
       return state
@@ -39,7 +53,22 @@ export const fetchUser = () => (dispatch) => {
 
   return axios('/api/user')
     .then(
-      json => dispatch(receiveUser(json)),
-      error => console.log(error)
+      (json) => {
+        dispatch(successUser(json.data))
+      },
+      (error) => {
+        if (error.response) {
+          const message = error.response.data.error
+
+          dispatch(failureUser(message))
+
+          throw new Error(message)
+        }
+
+        throw new Error('No response')
+      }
     )
+    .catch((error) => {
+      console.log(`Failure fetching user: ${error.message}`)
+    })
 }

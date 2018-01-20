@@ -1,17 +1,26 @@
 import React, { Component, Fragment } from 'react'
-import { Provider } from 'react-redux'
+import { Provider, connect } from 'react-redux'
 import { BrowserRouter, Route } from 'react-router'
 import { ConnectedRouter } from 'react-router-redux'
-import { object } from 'prop-types'
+import { object, func } from 'prop-types'
 
 import WelcomePage from './WelcomePage'
 import LoginPage from './LoginPage'
 //import RegistrationPage from './RegistrationPage'
+import { fetchUser } from '../reducers/user'
+
 
 class Root extends Component {
   static propTypes = {
     store: object.isRequired,
-    history: object.isRequired
+    history: object.isRequired,
+    getUser: func.isRequired
+  }
+
+  componentDidMount() {
+    const { getUser } = this.props
+
+    getUser()
   }
 
   render() {
@@ -23,6 +32,7 @@ class Root extends Component {
           <Fragment>
             <Route exact path="/" component={WelcomePage} />
             <Route path="/login" component={LoginPage} />
+            {/* <Route path="/register" component={RegistrationPage} /> */}
           </Fragment>
         </ConnectedRouter>
       </Provider>
@@ -30,4 +40,9 @@ class Root extends Component {
   }
 }
 
-export default Root
+export default connect(
+  (state) => ({}),
+  (dispatch) => ({
+    getUser: () => dispatch(fetchUser())
+  })
+)(Root)

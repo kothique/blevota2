@@ -1,4 +1,4 @@
-const omit = require('lodash/omit')
+const pick = require('lodash/pick')
 
 const { ifUser, ifGuest, AuthError } = require('./auth')
 
@@ -31,15 +31,13 @@ module.exports = (app) => {
   app.post('/logout', ifGuest({ error: true }), (req, res) => {
     req.auth.logout()
 
-    if (Math.random() > 0.5) {
-      res.status(418).send({ error: 'I\'m a teapot, man' })
-    } else {
-      res.end()
-    }
+    res.send({})
   })
 
   app.get('/user', ifGuest({ error: true }), (req, res) => {
-    let user = omit(req.auth.user, 'password')
+    let user = pick(req.auth.user, [
+      'username'
+    ])
 
     res.send(user)
   })
