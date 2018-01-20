@@ -7,6 +7,7 @@ import createStore from './createStore'
 
 import Root from './components/Root'
 import { login } from './reducers/login'
+import './util'
 
 let history = createHistory()
 let store = createStore(history)

@@ -8,10 +8,8 @@ const defaultState = {
 }
 
 export const REQUEST_LOGIN = 'REQUEST_LOGIN'
-const requestLogin = (username, password) => ({
-  type: REQUEST_LOGIN,
-  username,
-  password
+const requestLogin = () => ({
+  type: REQUEST_LOGIN
 })
 
 export const SUCCESS_LOGIN = 'SUCCESS_LOGIN'

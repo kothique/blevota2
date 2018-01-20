@@ -12,7 +12,7 @@ class WelcomePage extends Component {
   }
 
   render() {
-    const { user, onLogin, onLogout } = this.props
+    const { user, onLogin, onRegister, onLogout } = this.props
 
     return (
       <main id="welcome-page">
@@ -31,10 +31,10 @@ class WelcomePage extends Component {
           : <Fragment>
               <a href='' onClick={onLogin}>
                 Login
-              </a>
-              {/* <Link to="/register">
+              </a><br />
+              <a href='' onClick={onRegister}>
                 Register
-              </Link> */}
+              </a>
             </Fragment>
         }
       </main>
@@ -51,6 +51,11 @@ export default connect(
       event.preventDefault()
 
       dispatch(push('/login'))
+    },
+    onRegister: (event) => {
+      event.preventDefault()
+
+      dispatch(push('/register'))
     },
     onLogout: (event) => {
       event.preventDefault()

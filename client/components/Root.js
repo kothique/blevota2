@@ -6,7 +6,7 @@ import { object, func } from 'prop-types'
 
 import WelcomePage from './WelcomePage'
 import LoginPage from './LoginPage'
-//import RegistrationPage from './RegistrationPage'
+import RegisterPage from './RegisterPage'
 import { fetchUser } from '../reducers/user'
 
 
@@ -32,7 +32,7 @@ class Root extends Component {
           <Fragment>
             <Route exact path="/" component={WelcomePage} />
             <Route path="/login" component={LoginPage} />
-            {/* <Route path="/register" component={RegistrationPage} /> */}
+            <Route path="/register" component={RegisterPage} />
           </Fragment>
         </ConnectedRouter>
       </Provider>

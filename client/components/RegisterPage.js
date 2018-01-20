@@ -3,33 +3,34 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 import { shape, bool, string, func } from 'prop-types'
 
-import { login } from '../reducers/login'
+import { register } from '../reducers/register'
 
-class LoginPage extends Component {
+class RegisterPage extends Component {
   static propTypes = {
-    login: shape({
+    register: shape({
       isFetching: bool.isRequired,
       error: string
     }).isRequired,
-    onLogin: func.isRequired
+    onRegister: func.isRequired
   }
 
   state = {
     username: '',
-    password: ''
+    password: '',
+    passwordRepeated: ''
   }
 
   render() {
-    const { login, onLogin } = this.props
-    const { username, password } = this.state
+    const { register, onRegister } = this.props
+    const { username, password, passwordRepeated } = this.state
 
     return (
-      <main id="login-page">
-        {login.isFetching
+      <main id="register-page">
+        {register.isFetching
           ? 'Fetching...'
-          : login.error
-         }
-        <form onSubmit={onLogin.bindArgs(username, password)}>
+          : register.error
+        }
+        <form onSubmit={onRegister.bindArgs(username, password, passwordRepeated)}>
           <input
             type="text"
             value={username}
@@ -40,8 +41,13 @@ class LoginPage extends Component {
             value={password}
             onChange={event => this.setState({ password: event.target.value })} />
           <br />
+          <input
+            type="password"
+            value={passwordRepeated}
+            onChange={event => this.setState({ passwordRepeated: event.target.value })} />
+          <br />
           <button type="submit">
-            Login
+            Register
           </button>
         </form>
       </main>
@@ -51,18 +57,18 @@ class LoginPage extends Component {
 
 export default connect(
   (state) => ({
-    login: state.login
+    register: state.register
   }),
   (dispatch) => ({
-    onLogin: (username, password, event) => {
+    onRegister: (username, password, passwordRepeated, event) => {
       event.preventDefault()
 
-      dispatch(login(username, password))
+      dispatch(register(username, password, passwordRepeated))
         .then(
           () => {
-            dispatch(push('/'))
+            dispatch(push('/login'))
           },
           () => {})
     }
   })
-)(LoginPage)
+)(RegisterPage)
