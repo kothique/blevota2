@@ -7,6 +7,7 @@ import { object, func } from 'prop-types'
 import WelcomePage from './WelcomePage'
 import LoginPage from './LoginPage'
 import RegisterPage from './RegisterPage'
+import GamePage from './GamePage'
 import { fetchUser } from '../reducers/user'
 
 
@@ -33,6 +34,7 @@ class Root extends Component {
             <Route exact path="/" component={WelcomePage} />
             <Route path="/login" component={LoginPage} />
             <Route path="/register" component={RegisterPage} />
+            <Route path="/game" component={GamePage} />
           </Fragment>
         </ConnectedRouter>
       </Provider>

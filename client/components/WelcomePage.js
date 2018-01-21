@@ -12,7 +12,7 @@ class WelcomePage extends Component {
   }
 
   render() {
-    const { user, onLogin, onRegister, onLogout } = this.props
+    const { user, onPlay, onLogout, onLogin, onRegister } = this.props
 
     return (
       <main id="welcome-page">
@@ -24,6 +24,9 @@ class WelcomePage extends Component {
         {user
           ? <Fragment>
               Hi, {user.username}!<br />
+              <a href='' onClick={onPlay}>
+                Play
+              </a><br />
               <a href='' onClick={onLogout}>
                 Logout
               </a>
@@ -56,6 +59,11 @@ export default connect(
       event.preventDefault()
 
       dispatch(push('/register'))
+    },
+    onPlay: (event) => {
+      event.preventDefault()
+
+      dispatch(push('/game'))
     },
     onLogout: (event) => {
       event.preventDefault()

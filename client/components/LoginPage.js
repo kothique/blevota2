@@ -33,7 +33,8 @@ class LoginPage extends Component {
           <input
             type="text"
             value={username}
-            onChange={event => this.setState({ username: event.target.value })} />
+            onChange={event => this.setState({ username: event.target.value })}
+            autoFocus />
           <br />
           <input
             type="password"
