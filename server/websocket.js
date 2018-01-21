@@ -1,12 +1,21 @@
+const WebSocket = require('ws')
+const pick = require('lodash/pick')
+const set = require('lodash/set')
+
 const { ifGuest } = require('./auth')
 const World = require('../common/world')
 const User = require('./db/user')
 
-let world = new World
+const world = new World
 
 const sendWorld = () => JSON.stringify({
   type: 'WORLD',
   data: world.data
+})
+
+const sendDiff = (diff) => JSON.stringify({
+  type: 'DIFF',
+  diff
 })
 
 const sendError = (error) => JSON.stringify({
@@ -26,13 +35,58 @@ module.exports = (app, wss, sessionParser) => {
   //   })
   // }, 2000)
 
-  const sendWorldToAll = () => {
-    //console.log(`World: ${JSON.stringify(world)}`)
+  const sendDiffToAll = (diff) => {
+    // console.log(`Sent world diff to all clients`)
 
-    wss.clients.forEach(ws => {
-      ws.send(sendWorld())
+    wss.clients.forEach((ws) => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(sendDiff(diff))
+      }
     })
   }
+
+  const gameLoopId = setInterval(() => {
+    const orb = world.data.orb
+    let diff = {}
+
+    wss.clients.forEach((ws) => {
+      if (!ws.ready) {
+        return
+      }
+
+      const { left, right, up, down } = ws.controls
+
+      const speed = 5
+
+      if (left) {
+        orb.x -= speed
+        set(diff, 'orb.x', orb.x)
+      }
+
+      if (right) {
+        orb.x += speed
+        set(diff, 'orb.x', orb.x)
+      }
+
+      if (up) {
+        orb.y -= speed
+        set(diff, 'orb.y', orb.y)
+      }
+
+      if (down) {
+        orb.y += speed
+        set(diff, 'orb.y', orb.y)
+      }
+    })
+
+    orb.rotation += 0.01
+    if (orb.rotation >= 1) {
+      orb.rotation = 0
+    }
+
+    // console.log(`World diff: ${JSON.stringify(diff)}`)
+    sendDiffToAll(diff)
+  }, 1000 / 60)
 
   wss.on('connection', (ws) => {
     console.log(`A new connection established`)
@@ -52,6 +106,15 @@ module.exports = (app, wss, sessionParser) => {
         ws.close()
         return
       }
+
+      ws.controls = {
+        left: false,
+        right: false,
+        up: false,
+        down: false
+      }
+
+      ws.ready = true
 
       /*User.findOne({ _id: ws.upgradeReq.session.userId }, (err, user) => {
         if (err) {
@@ -78,32 +141,7 @@ module.exports = (app, wss, sessionParser) => {
       switch (msg.type) {
         case 'CONTROLS':
           //console.log(`Controls received: ${JSON.stringify(msg.controls)}`)
-
-          let changed = false
-
-          if (msg.controls.ArrowLeft) {
-            world.data.orb.x -= 10
-            changed = true
-          }
-
-          if (msg.controls.ArrowRight) {
-            world.data.orb.x += 10
-            changed = true
-          }
-
-          if (msg.controls.ArrowUp) {
-            world.data.orb.y -= 10
-            changed = true
-          }
-
-          if (msg.controls.ArrowDown) {
-            world.data.orb.y += 10
-            changed = true
-          }
-
-          if (changed) {          
-            sendWorldToAll()
-          }
+          ws.controls = pick(msg.controls, ['left', 'right', 'up', 'down'])
 
           break
       }

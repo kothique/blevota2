@@ -1,4 +1,5 @@
 import 'pixi.js'
+import merge from 'lodash/merge'
 
 import World from '../common/world'
 import Keyboard from './keyboard'
@@ -6,8 +7,6 @@ import { createOrb, renderOrb } from './orb'
 
 export default class Game {
   static wsHost = 'ws://localhost:3000/'
-
-  first = true
 
   constructor() {
     let app = this.app = new PIXI.Application({
@@ -46,39 +45,42 @@ export default class Game {
 
       this.onmessage && this.onmessage(msg)
 
-      switch (msg.type) {
-        case 'ERROR':
-          this.onerror && this.onerror(msg.error)
-          dispatch(push('/login'))
+      if (msg.type === 'ERROR') {
+        this.onerror && this.onerror(msg.error)
+        dispatch(push('/login'))
+      } else if (msg.type === 'WORLD') {
+        this.data = msg.data
 
-          break
-        case 'WORLD':
-          this.data = msg.data
+        let { meta, x, y } = this.data.orb
 
-          let { meta, x, y } = msg.data.orb
+        this.orb = createOrb(meta)
+        this.orb.position.set(x, y)
+        this.app.stage.addChild(this.orb)
+      } else if (msg.type === 'DIFF') {
+        this.data = merge(this.data, msg.diff)
 
-          if (this.first) {
-            this.orb = createOrb(meta)
-            this.app.stage.addChild(this.orb)
-
-            this.first = false
-          }
-
-          renderOrb(this.orb, meta)
-
-          this.orb.position.set(x, y)
-
-          break
-        default:
-          console.log(`Invalid websocket message type: ${msg.type}`)
+        let { meta, x, y } = this.data.orb
+        renderOrb(this.orb, meta)
+        this.orb.position.set(x, y)
+      } else {
+        console.log(`Invalid websocket message type: ${msg.type}`)
       }
     }
   }
 
   sendControls = () => {
+    const { ArrowLeft, ArrowRight, ArrowUp, ArrowDown } = Keyboard.controls
+
+    let controls = {
+      left: ArrowLeft,
+      right: ArrowRight,
+      up: ArrowUp,
+      down: ArrowDown
+    }
+
     this.ws.send(JSON.stringify({
       type: 'CONTROLS',
-      controls: Keyboard.controls
+      controls
     }))
 
     //console.log(`Game: sent controls: ${JSON.stringify(Keyboard.controls)}`)
