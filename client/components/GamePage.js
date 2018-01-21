@@ -11,18 +11,10 @@ class GamePage extends Component {
     dispatch: func.isRequired
   }
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      game: null
-    }
-  }
-
   componentDidMount() {
     const { dispatch } = this.props
 
-    let game = new Game
+    let game = this.game = new Game
 
     game.onopen = (host) => {
       console.log(`Game: successfully connected to ${host}`)
@@ -40,12 +32,14 @@ class GamePage extends Component {
     }
 
     game.onmessage = (msg) => {
-      console.log(`Message received: ${JSON.stringify(msg)}`)
+      //console.log(`Message received: ${JSON.stringify(msg)}`)
     }
 
-    this.setState({ game })
-
     document.getElementById('game').replaceWith(game.app.view)
+  }
+
+  componentWillUnmount() {
+    document.getElementById('game').remove()
   }
 
   render() {

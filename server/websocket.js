@@ -1,5 +1,5 @@
 const { ifGuest } = require('./auth')
-const { World } = require('../common/world')
+const World = require('../common/world')
 const User = require('./db/user')
 
 let world = new World
@@ -27,7 +27,7 @@ module.exports = (app, wss, sessionParser) => {
   // }, 2000)
 
   const sendWorldToAll = () => {
-    console.log(`World: ${JSON.stringify(world)}`)
+    //console.log(`World: ${JSON.stringify(world)}`)
 
     wss.clients.forEach(ws => {
       ws.send(sendWorld())
@@ -53,7 +53,7 @@ module.exports = (app, wss, sessionParser) => {
         return
       }
 
-      User.findOne({ _id: ws.upgradeReq.session.userId }, (err, user) => {
+      /*User.findOne({ _id: ws.upgradeReq.session.userId }, (err, user) => {
         if (err) {
           ws.send(sendError('Internal server error'))
           ws.close()
@@ -64,38 +64,40 @@ module.exports = (app, wss, sessionParser) => {
         ws.user = user
         ws.orb = orb
         sendWorldToAll()
-      })
+      })*/
+
+      ws.send(sendWorld())
     })
   })
 
   app.ws('/', (ws, req) => {
     ws.on('message', (data) => {
       const msg = JSON.parse(data)
-      console.log(`Message received: ${data}`)
+      //console.log(`Message received: ${data}`)
 
       switch (msg.type) {
         case 'CONTROLS':
-          console.log(`Controls received: ${JSON.stringify(msg.controls)}`)
+          //console.log(`Controls received: ${JSON.stringify(msg.controls)}`)
 
           let changed = false
 
           if (msg.controls.ArrowLeft) {
-            ws.orb.x -= 10
+            world.data.orb.x -= 10
             changed = true
           }
 
           if (msg.controls.ArrowRight) {
-            ws.orb.x += 10
+            world.data.orb.x += 10
             changed = true
           }
 
           if (msg.controls.ArrowUp) {
-            ws.orb.y -= 10
+            world.data.orb.y -= 10
             changed = true
           }
 
           if (msg.controls.ArrowDown) {
-            ws.orb.y += 10
+            world.data.orb.y += 10
             changed = true
           }
 
