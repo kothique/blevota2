@@ -14,7 +14,7 @@ app.use('/api', proxy({
     '^/api': ''
   },
   onError: (err, req, res) => {
-    res.status(500).send({ error: 'Internal server error' })
+    console.log(`Error while proxying: ${err.message}`)
   }
 }))
 

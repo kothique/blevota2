@@ -2,9 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { func } from 'prop-types'
 import { push } from 'react-router-redux'
-import 'pixi.js'
 
-import '../../common/world'
+import Game from '../game'
 import './../css/common.css'
 
 class GamePage extends Component {
@@ -12,85 +11,41 @@ class GamePage extends Component {
     dispatch: func.isRequired
   }
 
-  static wsHost = 'ws://localhost:3000/'
+  constructor(props) {
+    super(props)
 
-  controls: {
-    left: false,
-    right: false,
-    up: false,
-    down: false,
-
-    lmb: false,
-    rmb: false,
-    mmb: false
-  }
-
-  ws: null
-  world: null
-  app: null
-
-  sendControls() {
-    ws.send(JSON.stringify(this.controls))
-
-    console.log(`Sent controls: ${this.controls}`)
+    this.state = {
+      game: null
+    }
   }
 
   componentDidMount() {
     const { dispatch } = this.props
 
-    this.app = new PIXI.Application({
-      antialias: true,
-      transparent: false,
-      resolution: 1
-    });
+    let game = new Game
 
-    (it => {
-      it.view.style.position = 'absolute'
-      it.view.style.display = 'block'
-      it.autoResize = true
-      it.resize(window.innerWidth, window.innerHeight)
-      it.backgroundColor = 0xDDDDDD
-    })(this.app.renderer)
-
-    this.test = new PIXI.Graphics()
-    this.test.beginFill(0xFF0011)
-    this.test.drawCircle(0, 0, 30)
-    this.test.endFill()
-    this.test.x = this.test.y = 0
-    this.app.stage.addChild(this.test)
-
-    document.getElementById('root').appendChild(this.app.view)
-
-    this.ws = new WebSocket(GamePage.wsHost)
-
-    this.ws.onopen = (event) => {
-      console.log(`Successfully connected to ${GamePage.wsHost}`)
+    game.onopen = (host) => {
+      console.log(`Game: successfully connected to ${host}`)
     }
 
-    this.ws.onmessage = (event) => {
-      let msg = JSON.parse(event.data)
-
-      switch (msg.type) {
-        case 'TEST':
-          this.test.position.set(msg.x, msg.y)
-
-          break
-        case 'ERROR':
-          alert('ERROR: ', msg.error)
-          dispatch(push('/login'))
-
-          break
-        case 'WORLD':
-          this.world = msg.world
-          console.log(`World received: ${this.world}`)
-
-          // re-render
-
-          break
-        default:
-          console.log(`Invalid websocket message type: ${msg.type}`)
-      }
+    game.onerror = (error)  => {
+      console.log(`Game: error: ${JSON.stringify(error)}`)
+      alert(error)
+      dispatch(push('/'))
     }
+
+    game.onclose = (code) => {
+      console.log(`Connection closed with code ${code}`)
+      dispatch(push('/'))
+    }
+
+    game.onmessage = (msg) => {
+      console.log(`Message received: ${JSON.stringify(msg)}`)
+    }
+
+    this.setState({ game })
+
+    document.getElementById('game').replaceWith(game.app.view)
   }
 
   render() {

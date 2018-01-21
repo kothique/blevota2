@@ -1,39 +1,107 @@
 const { ifGuest } = require('./auth')
+const { World } = require('../common/world')
+const User = require('./db/user')
 
-module.exports = (app, wss) => {
-  wss.on('connection', (ws, req) => {
+let world = new World
+
+const sendWorld = () => JSON.stringify({
+  type: 'WORLD',
+  data: world.data
+})
+
+const sendError = (error) => JSON.stringify({
+  type: 'ERROR',
+  error
+})
+
+module.exports = (app, wss, sessionParser) => {
+  // setInterval(() => {
+  //   wss.clients.forEach((ws) => {
+  //     if (ws.isAlive === false) {
+  //       return ws.terminate()
+  //     }
+
+  //     ws.isAlive = false
+  //     ws.ping(() => {})
+  //   })
+  // }, 2000)
+
+  const sendWorldToAll = () => {
+    console.log(`World: ${JSON.stringify(world)}`)
+
+    wss.clients.forEach(ws => {
+      ws.send(sendWorld())
+    })
+  }
+
+  wss.on('connection', (ws) => {
     console.log(`A new connection established`)
 
-    /*if (!req.auth.user) {
-      ws.send(JSON.stringify({
-        type: 'ERROR',
-        error: 'Unauthorized'
-      }))
-      ws.close()
+    ws.on('close', () => {
       console.log(`Connection closed`)
-    }*/
+    })
 
-    const msg = {
-      type: 'TEST',
-      x: 50,
-      y: 100
-    }
+    sessionParser(ws.upgradeReq, {}, () => {
+      // ws.isAlive = true
+      // ws.on('pong', (ws) => ws.isAlive = true)
 
-    ws.send(JSON.stringify(msg))
-    console.log(`Message sent: ${JSON.stringify(msg)}`)
+      const userId = ws.upgradeReq.session.userId
 
-    setTimeout(() => {
-      ws.send(JSON.stringify({ type: 'TEST', x: 100, y: 200 }))
-    }, 1000)
+      if (!userId) {
+        ws.send(sendError('Unauthorized'))
+        ws.close()
+        return
+      }
+
+      User.findOne({ _id: ws.upgradeReq.session.userId }, (err, user) => {
+        if (err) {
+          ws.send(sendError('Internal server error'))
+          ws.close()
+          return
+        }
+
+        let orb = world.newOrb(user)
+        ws.user = user
+        ws.orb = orb
+        sendWorldToAll()
+      })
+    })
   })
 
-  app.ws('/', ifGuest({ error: true}), (ws, req) => {
+  app.ws('/', (ws, req) => {
     ws.on('message', (data) => {
-      console.log(`Message received: ${JSON.stringify(data)}`)
+      const msg = JSON.parse(data)
+      console.log(`Message received: ${data}`)
 
-      switch (data.type) {
+      switch (msg.type) {
         case 'CONTROLS':
-          console.log(`Controls received: ${JSON.stringify(data.controls)}`)
+          console.log(`Controls received: ${JSON.stringify(msg.controls)}`)
+
+          let changed = false
+
+          if (msg.controls.ArrowLeft) {
+            ws.orb.x -= 10
+            changed = true
+          }
+
+          if (msg.controls.ArrowRight) {
+            ws.orb.x += 10
+            changed = true
+          }
+
+          if (msg.controls.ArrowUp) {
+            ws.orb.y -= 10
+            changed = true
+          }
+
+          if (msg.controls.ArrowDown) {
+            ws.orb.y += 10
+            changed = true
+          }
+
+          if (changed) {          
+            sendWorldToAll()
+          }
 
           break
       }
