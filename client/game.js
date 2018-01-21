@@ -2,10 +2,12 @@ import 'pixi.js'
 
 import World from '../common/world'
 import Keyboard from './keyboard'
-import { createOrb } from './orb'
+import { createOrb, renderOrb } from './orb'
 
 export default class Game {
   static wsHost = 'ws://localhost:3000/'
+
+  first = true
 
   constructor() {
     let app = this.app = new PIXI.Application({
@@ -16,22 +18,12 @@ export default class Game {
     app.view.style.display = 'block'
     app.renderer.autoResize = true
     app.renderer.resize(window.innerWidth, window.innerHeight)
-    app.renderer.backgroundColor = 0xDDDDDD
+    app.renderer.backgroundColor = 0xEEEEEE
 
     Keyboard.listen('ArrowLeft')
     Keyboard.listen('ArrowRight')
     Keyboard.listen('ArrowUp')
     Keyboard.listen('ArrowDown')
-
-    let orb = this.orb = createOrb({
-      hp: 0,
-      energy: {
-        red: 0,
-        green: 0,
-        blue: 0
-      }
-    })
-    app.stage.addChild(orb)
 
     let ws = this.ws = new WebSocket(Game.wsHost)
 
@@ -64,7 +56,17 @@ export default class Game {
           this.data = msg.data
 
           let { meta, x, y } = msg.data.orb
-          orb.position.set(x, y)
+
+          if (this.first) {
+            this.orb = createOrb(meta)
+            this.app.stage.addChild(this.orb)
+
+            this.first = false
+          }
+
+          renderOrb(this.orb, meta)
+
+          this.orb.position.set(x, y)
 
           break
         default:

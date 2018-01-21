@@ -3,11 +3,15 @@ module.exports = class World {
     this.data = {
       orb: {
         meta: {
-          hp: 2000,
+          hp: 1300,
+          hpMax: 2000,
           energy: {
-            red: 100,
+            red: 80,
+            redMax: 100,
             green: 100,
-            blue: 100
+            greenMax: 100,
+            blue: 40,
+            blueMax: 100
           },
         },
         x: 0,
