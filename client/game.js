@@ -2,6 +2,7 @@ import 'pixi.js'
 
 import World from '../common/world'
 import Keyboard from './keyboard'
+import { createOrb } from './orb'
 
 export default class Game {
   static wsHost = 'ws://localhost:3000/'
@@ -22,11 +23,14 @@ export default class Game {
     Keyboard.listen('ArrowUp')
     Keyboard.listen('ArrowDown')
 
-    let orb = this.orb = new PIXI.Graphics()
-    orb.beginFill(0xFF0011)
-    orb.drawCircle(0, 0, 30)
-    orb.endFill()
-    orb.x = this.orb.y = 0
+    let orb = this.orb = createOrb({
+      hp: 0,
+      energy: {
+        red: 0,
+        green: 0,
+        blue: 0
+      }
+    })
     app.stage.addChild(orb)
 
     let ws = this.ws = new WebSocket(Game.wsHost)
@@ -59,8 +63,7 @@ export default class Game {
         case 'WORLD':
           this.data = msg.data
 
-          let { hp, energy: { r, g, b }, x, y } = msg.data.orb
-
+          let { meta, x, y } = msg.data.orb
           orb.position.set(x, y)
 
           break

@@ -2,11 +2,13 @@ module.exports = class World {
   constructor() {
     this.data = {
       orb: {
-        hp: 2000,
-        energy: {
-          r: 100,
-          g: 100,
-          b: 100
+        meta: {
+          hp: 2000,
+          energy: {
+            red: 100,
+            green: 100,
+            blue: 100
+          },
         },
         x: 0,
         y: 0
