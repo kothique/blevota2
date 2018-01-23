@@ -1,9 +1,11 @@
 import 'pixi.js'
 import merge from 'lodash/merge'
+import get from 'lodash/get'
 
 import World from '../common/world'
 import Keyboard from './keyboard'
 import { createOrb, renderOrb } from './orb'
+import FrameReceiver from './framereceiver';
 
 export default class Game {
   static wsHost = 'ws://localhost:3000/'
@@ -45,24 +47,44 @@ export default class Game {
 
       this.onmessage && this.onmessage(msg)
 
-      if (msg.type === 'ERROR') {
+      if (msg.type === 'ERROR')
+      {
         this.onerror && this.onerror(msg.error)
         dispatch(push('/login'))
-      } else if (msg.type === 'WORLD') {
+      }
+      else if (msg.type === 'WORLD')
+      {
         this.data = msg.data
 
-        let { meta, x, y } = this.data.orb
+        this.frameReceiver = new FrameReceiver(this.data)
+        this.frameReceiver.on('frame', (diff) => {
+          if (get(diff, 'orb.x')) {
+            this.orb.x = diff.orb.x
+          }
 
+          if (get(diff, 'orb.y')) {
+            this.orb.y = diff.orb.y
+          }
+
+          if (get(diff, 'meta')) {
+            this.orb.meta = merge(this.orb.meta, diff.meta)
+
+            renderOrb(this.orb)
+          }
+        }) 
+        this.frameReceiver.start()
+
+        let { meta, x, y } = this.data.orb
         this.orb = createOrb(meta)
         this.orb.position.set(x, y)
         this.app.stage.addChild(this.orb)
-      } else if (msg.type === 'DIFF') {
-        this.data = merge(this.data, msg.diff)
-
-        let { meta, x, y } = this.data.orb
-        renderOrb(this.orb, meta)
-        this.orb.position.set(x, y)
-      } else {
+      }
+      else if (msg.type === 'DIFF')
+      {
+        this.frameReceiver.putFrame(msg.diff)
+      }
+      else
+      {
         console.log(`Invalid websocket message type: ${msg.type}`)
       }
     }
@@ -71,7 +93,7 @@ export default class Game {
   sendControls = () => {
     const { ArrowLeft, ArrowRight, ArrowUp, ArrowDown } = Keyboard.controls
 
-    let controls = {
+    const controls = {
       left: ArrowLeft,
       right: ArrowRight,
       up: ArrowUp,

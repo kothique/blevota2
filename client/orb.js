@@ -44,12 +44,12 @@ const renderHealthCircle = (g, { hp, hpMax }, first = false) => {
   g.endFill()
 }
 
-export const renderOrb = (orb, meta, first = false) => {
+export const renderOrb = (orb, first = false) => {
   const { typeRing, energyRing, healthCircle } = orb.meta.parts
 
-  renderTypeRing(typeRing, meta, first)
-  renderEnergyRing(energyRing, meta, first)
-  renderHealthCircle(healthCircle, meta, first)
+  renderTypeRing(typeRing, orb.meta, first)
+  renderEnergyRing(energyRing, orb.meta, first)
+  renderHealthCircle(healthCircle, orb.meta, first)
 }
 
 export const createOrb = (meta) => {
@@ -70,7 +70,7 @@ export const createOrb = (meta) => {
     healthCircle
   }
 
-  renderOrb(orb, meta, true)
+  renderOrb(orb, true)
 
   return orb
 }
