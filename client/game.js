@@ -26,12 +26,14 @@ export default class Game {
     Keyboard.listen('ArrowUp')
     Keyboard.listen('ArrowDown')
 
+    Keyboard.on('change', () => {
+      this.sendControls()
+    })
+
     let ws = this.ws = new WebSocket(Game.wsHost)
 
     ws.onopen = (event) => {
       this.onopen && this.onopen(Game.wsHost)
-
-      setInterval(this.sendControls, 1000 / 60)
     }
 
     ws.onerror = (event) => {
@@ -105,7 +107,7 @@ export default class Game {
       controls
     }))
 
-    //console.log(`Game: sent controls: ${JSON.stringify(Keyboard.controls)}`)
+    //console.log(`Game: sent controls: ${JSON.stringify(controls)}`)
   }
 
 }

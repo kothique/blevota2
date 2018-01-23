@@ -1,6 +1,8 @@
 let keys = {},
     keysData = {}
 
+let onchange = []
+
 const addKeyListener = (keyCode) => {
   if (keys[keyCode]) {
     return
@@ -13,19 +15,25 @@ const addKeyListener = (keyCode) => {
 
   keysData[keyCode].downHandler = (event) => {
     if (event.code === keyCode) {
-      if (!keys[keyCode]) {
-        keysData[keyCode].onPress && keysData[keyCode].onPress()
-      }
+      const emit = !keys[keyCode]
       keys[keyCode] = true
+
+      if (emit) {
+        keysData[keyCode].onPress && keysData[keyCode].onPress()
+        onchange && onchange('down', keyCode)
+      }
     }
   }
 
   keysData[keyCode].upHandler = (event) => {
     if (event.code === keyCode) {
-      if (keys[keyCode]) {
-        keysData[keyCode].onRelease && keysData[keyCode].onRelease()
-      }
+      let emit = keys[keyCode]
       keys[keyCode] = false
+
+      if (emit) {
+        keysData[keyCode].onRelease && keysData[keyCode].onRelease()
+        onchange && onchange('up', keyCode)
+      }
     }
   }
 
@@ -57,5 +65,11 @@ export default class Keyboard {
 
   static get controls() {
     return keys
+  }
+
+  static on = (event, callback) => {
+    if (event === 'change') {
+      onchange = callback
+    }
   }
 }
