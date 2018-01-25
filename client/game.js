@@ -77,7 +77,7 @@ export default class Game {
 
             renderOrb(this.orb)
           }
-        }) 
+        })
         this.frameReceiver.start()
 
         let { meta, x, y } = { ...this.state, meta: {} }
@@ -87,7 +87,7 @@ export default class Game {
       }
       else if (msg.type === 'DIFF')
       {
-        this.frameReceiver.putFrame(msg.diff)
+        this.frameReceiver.put(msg.diff)
       }
       else
       {
