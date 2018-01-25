@@ -1,22 +1,50 @@
 module.exports = class World {
   constructor() {
-    this.data = {
-      orb: {
-        meta: {
-          hp: 1300,
-          hpMax: 2000,
-          energy: {
-            red: 80,
-            redMax: 100,
-            green: 100,
-            greenMax: 100,
-            blue: 40,
-            blueMax: 100
-          },
-        },
-        x: 0,
-        y: 0
+    this.previous = {
+      state: {
+        x: 50,
+        y: 50
       }
+    }
+
+    this.state = this.previous.state
+  }
+
+  integrate(t, dt, controls) {
+    this.previous.state = this.state
+
+    let diff = {}
+
+    const { left, right, up, down } = controls,
+          v = 5
+
+    if (left) {
+      this.state.x -= v * dt
+      set(diff, 'x', this.state.x)
+    }
+
+    if (right) {
+      this.state.x += v * dt
+      set(diff, 'x', this.state.x)
+    }
+
+    if (up) {
+      this.state.y -= v * dt
+      set(diff, 'y', this.state.y)
+    }
+
+    if (down) {
+      this.state.y += v * dt
+      set(diff, 'y', this.state.y)
+    }
+
+    // console.log(`World diff: ${JSON.stringify(diff)}`)
+  }
+
+  getState(alpha) {
+    return {
+      x: this.state.x * alpha + this.previous.state.x * (1 - alpha),
+      y: this.state.y * alpha + this.previous.state.y * (1 - alpha)
     }
   }
 

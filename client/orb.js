@@ -48,8 +48,8 @@ export const renderOrb = (orb, first = false) => {
   const { typeRing, energyRing, healthCircle } = orb.meta.parts
 
   renderTypeRing(typeRing, orb.meta, first)
-  renderEnergyRing(energyRing, orb.meta, first)
-  renderHealthCircle(healthCircle, orb.meta, first)
+  // renderEnergyRing(energyRing, orb.meta, first)
+  // renderHealthCircle(healthCircle, orb.meta, first)
 }
 
 export const createOrb = (meta) => {

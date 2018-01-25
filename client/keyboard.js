@@ -1,7 +1,7 @@
 let keys = {},
     keysData = {}
 
-let onchange = []
+let onchange = null
 
 const addKeyListener = (keyCode) => {
   if (keys[keyCode]) {

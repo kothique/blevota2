@@ -32,7 +32,7 @@ class GamePage extends Component {
     }
 
     game.onmessage = (msg) => {
-      //console.log(`Message received: ${JSON.stringify(msg)}`)
+      console.log(`Message received: ${JSON.stringify(msg)}`)
     }
 
     document.getElementById('game').replaceWith(game.app.view)

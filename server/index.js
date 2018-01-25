@@ -1,41 +1,59 @@
-const mongoose = require('mongoose')
-const escape = require('lodash/escape')
-const session = require('express-session')
-
-const auth = require('./auth')
+const cluster = require('cluster')
 
 const port = process.env.PORT || 3001
 
-const mongoPort = process.env.MONGO_PORT || 27017
+require('./mongo')(() => {
+  if (cluster.isMaster) {
+    const server = cluster.fork({
+      WORKER_TYPE: 'SERVER'
+    })
 
-mongoose.connect(`mongodb://localhost:${mongoPort}/blevota2`, {
-  useMongoClient: true
-})
-mongoose.Promise = global.Promise
+    const simulation = cluster.fork({
+      WORKER_TYPE: 'SIMULATION'
+    })
 
-let db = mongoose.connection
+    cluster.on('message', (worker, msg) => {
+      switch (msg.type) {
+        case 'DIFF':
+          server.send({
+            type: 'DIFF',
+            diff: msg.diff
+          })
+          break
+      }
+    })
+  } else if (cluster.isWorker) {
+    if (process.env.WORKER_TYPE === 'SERVER') {
+      let app = require('express')(),
+          expressWs = require('express-ws')(app)
 
-db.on('error', (err) => {
-  console.log(err.stack)
-})
+      let sessionParser = require('express-session')({
+        secret: 'my wonderful secret',
+        resave: false,
+        saveUninitialized: false
+      })
 
-db.once('open', () => {
-  console.log(`Successfully connected to MongoDB server`)
+      require('./middleware')(app, sessionParser)
+      require('./websocket')(app, expressWs.getWss(), sessionParser)
+      require('./routes')(app)
 
-  let app = require('express')(),
-      expressWs = require('express-ws')(app)
+      app.listen(3001, () => {
+        console.log(`Worker ${process.pid} is now listening on port ${port}`)
+      })
+    } else if (process.env.WORKER_TYPE === 'SIMULATION') {
+      const Game = require('./game'),
+            game = new Game
 
-  let sessionParser = session({
-    secret: 'my wonderful secret',
-    resave: false,
-    saveUninitialized: false
-  })
+      game.on('tick', (state) => {
+        process.send({
+          type: 'DIFF',
+          diff: state
+        })
+      })
 
-  require('./middleware')(app, sessionParser)
-  require('./websocket')(app, expressWs.getWss(), sessionParser)
-  require('./routes')(app)
-
-  app.listen(3001, () => {
-    console.log(`Server is listening on port ${port}`)
-  })
+      game.run(() => {
+        console.log(`Worker ${process.pid} is now running simulation`)
+      })
+    }
+  }
 })

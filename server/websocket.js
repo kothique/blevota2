@@ -3,14 +3,18 @@ const pick = require('lodash/pick')
 const set = require('lodash/set')
 
 const { ifGuest } = require('./auth')
-const World = require('../common/world')
 const User = require('./db/user')
 
-const world = new World
+let controls = {
+  left: false,
+  right: false,
+  up: false,
+  down: false
+}
 
-const sendWorld = () => JSON.stringify({
+const sendWorld = (state) => JSON.stringify({
   type: 'WORLD',
-  data: world.data
+  state
 })
 
 const sendDiff = (diff) => JSON.stringify({
@@ -45,48 +49,15 @@ module.exports = (app, wss, sessionParser) => {
     })
   }
 
-  const gameLoopId = setInterval(() => {
-    const orb = world.data.orb
-    let diff = {}
-
-    wss.clients.forEach((ws) => {
-      if (!ws.ready) {
-        return
-      }
-
-      const { left, right, up, down } = ws.controls
-
-      const speed = 5
-
-      if (left) {
-        orb.x -= speed
-        set(diff, 'orb.x', orb.x)
-      }
-
-      if (right) {
-        orb.x += speed
-        set(diff, 'orb.x', orb.x)
-      }
-
-      if (up) {
-        orb.y -= speed
-        set(diff, 'orb.y', orb.y)
-      }
-
-      if (down) {
-        orb.y += speed
-        set(diff, 'orb.y', orb.y)
-      }
-    })
-
-    orb.rotation += 0.01
-    if (orb.rotation >= 1) {
-      orb.rotation = 0
+  process.on('message', (msg) => {
+    switch (msg.type) {
+      case 'DIFF':
+        sendDiffToAll(msg.diff)
+        break
+      default:
+        throw new Error(`Invalid type of message received: ${msg.type}`)
     }
-
-    // console.log(`World diff: ${JSON.stringify(diff)}`)
-    sendDiffToAll(diff)
-  }, 1000 / 60)
+  })
 
   wss.on('connection', (ws) => {
     console.log(`A new connection established`)
@@ -107,15 +78,6 @@ module.exports = (app, wss, sessionParser) => {
         return
       }
 
-      ws.controls = {
-        left: false,
-        right: false,
-        up: false,
-        down: false
-      }
-
-      ws.ready = true
-
       /*User.findOne({ _id: ws.upgradeReq.session.userId }, (err, user) => {
         if (err) {
           ws.send(sendError('Internal server error'))
@@ -129,7 +91,7 @@ module.exports = (app, wss, sessionParser) => {
         sendWorldToAll()
       })*/
 
-      ws.send(sendWorld())
+      ws.send(sendWorld({ x: 50, y: 50 }))
     })
   })
 
@@ -141,7 +103,7 @@ module.exports = (app, wss, sessionParser) => {
       switch (msg.type) {
         case 'CONTROLS':
           //console.log(`Controls received: ${JSON.stringify(msg.controls)}`)
-          ws.controls = pick(msg.controls, ['left', 'right', 'up', 'down'])
+          controls = pick(msg.controls, ['left', 'right', 'up', 'down'])
 
           break
       }

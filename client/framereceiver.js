@@ -6,7 +6,8 @@ export default class FrameReceiver {
   constructor(world) {
     this.frames = new Queue
 
-    this.world1 = this.world2 = world
+    this.state1 = this.state2 = world
+    this.stop = false
   }
 
   on = (event, callback) => {
@@ -18,19 +19,25 @@ export default class FrameReceiver {
   putFrame = (frame) => {
     this.frames.enqueue(frame)
 
-    this.world1 = this.world2
-    this.world2 = merge(this.world1, frame)
+    this.state1 = this.state2
+    this.state2 = merge(this.state1, frame)
   }
 
   start = () => {
-    this.intervalID = setInterval(() => {
+    this.stop = false
+
+    const animate = () => {
+      if (this.stop) {
+        return
+      }
+
       //console.log(`Frames: ${this.frames.length}`)
 
       if (this.frames.length === 2) {
         this.putFrame({
           orb: {
-            x: 2 * this.world2.orb.x - this.world1.orb.x,
-            y: 2 * this.world2.orb.y - this.world1.orb.y
+            x: 2 * this.state2.x - this.state1.x,
+            y: 2 * this.state2.y - this.state1.y
           }
         })
       }
@@ -41,11 +48,14 @@ export default class FrameReceiver {
       }
 
       this.onframe && this.onframe(frame)
-    }, 1000 / 60)
+
+      requestAnimationFrame(animate)
+    }
+
+    requestAnimationFrame(animate)
   }
 
   stop = () => {
-    clearInterval(this.intervalID)
-    delete this.intervalID
+    this.stop = true
   }
 }

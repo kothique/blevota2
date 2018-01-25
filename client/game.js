@@ -21,14 +21,18 @@ export default class Game {
     app.renderer.resize(window.innerWidth, window.innerHeight)
     app.renderer.backgroundColor = 0xEEEEEE
 
-    Keyboard.listen('ArrowLeft')
-    Keyboard.listen('ArrowRight')
-    Keyboard.listen('ArrowUp')
-    Keyboard.listen('ArrowDown')
+    Keyboard.listen('KeyA')
+    Keyboard.listen('KeyD')
+    Keyboard.listen('KeyW')
+    Keyboard.listen('KeyS')
 
     Keyboard.on('change', () => {
       this.sendControls()
     })
+
+    // setInterval(() => {
+    //   this.sendControls()
+    // }, 1000 / 60)
 
     let ws = this.ws = new WebSocket(Game.wsHost)
 
@@ -56,16 +60,16 @@ export default class Game {
       }
       else if (msg.type === 'WORLD')
       {
-        this.data = msg.data
+        this.state = msg.state
 
-        this.frameReceiver = new FrameReceiver(this.data)
+        this.frameReceiver = new FrameReceiver(this.state)
         this.frameReceiver.on('frame', (diff) => {
-          if (get(diff, 'orb.x')) {
-            this.orb.x = diff.orb.x
+          if (get(diff, 'x')) {
+            this.orb.x = diff.x
           }
 
           if (get(diff, 'orb.y')) {
-            this.orb.y = diff.orb.y
+            this.orb.y = diff.y
           }
 
           if (get(diff, 'meta')) {
@@ -76,7 +80,7 @@ export default class Game {
         }) 
         this.frameReceiver.start()
 
-        let { meta, x, y } = this.data.orb
+        let { meta, x, y } = { ...this.state, meta: {} }
         this.orb = createOrb(meta)
         this.orb.position.set(x, y)
         this.app.stage.addChild(this.orb)
@@ -93,18 +97,19 @@ export default class Game {
   }
 
   sendControls = () => {
-    const { ArrowLeft, ArrowRight, ArrowUp, ArrowDown } = Keyboard.controls
+    const { KeyA, KeyD, KeyW, KeyS } = Keyboard.controls
 
     const controls = {
-      left: ArrowLeft,
-      right: ArrowRight,
-      up: ArrowUp,
-      down: ArrowDown
+      left: KeyA,
+      right: KeyD,
+      up: KeyW,
+      down: KeyS
     }
 
     this.ws.send(JSON.stringify({
       type: 'CONTROLS',
-      controls
+      controls,
+      time: Date.now()
     }))
 
     //console.log(`Game: sent controls: ${JSON.stringify(controls)}`)
