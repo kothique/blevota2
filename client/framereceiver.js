@@ -31,7 +31,7 @@ export default class FrameReceiver {
         return
       }
 
-      //console.log(`Frames: ${this.frames.length}`)
+      console.log(`Frames: ${this.frames.length}`)
 
       if (this.frames.length === 2) {
         this.putFrame({

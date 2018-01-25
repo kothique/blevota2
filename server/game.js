@@ -9,7 +9,7 @@ module.exports = class Game extends EventEmitter {
 
     this.world = options.world || new World
     this.t = options.t || 0
-    this.dt = options.dt || 0.001
+    this.dt = options.dt || 1000 / 120
     this.accumulator = 0
 
     this.pause = false
@@ -18,12 +18,12 @@ module.exports = class Game extends EventEmitter {
   run(callback = null) {
     this.pause = false
 
-    callback && process.nextTick(callback)
+    callback && callback()
 
-    let currentTime = microtime.now()
+    let currentTime = Date.now()
 
     const loop = () => {
-      let newTime = microtime.now(),
+      let newTime = Date.now(),
           frameTime = newTime - currentTime
       
       if (frameTime > 1000 / 60) {
@@ -43,11 +43,14 @@ module.exports = class Game extends EventEmitter {
       const alpha = this.accumulator / this.dt
       this.emit('tick', this.world.getState(alpha))
 
-
-      setImmediate(loop)
+      if (Date.now() - currentTime < this.dt - 4) {
+        setTimeout(loop)
+      } else {
+        setImmediate(loop)
+      }
     }
 
-    setImmediate(loop)
+    loop()
   }
 
   stop() {
