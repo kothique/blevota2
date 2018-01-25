@@ -1,3 +1,5 @@
+const set = require('lodash/set')
+
 module.exports = class World {
   constructor() {
     this.previous = {
@@ -16,7 +18,7 @@ module.exports = class World {
     let diff = {}
 
     const { left, right, up, down } = controls,
-          v = 5
+          v = 0.5
 
     if (left) {
       this.state.x -= v * dt

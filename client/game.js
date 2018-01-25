@@ -68,7 +68,7 @@ export default class Game {
             this.orb.x = diff.x
           }
 
-          if (get(diff, 'orb.y')) {
+          if (get(diff, 'y')) {
             this.orb.y = diff.y
           }
 
@@ -112,7 +112,7 @@ export default class Game {
       time: Date.now()
     }))
 
-    //console.log(`Game: sent controls: ${JSON.stringify(controls)}`)
+    console.log(`Game: sent controls: ${JSON.stringify(controls)}`)
   }
 
 }

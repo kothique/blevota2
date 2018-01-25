@@ -5,15 +5,12 @@ export default class FrameReceiver extends EventEmitter {
   constructor(initialState) {
     super()
 
-    this.state1 = this.state2 = initialState
+    this.state = initialState
     this.stop = false
   }
 
   put = (frame) => {
-    //this.frames.enqueue(frame)
-
-    this.state1 = this.state2
-    this.state2 = merge(this.state1, frame)
+    this.state = merge(this.state, frame)
   }
 
   start = () => {
@@ -24,7 +21,7 @@ export default class FrameReceiver extends EventEmitter {
         return
       }
 
-      this.emit('frame', this.state2)
+      this.emit('frame', this.state)
 
       requestAnimationFrame(nextFrame)
     }

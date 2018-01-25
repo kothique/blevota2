@@ -27,7 +27,7 @@ const sendError = (error) => JSON.stringify({
   error
 })
 
-module.exports = (app, wss, sessionParser) => {
+module.exports = (app, wss, sessionParser, simulation) => {
   // setInterval(() => {
   //   wss.clients.forEach((ws) => {
   //     if (ws.isAlive === false) {
@@ -49,13 +49,12 @@ module.exports = (app, wss, sessionParser) => {
     })
   }
 
-  process.on('message', (msg) => {
+  /* Receive a new game state from the simulation process */
+  simulation.on('message', (msg) => {
     switch (msg.type) {
       case 'DIFF':
         sendDiffToAll(msg.diff)
         break
-      default:
-        throw new Error(`Invalid type of message received: ${msg.type}`)
     }
   })
 
@@ -103,8 +102,12 @@ module.exports = (app, wss, sessionParser) => {
       switch (msg.type) {
         case 'CONTROLS':
           //console.log(`Controls received: ${JSON.stringify(msg.controls)}`)
-          controls = pick(msg.controls, ['left', 'right', 'up', 'down'])
 
+          /* Send controls to the simulation process */
+          simulation.send({
+            type: 'CONTROLS',
+            controls: pick(msg.controls, ['left', 'right', 'up', 'down'])
+          })
           break
       }
     })
