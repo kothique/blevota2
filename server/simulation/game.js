@@ -1,7 +1,7 @@
 const EventEmitter = require('events')
 const microtime = require('microtime')
 
-const World = require('../common/world')
+const World = require('../../common/world')
 
 module.exports = class Game extends EventEmitter {
   constructor(options = {}) {
