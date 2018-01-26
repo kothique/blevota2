@@ -5,7 +5,11 @@ module.exports = class World {
     this.previous = {
       state: {
         x: 50,
-        y: 50
+        y: 50,
+        v: {
+          x: 0.5,
+          y: 0.5
+        }
       }
     }
 
@@ -15,36 +19,38 @@ module.exports = class World {
   integrate(t, dt, controls) {
     this.previous.state = this.state
 
-    let diff = {}
+    // let diff = {}
 
     const { left, right, up, down } = controls,
-          v = 0.5
+          { x, y, v } = this.state
 
     if (left) {
-      this.state.x -= v * dt
-      set(diff, 'x', this.state.x)
+      this.state.x -= v.x * dt
+      // set(diff, 'x', this.state.x)
     }
 
     if (right) {
-      this.state.x += v * dt
-      set(diff, 'x', this.state.x)
+      this.state.x += v.x * dt
+      // set(diff, 'x', this.state.x)
     }
 
     if (up) {
-      this.state.y -= v * dt
-      set(diff, 'y', this.state.y)
+      this.state.y -= v.y * dt
+      // set(diff, 'y', this.state.y)
     }
 
     if (down) {
-      this.state.y += v * dt
-      set(diff, 'y', this.state.y)
+      this.state.y += v.y * dt
+      // set(diff, 'y', this.state.y)
     }
 
     // console.log(`World diff: ${JSON.stringify(diff)}`)
   }
 
-  getState(alpha) {
+  approximate(alpha) {
     return {
+      ...this.state,
+
       x: this.state.x * alpha + this.previous.state.x * (1 - alpha),
       y: this.state.y * alpha + this.previous.state.y * (1 - alpha)
     }

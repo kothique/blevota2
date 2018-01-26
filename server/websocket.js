@@ -12,14 +12,10 @@ let controls = {
   down: false
 }
 
-const sendWorld = (state) => JSON.stringify({
-  type: 'WORLD',
-  state
-})
-
-const sendDiff = (diff) => JSON.stringify({
-  type: 'DIFF',
-  diff
+const sendFrame = ({ frame, timestamp }) => JSON.stringify({
+  type: 'FRAME',
+  frame,
+  timestamp
 })
 
 const sendError = (error) => JSON.stringify({
@@ -28,32 +24,24 @@ const sendError = (error) => JSON.stringify({
 })
 
 module.exports = (app, wss, sessionParser, simulation) => {
-  // setInterval(() => {
-  //   wss.clients.forEach((ws) => {
-  //     if (ws.isAlive === false) {
-  //       return ws.terminate()
-  //     }
-
-  //     ws.isAlive = false
-  //     ws.ping(() => {})
-  //   })
-  // }, 2000)
-
-  const sendDiffToAll = (diff) => {
+  const sendFrameToAll = (data) => {
     // console.log(`Sent world diff to all clients`)
 
     wss.clients.forEach((ws) => {
       if (ws.readyState === WebSocket.OPEN) {
-        ws.send(sendDiff(diff))
+        ws.send(sendFrame(data))
       }
     })
   }
 
-  /* Receive a new game state from the simulation process */
+  /* Receive a new frame from the simulation process */
   simulation.on('message', (msg) => {
     switch (msg.type) {
-      case 'DIFF':
-        sendDiffToAll(msg.diff)
+      case 'FRAME':
+        sendFrameToAll({
+          frame: msg.frame,
+          timestamp: msg.timestamp
+        })
         break
     }
   })
@@ -65,10 +53,8 @@ module.exports = (app, wss, sessionParser, simulation) => {
       console.log(`Connection closed`)
     })
 
+    /* Parse session and check authorization */
     sessionParser(ws.upgradeReq, {}, () => {
-      // ws.isAlive = true
-      // ws.on('pong', (ws) => ws.isAlive = true)
-
       const userId = ws.upgradeReq.session.userId
 
       if (!userId) {
@@ -76,21 +62,6 @@ module.exports = (app, wss, sessionParser, simulation) => {
         ws.close()
         return
       }
-
-      /*User.findOne({ _id: ws.upgradeReq.session.userId }, (err, user) => {
-        if (err) {
-          ws.send(sendError('Internal server error'))
-          ws.close()
-          return
-        }
-
-        let orb = world.newOrb(user)
-        ws.user = user
-        ws.orb = orb
-        sendWorldToAll()
-      })*/
-
-      ws.send(sendWorld({ x: 50, y: 50 }))
     })
   })
 
@@ -101,7 +72,7 @@ module.exports = (app, wss, sessionParser, simulation) => {
 
       switch (msg.type) {
         case 'CONTROLS':
-          //console.log(`Controls received: ${JSON.stringify(msg.controls)}`)
+          // console.log(`Controls received: ${JSON.stringify(msg.controls)}`)
 
           /* Send controls to the simulation process */
           simulation.send({

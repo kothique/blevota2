@@ -1,4 +1,5 @@
 const EventEmitter = require('events')
+const present = require('present')
 
 const World = require('../../common/world')
 
@@ -32,6 +33,7 @@ module.exports = class Game extends EventEmitter {
 
   run(callback = null) {
     this.pause = false
+    this.begin = present()
 
     callback && callback()
 
@@ -48,15 +50,22 @@ module.exports = class Game extends EventEmitter {
 
       this.accumulator += frameTime
 
+      let integrated = false
       while (this.accumulator >= this.dt) {
         this.world.integrate(this.t, this.dt, this.controls)
+        integrated = true
 
         this.t += this.dt
         this.accumulator -= this.dt
       }
 
-      //const alpha = this.accumulator / this.dt
-      this.emit('tick', this.world.state)//this.world.getState(alpha))
+      if (integrated) {
+        const alpha = this.accumulator / this.dt
+        this.emit('tick', {
+          frame: this.world.approximate(alpha),
+          timestamp: this.t
+        })
+      }
 
       if (Date.now() - currentTime < this.dt - 4) {
         setTimeout(loop)
