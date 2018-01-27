@@ -1,10 +1,10 @@
 const Game = require('./game'),
       game = new Game
 
-game.on('tick', ({ frame, timestamp }) => {
+game.on('tick', ({ state, timestamp }) => {
   process.send({
     type: 'FRAME',
-    frame,
+    state,
     timestamp
   })
 })

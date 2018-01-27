@@ -3,12 +3,14 @@ import Queue from '../common/queue'
 import merge from 'lodash/merge'
 import present from 'present'
 
+import World from '../common/world'
+
 export default class PlayoutBuffer extends EventEmitter {
   constructor() {
     super()
 
     this.stop = false
-    this.latency = 60 // ms
+    this.latency = 60
     this.frames = new Queue
   }
 
@@ -16,7 +18,7 @@ export default class PlayoutBuffer extends EventEmitter {
     this.frames.clear()
   }
 
-  put = ({ frame, timestamp }) => {
+  put = ({ state, timestamp }) => {
     const firstFrame = !this.frames.length
 
     if (firstFrame) {
@@ -24,7 +26,7 @@ export default class PlayoutBuffer extends EventEmitter {
     }
     
     this.frames.enqueue({
-      frame,
+      state,
       timestamp: timestamp - this.beginFrames
     })
 
@@ -66,7 +68,11 @@ export default class PlayoutBuffer extends EventEmitter {
       const currentTimestamp = present() - this.begin,
             frame = getFrame(currentTimestamp)
 
-      this.emit('frame', frame)
+      const approximatedState = new World(frame.state)
+        .integrate(currentTimestamp, currentTimestamp - frame.timestamp)
+        .state
+
+      this.emit('frame', { state: approximatedState, currentTimestamp })
 
       requestAnimationFrame(nextFrame)
     }

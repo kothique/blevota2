@@ -12,9 +12,9 @@ let controls = {
   down: false
 }
 
-const sendFrame = ({ frame, timestamp }) => JSON.stringify({
+const sendFrame = ({ state, timestamp }) => JSON.stringify({
   type: 'FRAME',
-  frame,
+  state,
   timestamp
 })
 
@@ -39,7 +39,7 @@ module.exports = (app, wss, sessionParser, simulation) => {
     switch (msg.type) {
       case 'FRAME':
         sendFrameToAll({
-          frame: msg.frame,
+          state: msg.state,
           timestamp: msg.timestamp
         })
         break

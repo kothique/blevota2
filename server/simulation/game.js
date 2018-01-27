@@ -52,7 +52,8 @@ module.exports = class Game extends EventEmitter {
 
       let integrated = false
       while (this.accumulator >= this.dt) {
-        this.world.integrate(this.t, this.dt, this.controls)
+        this.world.applyControls(this.controls)
+        this.world.integrate(this.t, this.dt)
         integrated = true
 
         this.t += this.dt
@@ -60,9 +61,8 @@ module.exports = class Game extends EventEmitter {
       }
 
       if (integrated) {
-        const alpha = this.accumulator / this.dt
         this.emit('tick', {
-          frame: this.world.approximate(alpha),
+          state: this.world.state,
           timestamp: this.t
         })
       }

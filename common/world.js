@@ -1,84 +1,43 @@
-const set = require('lodash/set')
+const v = 0.5
+
+const defaultInitialState = {
+  x: 100,
+  y: 100,
+  v: {
+    x: v,
+    y: v
+  }
+}
 
 module.exports = class World {
-  constructor() {
-    this.previous = {
-      state: {
-        x: 50,
-        y: 50,
-        v: {
-          x: 0.5,
-          y: 0.5
-        }
-      }
-    }
+  constructor(initialState = defaultInitialState) {
+    this.state = initialState
+  }
 
-    this.state = this.previous.state
+  applyControls({ left, right, up, down }) {
+    if (left)
+      this.state.v.x = -v
+    else if (right)
+      this.state.v.x = v
+    else
+      this.state.v.x = 0
+
+    if (up)
+      this.state.v.y = -v
+    else if (down)
+      this.state.v.y = v
+    else
+      this.state.v.y = 0
+
+    return this
   }
 
   integrate(t, dt, controls) {
-    this.previous.state = this.state
+    const { x, y, v } = this.state
 
-    // let diff = {}
+    this.state.x += v.x * dt
+    this.state.y += v.y * dt
 
-    const { left, right, up, down } = controls,
-          { x, y, v } = this.state
-
-    if (left) {
-      this.state.x -= v.x * dt
-      // set(diff, 'x', this.state.x)
-    }
-
-    if (right) {
-      this.state.x += v.x * dt
-      // set(diff, 'x', this.state.x)
-    }
-
-    if (up) {
-      this.state.y -= v.y * dt
-      // set(diff, 'y', this.state.y)
-    }
-
-    if (down) {
-      this.state.y += v.y * dt
-      // set(diff, 'y', this.state.y)
-    }
-
-    // console.log(`World diff: ${JSON.stringify(diff)}`)
+    return this
   }
-
-  approximate(alpha) {
-    return {
-      ...this.state,
-
-      x: this.state.x * alpha + this.previous.state.x * (1 - alpha),
-      y: this.state.y * alpha + this.previous.state.y * (1 - alpha)
-    }
-  }
-
-  // newOrb(user) {
-  //   let orb = new Orb({
-  //     name: user.username,
-  //     x: 50,
-  //     y: 50,
-  //     r: Math.max(Math.min(user.username.length * 5, 50), 30)
-  //   })
-
-  //   this.data.orbs[user._id] = orb
-  //   console.log(`New orb created: ${JSON.stringify(orb)}`)
-
-  //   return orb
-  // }
-
-  // getOrb(user) {
-  //   return this.data.orbs[user._id]
-  // }
-
-  // removeOrb(user) {
-  //   if (this.data.orbs[user._id]) {
-  //     console.log(`Orb removed: ${user._id}`)
-  //   }
-
-  //   delete this.data.orbs[user._id]
-  // }
 }

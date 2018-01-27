@@ -7,6 +7,17 @@ import Keyboard from './keyboard'
 import { createOrb, renderOrb } from './orb'
 import PlayoutBuffer from './playoutbuffer';
 
+const prepareControls = (controls) => {
+  const { KeyA, KeyD, KeyW, KeyS } = Keyboard.controls
+
+  return {
+    left: KeyA,
+    right: KeyD,
+    up: KeyW,
+    down: KeyS
+  }
+}
+
 export default class Game {
   static host = 'ws://localhost:3000/'
 
@@ -29,6 +40,18 @@ export default class Game {
     this.app.stage.addChild(this.orb)
 
     /*
+      Configure playout buffer
+    */
+    this.buffer = new PlayoutBuffer()
+    this.buffer.on('frame', ({ state, timestamp }) => {
+      const { x, y, v } = state
+
+      this.orb.position.set(x, y)
+      this.orb.meta.v = v
+      renderOrb(this.orb)
+    })
+
+    /*
       Configure keyboard listener
     */
     Keyboard.listen('KeyA')
@@ -37,19 +60,9 @@ export default class Game {
     Keyboard.listen('KeyS')
 
     Keyboard.on('change', () => {
-      this.sendControls()
-    })
+      const controls = prepareControls(Keyboard.controls)
 
-    /*
-      Configure playout buffer
-    */
-    this.buffer = new PlayoutBuffer()
-    this.buffer.on('frame', ({ frame, timestamp }) => {
-      const { x, y, v } = frame
-
-      this.orb.position.set(x, y)
-      this.orb.meta.v = v
-      renderOrb(this.orb)
+      this.sendControls(controls)
     })
 
     /*
@@ -81,7 +94,7 @@ export default class Game {
         dispatch(push('/login'))
       } else if (msg.type === 'FRAME') {
         this.buffer.put({
-          frame: msg.frame,
+          state: msg.state,
           timestamp: msg.timestamp
         })
       } else {
@@ -90,16 +103,7 @@ export default class Game {
     }
   }
 
-  sendControls = () => {
-    const { KeyA, KeyD, KeyW, KeyS } = Keyboard.controls
-
-    const controls = {
-      left: KeyA,
-      right: KeyD,
-      up: KeyW,
-      down: KeyS
-    }
-
+  sendControls = (controls) => {
     this.ws.send(JSON.stringify({
       type: 'CONTROLS',
       controls,
