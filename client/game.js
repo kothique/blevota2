@@ -21,12 +21,13 @@ const prepareControls = (controls) => {
 export default class Game {
   static host = 'ws://localhost:3000/'
 
-  constructor() {
+  constructor(view) {
     /*
       Configure PixiJS application
     */
     let app = this.app = new PIXI.Application({
-      anitalias: true
+      view,
+      antialias: true
     })
 
     app.view.style.position = 'absolute'

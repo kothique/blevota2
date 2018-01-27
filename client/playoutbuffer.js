@@ -1,5 +1,5 @@
 import EventEmitter from 'events'
-import Queue from '../common/queue'
+import List from 'collections/list'
 import merge from 'lodash/merge'
 import present from 'present'
 
@@ -11,7 +11,7 @@ export default class PlayoutBuffer extends EventEmitter {
 
     this.stop = false
     this.latency = 60
-    this.frames = new Queue
+    this.frames = new List
   }
 
   clear = () => {
@@ -19,13 +19,13 @@ export default class PlayoutBuffer extends EventEmitter {
   }
 
   put = ({ state, timestamp }) => {
-    const firstFrame = !this.frames.length
+    const firstFrame = !this.frames.peek()
 
     if (firstFrame) {
       this.beginFrames = timestamp
     }
     
-    this.frames.enqueue({
+    this.frames.push({
       state,
       timestamp: timestamp - this.beginFrames
     })
@@ -50,14 +50,13 @@ export default class PlayoutBuffer extends EventEmitter {
 
       while (currentFrame = this.frames.peek()) {
         if (currentFrame.timestamp < currentTimestamp) {
-          this.frames.dequeue()
+          this.frames.shift()
         } else {
           return previousFrame
         }
 
         previousFrame = currentFrame
       }
-
     }
 
     const nextFrame = () => {
@@ -68,11 +67,13 @@ export default class PlayoutBuffer extends EventEmitter {
       const currentTimestamp = present() - this.begin,
             frame = getFrame(currentTimestamp)
 
-      const approximatedState = new World(frame.state)
-        .integrate(currentTimestamp, currentTimestamp - frame.timestamp)
-        .state
+      if (frame) {
+        const approximatedState = new World(frame.state)
+          .integrate(currentTimestamp, currentTimestamp - frame.timestamp)
+          .state
 
-      this.emit('frame', { state: approximatedState, currentTimestamp })
+        this.emit('frame', { state: approximatedState, currentTimestamp })
+      }
 
       requestAnimationFrame(nextFrame)
     }

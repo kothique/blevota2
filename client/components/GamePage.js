@@ -14,7 +14,7 @@ class GamePage extends Component {
   componentDidMount() {
     const { dispatch } = this.props
 
-    let game = this.game = new Game
+    let game = this.game = new Game(document.getElementById('game'))
 
     game.onopen = (host) => {
       console.log(`Game: successfully connected to ${host}`)
@@ -32,19 +32,13 @@ class GamePage extends Component {
     }
 
     game.onmessage = (msg) => {
-      // console.log(`Message received: ${JSON.stringify(msg)}`)
+      // console.log(`Message received: `, msg)
     }
-
-    document.getElementById('game').replaceWith(game.app.view)
-  }
-
-  componentWillUnmount() {
-    document.getElementById('game').remove()
   }
 
   render() {
     return (
-      <div id="game"></div>
+      <canvas id="game"></canvas>
     )
   }
 }
