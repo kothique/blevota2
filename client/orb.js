@@ -45,30 +45,14 @@ const renderHealthCircle = (g, { hp, hpMax }, first = false) => {
 }
 
 export const renderOrb = (orb, first = false) => {
-  const { typeRing, energyRing, healthCircle } = orb.meta.parts
-
-  renderTypeRing(typeRing, orb.meta, first)
+  renderTypeRing(orb, orb.meta, first)
   // renderEnergyRing(energyRing, orb.meta, first)
   // renderHealthCircle(healthCircle, orb.meta, first)
 }
 
 export const createOrb = (meta) => {
-  let orb = new PIXI.Container
-
-  let typeRing = new PIXI.Graphics,
-      energyRing = new PIXI.Graphics,
-      healthCircle = new PIXI.Graphics
-
-  orb.addChild(typeRing)
-  orb.addChild(energyRing)
-  orb.addChild(healthCircle)
-
+  let orb = new PIXI.Graphics
   orb.meta = meta
-  orb.meta.parts = {
-    typeRing,
-    energyRing,
-    healthCircle
-  }
 
   renderOrb(orb, true)
 
