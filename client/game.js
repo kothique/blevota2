@@ -72,10 +72,10 @@ export default class Game {
     /*
       Configure keyboard listener
     */
-    // Keyboard.listen ...
+    // Keyboard.listen(...)
 
     Keyboard.on('change', () => {
-      this.sendControls(Keyboard.controls)
+      this.sendControls(Keyboard.getControls())
     })
 
     /*
