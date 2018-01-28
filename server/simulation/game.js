@@ -15,17 +15,34 @@ module.exports = class Game extends EventEmitter {
     this.pause = false
 
     this.controls = {
-      left: false,
-      right: false,
-      up: false,
-      down: false
+      mX: 0,
+      mY: 0,
+      lmb: false,
+      wheel: false,
+      rmb: false
     }
 
     /* Receive controls from the server */
     process.on('message', (msg) => {
       switch (msg.type) {
         case 'CONTROLS':
-          this.controls = msg.controls
+          const { mX, mY, lmb, wheel, rmb } = msg.controls
+
+          if (typeof mX !== 'undefined')
+            this.controls.mX = mX
+
+          if (typeof mY !== 'undefined')
+            this.controls.mY = mY
+      
+          if (typeof lmb !== 'undefined')
+            this.controls.lmb = lmb
+
+          if (typeof wheel !== 'undefined')
+            this.controls.wheel = wheel
+
+          if (typeof rmb !== 'undefined')
+            this.controls.rmb = rmb
+
           break
       }
     })

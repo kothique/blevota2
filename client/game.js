@@ -2,21 +2,9 @@ import 'pixi.js'
 import merge from 'lodash/merge'
 import get from 'lodash/get'
 
-import World from '../common/world'
 import Keyboard from './keyboard'
 import { createOrb, renderOrb } from './orb'
 import PlayoutBuffer from './playoutbuffer';
-
-const prepareControls = (controls) => {
-  const { KeyA, KeyD, KeyW, KeyS } = Keyboard.controls
-
-  return {
-    left: KeyA,
-    right: KeyD,
-    up: KeyW,
-    down: KeyS
-  }
-}
 
 export default class Game {
   static host = 'ws://localhost:3000/'
@@ -36,9 +24,38 @@ export default class Game {
     app.renderer.resize(window.innerWidth, window.innerHeight)
     app.renderer.backgroundColor = 0xEEEEEE
 
-    this.orb = createOrb({ v: { x: 0, y: 0 } })
+    this.orb = createOrb({ dir: 0, v: 0 })
     this.orb.position.set(0, 0)
     this.app.stage.addChild(this.orb)
+
+    const btnName = {
+      0: 'lmb',
+      1: 'wheel',
+      2: 'rmb'
+    }
+
+    app.view.addEventListener('mousemove', ({ clientX, clientY }) => {
+      this.sendControls({
+        mX: clientX,
+        mY: clientY
+      })
+    })
+
+    app.view.addEventListener('mouseup', ({ clientX, clientY, button }) => {
+      this.sendControls({
+        mX: clientX,
+        mY: clientY,
+        [btnName[button]]: false
+      })
+    })
+
+    app.view.addEventListener('mousedown', ({ clientX, clientY, button }) => {
+      this.sendControls({
+        mX: clientX,
+        mY: clientY,
+        [btnName[button]]: true
+      })
+    })
 
     /*
       Configure playout buffer
@@ -55,15 +72,10 @@ export default class Game {
     /*
       Configure keyboard listener
     */
-    Keyboard.listen('KeyA')
-    Keyboard.listen('KeyD')
-    Keyboard.listen('KeyW')
-    Keyboard.listen('KeyS')
+    // Keyboard.listen ...
 
     Keyboard.on('change', () => {
-      const controls = prepareControls(Keyboard.controls)
-
-      this.sendControls(controls)
+      this.sendControls(Keyboard.controls)
     })
 
     /*

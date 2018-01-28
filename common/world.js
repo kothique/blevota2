@@ -1,12 +1,8 @@
-const v = 0.5
-
 const defaultInitialState = {
   x: 100,
   y: 100,
-  v: {
-    x: v,
-    y: v
-  }
+  dir: 0,
+  v: 0
 }
 
 module.exports = class World {
@@ -14,29 +10,21 @@ module.exports = class World {
     this.state = initialState
   }
 
-  applyControls({ left, right, up, down }) {
-    if (left)
-      this.state.v.x = -v
-    else if (right)
-      this.state.v.x = v
-    else
-      this.state.v.x = 0
+  applyControls({ mX, mY, lmb, rmb, wheel }) {
+    const dx = mX - this.state.x,
+          dy = mY - this.state.y
 
-    if (up)
-      this.state.v.y = -v
-    else if (down)
-      this.state.v.y = v
-    else
-      this.state.v.y = 0
+    this.state.dir = Math.atan2(dy, dx)
+    this.state.v = lmb ? 0.5 : 0
 
     return this
   }
 
-  integrate(t, dt, controls) {
-    const { x, y, v } = this.state
+  integrate(t, dt) {
+    const { x, y, dir, v } = this.state
 
-    this.state.x += v.x * dt
-    this.state.y += v.y * dt
+    this.state.x += Math.cos(dir) * v * dt
+    this.state.y += Math.sin(dir) * v * dt
 
     return this
   }

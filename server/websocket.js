@@ -5,13 +5,6 @@ const set = require('lodash/set')
 const { ifGuest } = require('./auth')
 const User = require('./db/user')
 
-let controls = {
-  left: false,
-  right: false,
-  up: false,
-  down: false
-}
-
 const sendFrame = ({ state, timestamp }) => JSON.stringify({
   type: 'FRAME',
   state,
@@ -77,7 +70,7 @@ module.exports = (app, wss, sessionParser, simulation) => {
           /* Send controls to the simulation process */
           simulation.send({
             type: 'CONTROLS',
-            controls: pick(msg.controls, ['left', 'right', 'up', 'down'])
+            controls: pick(msg.controls, ['mX', 'mY', 'lmb', 'wheel', 'rmb' ])
           })
           break
       }
