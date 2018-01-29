@@ -11,7 +11,8 @@
     "run:server": "node server/index.js",
     "build:both": "yarn run concurrently 'yarn run build:client' 'yarn run build:server'",
     "build:client": "yarn run webpack --config webpack.client.config.js",
-    "build:server": "echo Server built yo!"
+    "build:server": "echo Server built yo!",
+    "docs": "yarn run jsdoc -c jsdoc.conf.js"
   },
   "author": "Kothique Félixx",
   "license": "UNLICENSED",
@@ -53,5 +54,7 @@
     "style-loader": "^0.19.1",
     "webpack": "^3.10.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "jsdoc": "^3.5.5"
+  }
 }

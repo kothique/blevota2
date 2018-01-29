@@ -1,31 +1,65 @@
+/** @module common/world */
+
+/**
+ * The empty world's state.
+ * 
+ * @constant
+ * @default
+ */
 const defaultInitialState = {
-  x: 100,
-  y: 100,
-  dir: 0,
-  v: 0
+  orbs: {}
 }
 
-module.exports = class World {
+class World {
+  /**
+   * Create a new world.
+   * 
+   * @param {?object} initialState - Initial state.
+   */
   constructor(initialState = defaultInitialState) {
     this.state = initialState
   }
 
-  applyControls({ mX, mY, lmb, rmb, wheel }) {
-    const dx = mX - this.state.x,
-          dy = mY - this.state.y
+  /**
+   * Set velocity and direction according to controls.
+   * 
+   * @param {number} id - The user's id.
+   * @param {object} controls - The user's controls.
+   * @return {object} - Reference to this.
+   */
+  applyControls(id, { mX, mY, lmb, rmb, wheel }) {
+    const { orbs } = this.state
 
-    this.state.dir = Math.atan2(dy, dx)
-    this.state.v = lmb ? 0.5 : 0
+    if (orbs[id]) {
+      const dx = mX - orbs[id].x,
+            dy = mY - orbs[id].y
+
+      orbs[id].dir = Math.atan2(dy, dx)
+      orbs[id].v = lmb ? 0.5 : 0
+    }
 
     return this
   }
 
+  /**
+   * Advance the physics by dt.
+   * 
+   * @param {number} t  - Current timestamp.
+   * @param {number} dt - Time delta.
+   * @return {object} - Reference to this.
+   */
   integrate(t, dt) {
-    const { x, y, dir, v } = this.state
+    const { orbs } = this.state
 
-    this.state.x += Math.cos(dir) * v * dt
-    this.state.y += Math.sin(dir) * v * dt
+    orbs.forEach((orb) => {
+      const { x, y, dir, v } = orb
+
+      orb.x += Math.cos(dir) * v * dt
+      orb.y += Math.sin(dir) * v * dt
+    })
 
     return this
   }
 }
+
+module.exports = World
