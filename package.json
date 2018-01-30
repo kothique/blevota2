@@ -3,15 +3,13 @@
   "version": "0.0.1",
   "description": "",
   "scripts": {
-    "both": "yarn run concurrently --names 'CLIENT,SERVER' 'yarn run client' 'yarn run server'",
     "client": "yarn run concurrently 'yarn run build:client --watch' 'yarn run run:client'",
-    "server": "yarn run concurrently 'yarn run build:server' 'yarn run run:server'",
-    "run:both": "yarn run concurrently 'yarn run run:client' 'yarn run run:server'",
     "run:client": "node client/app.js",
-    "run:server": "node server/index.js",
-    "build:both": "yarn run concurrently 'yarn run build:client' 'yarn run build:server'",
     "build:client": "yarn run webpack --config webpack.client.config.js",
-    "build:server": "echo Server built yo!",
+
+    "server": "yarn run run:server",
+    "run:server": "node server/index.js",
+
     "docs": "yarn run jsdoc -c jsdoc.conf.js"
   },
   "author": "Kothique Félixx",

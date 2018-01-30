@@ -1,18 +1,21 @@
-/** @module common/world */
+/**
+ * @module common/world
+ */
 
 /**
  * The empty world's state.
  * 
  * @constant
  * @default
+ * @type {object}
  */
 const defaultInitialState = {
-  x: 0,
-  y: 0,
-  dir: 0,
-  v: 0
+  orbs: {}
 }
 
+/**
+ * @class
+ */
 class World {
   /**
    * Create a new world.
@@ -24,20 +27,40 @@ class World {
   }
 
   /**
+   * Adds a new orb into the world.
+   *
+   * @param {string} id - The id of the new orb.
+   * @return {World} - Reference to `this`.
+   */
+  newOrb(id) {
+    this.state.orbs[id] = {
+      x: 0,
+      y: 0,
+      dir: 0,
+      v: 0
+    }
+
+    return this
+  }
+
+  /**
    * Set velocity and direction according to controls.
    * 
    * @param {number} id - The user's id.
    * @param {object} controls - The user's controls.
-   * @return {object} - Reference to this.
+   * @return {World} - Reference to `this`.
    */
-  applyControls({ mX, mY, lmb, rmb, wheel }) {
-    const { x, y, dir, v } = this.state
+  applyControls(id, { mX, mY, lmb, rmb, wheel }) {
+    const { orbs } = this.state
 
-    const dx = mX - x,
-          dy = mY - y
+    for (let id in orbs) {
+      const dx = mX - orbs[id].x,
+            dy = mY - orbs[id].y,
+            dir = Math.atan2(dy, dx)
 
-    this.state.dir = Math.atan2(dy, dx)
-    this.state.v = lmb ? 0.5 : 0
+      orbs[id].dir = dir
+      orbs[id].v = lmb ? 0.5 : 0
+    }
 
     return this
   }
@@ -47,13 +70,17 @@ class World {
    * 
    * @param {number} t  - Current timestamp.
    * @param {number} dt - Time delta.
-   * @return {object} - Reference to this.
+   * @return {World} - Reference to `this`.
    */
   integrate(t, dt) {
-    const { x, y, dir, v } = this.state
+    const { orbs } = this.state
 
-    this.state.x += Math.cos(dir) * v * dt
-    this.state.y += Math.sin(dir) * v * dt
+    for (let id in orbs) {
+      const { x, y, dir, v } = orbs[id]
+
+      orbs[id].x += Math.cos(dir) * v * dt
+      orbs[id].y += Math.sin(dir) * v * dt
+    }
 
     return this
   }

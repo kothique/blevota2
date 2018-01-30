@@ -6,10 +6,11 @@ module.exports = {
       'client', 'server', 'common'
     ],
     exclude: [
-      'node_modules'
+      'node_modules', 'client/public'
     ]
   },
   opts: {
-    destination: './dist/'
+    destination: './docs',
+    recurse: true
   }
 }

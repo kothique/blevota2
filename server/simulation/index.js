@@ -1,14 +1,36 @@
-const Game = require('./game'),
-      game = new Game
+/**
+ * @module server/simulation/index
+ *
+ * @description
+ * This is the entry point of the simulation program.
+ * It communicates with the server through IPC.
+ */
 
-game.on('tick', ({ state, timestamp }) => {
-  process.send({
-    type: 'FRAME',
-    state,
-    timestamp
-  })
+const Simulator = require('./simulator'),
+      simulator = new Simulator
+
+process.on('message', (msg) => {
+  switch (msg.type) {
+    case 'NEW_ORB':
+      simulator.newOrb(msg.id)
+      break
+    case 'START':
+      simulator.start(() => {
+        console.log(`Process ${process.pid} is now running simulation`)
+      })
+      break
+    case 'STOP':
+      simulator.stop()
+      break
+    case 'CONTROLS':
+      simulator.setControls(msg.id, msg.controls)
+      break
+  }
 })
 
-game.run(() => {
-  console.log(`Worker ${process.pid} is now running simulation`)
+simulator.on('frame', (frame) => {
+  process.send({
+    type: 'FRAME',
+    frame
+  })
 })
