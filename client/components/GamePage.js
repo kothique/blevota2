@@ -4,7 +4,8 @@ import { func } from 'prop-types'
 import { push } from 'react-router-redux'
 
 import Game from '../game'
-import './../css/common.css'
+import '../css/GamePage.css'
+import '../css/common.css'
 
 class GamePage extends Component {
   static propTypes = {
@@ -38,7 +39,7 @@ class GamePage extends Component {
 
   render() {
     return (
-      <canvas id="game"></canvas>
+      <svg id="game"></svg>
     )
   }
 }

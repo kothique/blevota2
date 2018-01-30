@@ -1,5 +1,4 @@
 import List from 'collections/list'
-import 'pixi.js'
 
 export default class SpritePool {
   available = new List

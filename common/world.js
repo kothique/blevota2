@@ -7,7 +7,10 @@
  * @default
  */
 const defaultInitialState = {
-  orbs: {}
+  x: 0,
+  y: 0,
+  dir: 0,
+  v: 0
 }
 
 class World {
@@ -27,16 +30,14 @@ class World {
    * @param {object} controls - The user's controls.
    * @return {object} - Reference to this.
    */
-  applyControls(id, { mX, mY, lmb, rmb, wheel }) {
-    const { orbs } = this.state
+  applyControls({ mX, mY, lmb, rmb, wheel }) {
+    const { x, y, dir, v } = this.state
 
-    if (orbs[id]) {
-      const dx = mX - orbs[id].x,
-            dy = mY - orbs[id].y
+    const dx = mX - x,
+          dy = mY - y
 
-      orbs[id].dir = Math.atan2(dy, dx)
-      orbs[id].v = lmb ? 0.5 : 0
-    }
+    this.state.dir = Math.atan2(dy, dx)
+    this.state.v = lmb ? 0.5 : 0
 
     return this
   }
@@ -49,14 +50,10 @@ class World {
    * @return {object} - Reference to this.
    */
   integrate(t, dt) {
-    const { orbs } = this.state
+    const { x, y, dir, v } = this.state
 
-    orbs.forEach((orb) => {
-      const { x, y, dir, v } = orb
-
-      orb.x += Math.cos(dir) * v * dt
-      orb.y += Math.sin(dir) * v * dt
-    })
+    this.state.x += Math.cos(dir) * v * dt
+    this.state.y += Math.sin(dir) * v * dt
 
     return this
   }

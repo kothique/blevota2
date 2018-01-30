@@ -1,9 +1,7 @@
-import 'pixi.js'
 import merge from 'lodash/merge'
 import get from 'lodash/get'
 
 import Keyboard from './keyboard'
-import { createOrb, renderOrb } from './orb'
 import PlayoutBuffer from './playoutbuffer';
 
 export default class Game {
@@ -11,49 +9,43 @@ export default class Game {
 
   constructor(view) {
     /*
-      Configure PixiJS application
+      Configure the scene
     */
-    let app = this.app = new PIXI.Application({
-      view,
-      antialias: true
-    })
+    this.svg = document.getElementById('game')
 
-    app.view.style.position = 'absolute'
-    app.view.style.display = 'block'
-    app.renderer.autoResize = true
-    app.renderer.resize(window.innerWidth, window.innerHeight)
-    app.renderer.backgroundColor = 0xEEEEEE
+    this.orb = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+    this.orb.setAttributeNS(null, 'cx', 0)
+    this.orb.setAttributeNS(null, 'cy', 0)
+    this.orb.setAttributeNS(null, 'r', 30)
+    this.orb.style.fill = 'rbg(150, 0, 30)'
+    this.svg.appendChild(this.orb)
 
-    this.orb = createOrb({ dir: 0, v: 0 })
-    this.orb.position.set(0, 0)
-    this.app.stage.addChild(this.orb)
-
-    const btnName = {
+    const buttonName = {
       0: 'lmb',
       1: 'wheel',
       2: 'rmb'
     }
 
-    app.view.addEventListener('mousemove', ({ clientX, clientY }) => {
+    this.svg.addEventListener('mousemove', ({ clientX, clientY }) => {
       this.sendControls({
         mX: clientX,
         mY: clientY
       })
     })
 
-    app.view.addEventListener('mouseup', ({ clientX, clientY, button }) => {
+    this.svg.addEventListener('mouseup', ({ clientX, clientY, button }) => {
       this.sendControls({
         mX: clientX,
         mY: clientY,
-        [btnName[button]]: false
+        [buttonName[button]]: false
       })
     })
 
-    app.view.addEventListener('mousedown', ({ clientX, clientY, button }) => {
+    this.svg.addEventListener('mousedown', ({ clientX, clientY, button }) => {
       this.sendControls({
         mX: clientX,
         mY: clientY,
-        [btnName[button]]: true
+        [buttonName[button]]: true
       })
     })
 
@@ -62,11 +54,10 @@ export default class Game {
     */
     this.buffer = new PlayoutBuffer()
     this.buffer.on('frame', ({ state, timestamp }) => {
-      const { x, y, v } = state
+      const { x, y } = state
 
-      this.orb.position.set(x, y)
-      this.orb.meta.v = v
-      renderOrb(this.orb)
+      this.orb.setAttributeNS(null, 'cx', x)
+      this.orb.setAttributeNS(null, 'cy', y)
     })
 
     /*
