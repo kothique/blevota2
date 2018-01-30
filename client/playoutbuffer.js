@@ -40,10 +40,10 @@ export default class PlayoutBuffer extends EventEmitter {
     this.stop = false
 
     /**
-     * Find the closest to the current moment frame in the queue
+     * Find the frame in the queue closest to the current moment.
      * 
-     * @param {Number} currentTimestamp
-     * @returns {Object|null}
+     * @param {number} currentTimestamp
+     * @returns {object|null}
      */
     const getFrame = (currentTimestamp) => {
       let previousFrame, currentFrame
@@ -72,7 +72,10 @@ export default class PlayoutBuffer extends EventEmitter {
           .integrate(currentTimestamp, currentTimestamp - frame.timestamp)
           .state
 
-        this.emit('frame', { state: approximatedState, currentTimestamp })
+        this.emit('frame', {
+          state: approximatedState,
+          timestamp: currentTimestamp
+        })
       }
 
       requestAnimationFrame(nextFrame)

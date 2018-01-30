@@ -62,6 +62,7 @@ module.exports = (app) => {
 
   app.get('/user', ifGuest({ error: true }), (req, res) => {
     let user = pick(req.auth.user, [
+      '_id',
       'username'
     ])
 

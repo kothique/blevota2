@@ -39,26 +39,27 @@ const sendError = (error) => JSON.stringify({
  */
 module.exports = (app, wss, sessionParser) => {
   wss.on('connection', (ws) => {
-    if (!ws.readyState !== WebSocket.OPEN) {
-      return
-    }
+    console.log(`A new WebSocket connection established`)
 
-    console.log(`A new connection established`)
+    ws.on('close', () => {
+      console.log('A WebSocket connection closed')
+    })
 
     /* Parse session and check authorization */
     sessionParser(ws.upgradeReq, {}, () => {
       const userId = ws.upgradeReq.session.userId
 
       if (!userId) {
-        ws.send(sendError('Unauthorized'))
-        ws.close()
-        return
+        if (ws.readyState === WebSocket.OPEN) { // the connection can be already closed by this time
+          ws.send(sendError('Unauthorized'))
+        }
+        return ws.close()
       }
 
       ws.userId = userId
 
       let match = new Match
-      match.newPlayer(ws)
+      match.newPlayer(app, ws)
       match.start()
     })
   })

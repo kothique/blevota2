@@ -30,23 +30,25 @@ class Match {
   /**
    * Add a new player to the match.
    *
+   * @param {Express} app - The `express` application.
    * @param {WebSocket} ws - The WebSocket connection corresponding to the player.
    */
-  newPlayer(ws) {
+  newPlayer(app, ws) {
     this.players.set(ws.userId, ws)
 
-    ws.on('message', (data) => {
-      const msg = JSON.parse(data)
+    app.ws('/', (ws) => {
+      ws.on('close', () => {
+        this.stop()
+      })
 
-      switch (msg.type) {
-        case 'CONTROLS':
-          this.sendControls(ws, msg.controls)
-          break
-      }
-    })
-
-    ws.on('close', () => {
-      console.log('A WebSocket connection closed')
+      ws.on('message', (data) => {
+        const msg = JSON.parse(data)
+        switch (msg.type) {
+          case 'CONTROLS':
+            this.sendControls(ws, msg.controls)
+            break
+        }
+      })
     })
 
     this.sendNewOrb(ws)
@@ -63,7 +65,7 @@ class Match {
    * Stop the simulation.
    */
   stop() {
-    this.sendEnd()
+    this.sendStop()
   }
 
   /**

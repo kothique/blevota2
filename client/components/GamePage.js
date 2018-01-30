@@ -7,15 +7,24 @@ import Game from '../game'
 import '../css/GamePage.css'
 import '../css/common.css'
 
+/**
+ * @class
+ */
 class GamePage extends Component {
   static propTypes = {
     dispatch: func.isRequired
   }
 
   componentDidMount() {
-    const { dispatch } = this.props
+    const { dispatch, user } = this.props,
+          context = document.getElementById('game')
 
-    let game = this.game = new Game(document.getElementById('game'))
+    if (!user) {
+      dispatch(push('/'))
+      return
+    }
+
+    let game = this.game = new Game(context, user._id)
 
     game.onopen = (host) => {
       console.log(`Game: successfully connected to ${host}`)
@@ -27,13 +36,13 @@ class GamePage extends Component {
       dispatch(push('/'))
     }
 
-    game.onclose = (code) => {
+    game.onclose = ({ code }) => {
       console.log(`Connection closed with code ${code}`)
       dispatch(push('/'))
     }
 
     game.onmessage = (msg) => {
-      // console.log(`Message received: `, msg)
+      console.log(`Message received: `, msg.frame.state.orbs)
     }
   }
 

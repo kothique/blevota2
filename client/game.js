@@ -7,11 +7,13 @@ import PlayoutBuffer from './playoutbuffer';
 export default class Game {
   static host = 'ws://localhost:3000/'
 
-  constructor(view) {
+  constructor(context, userId) {
+    this.userId = userId
+
     /*
       Configure the scene
     */
-    this.svg = document.getElementById('game')
+    this.svg = context
 
     this.orb = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     this.orb.setAttributeNS(null, 'cx', 0)
@@ -54,17 +56,23 @@ export default class Game {
     */
     this.buffer = new PlayoutBuffer()
     this.buffer.on('frame', ({ state, timestamp }) => {
-      const { x, y } = state
+      const { orbs } = state
 
-      this.orb.setAttributeNS(null, 'cx', x)
-      this.orb.setAttributeNS(null, 'cy', y)
+      for (let id in orbs) {
+        // only one user can be rendered by now,
+        // but it will be fixed soon
+        if (id === this.userId) {
+          const { x, y } = orbs[id]
+
+          this.orb.setAttributeNS(null, 'cx', x)
+          this.orb.setAttributeNS(null, 'cy', y)
+        }
+      }
     })
 
     /*
       Configure keyboard listener
     */
-    // Keyboard.listen(...)
-
     Keyboard.on('change', () => {
       this.sendControls(Keyboard.getControls())
     })
@@ -83,7 +91,7 @@ export default class Game {
     }
 
     ws.onclose = (event) => {
-      this.onclose && this.onclose(event.code)
+      this.onclose && this.onclose(event)
     }
 
     let c = 0
@@ -95,14 +103,8 @@ export default class Game {
 
       if (msg.type === 'ERROR') {
         this.onerror && this.onerror(msg.error)
-        dispatch(push('/login'))
       } else if (msg.type === 'FRAME') {
-        this.buffer.put({
-          state: msg.state,
-          timestamp: msg.timestamp
-        })
-      } else {
-        console.log(`Invalid websocket message type: ${msg.type}`)
+        this.buffer.put(msg.frame)
       }
     }
   }
@@ -110,11 +112,7 @@ export default class Game {
   sendControls = (controls) => {
     this.ws.send(JSON.stringify({
       type: 'CONTROLS',
-      controls,
-      time: Date.now()
+      controls
     }))
-
-    // console.log(`Game: sent controls: ${JSON.stringify(controls)}`)
   }
-
 }

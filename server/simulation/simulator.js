@@ -28,7 +28,7 @@ class Simulator extends EventEmitter {
     this.dt = options.dt || 1000 / 120
     this.accumulator = 0
 
-    this.stop = false
+    this.continue = true
 
     this.controls = new Dict
   }
@@ -79,12 +79,17 @@ class Simulator extends EventEmitter {
    * Start the simulation.
    */
   start() {
-    this.stop = false
+    this.continue = true
     this.begin = present()
 
     let currentTime = Date.now()
 
     const loop = () => {
+      if (!this.continue) {
+        process.exit()
+        return
+      }
+
       let newTime = Date.now(),
           frameTime = newTime - currentTime
       
@@ -129,7 +134,7 @@ class Simulator extends EventEmitter {
    * Stop the simulation.
    */
   stop() {
-    this.stop = true
+    this.continue = false
 
     console.log(`Simulation stopped`)
   }

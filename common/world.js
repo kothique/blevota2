@@ -3,17 +3,6 @@
  */
 
 /**
- * The empty world's state.
- * 
- * @constant
- * @default
- * @type {object}
- */
-const defaultInitialState = {
-  orbs: {}
-}
-
-/**
  * @class
  */
 class World {
@@ -22,8 +11,8 @@ class World {
    * 
    * @param {?object} initialState - Initial state.
    */
-  constructor(initialState = defaultInitialState) {
-    this.state = initialState
+  constructor(initialState = null) {
+    this.state = initialState || { orbs: {} }
   }
 
   /**
