@@ -37,7 +37,7 @@ const sendError = (error) => JSON.stringify({
  * @param {WebSocketServer} wss - The WebSocket server.
  * @param {function} sessionParser - The session parser to get user info from the request.
  */
-module.exports = (app, wss, sessionParser) => {
+module.exports = (app, wss) => {
   wss.on('connection', (ws) => {
     console.log(`A new WebSocket connection established`)
 
@@ -45,22 +45,24 @@ module.exports = (app, wss, sessionParser) => {
       console.log('A WebSocket connection closed')
     })
 
-    /* Parse session and check authorization */
-    sessionParser(ws.upgradeReq, {}, () => {
-      const userId = ws.upgradeReq.session.userId
+    ws.close()
 
-      if (!userId) {
-        if (ws.readyState === WebSocket.OPEN) { // the connection can be already closed by this time
-          ws.send(sendError('Unauthorized'))
-        }
-        return ws.close()
-      }
+    // /* Parse session and check authorization */
+    // sessionParser(ws.upgradeReq, {}, () => {
+    //   const userId = ws.upgradeReq.session.userId
 
-      ws.userId = userId
+    //   if (!userId) {
+    //     if (ws.readyState === WebSocket.OPEN) { // the connection can be already closed by this time
+    //       ws.send(sendError('Unauthorized'))
+    //     }
+    //     return ws.close()
+    //   }
 
-      let match = new Match
-      match.newPlayer(app, ws)
-      match.start()
-    })
+    //   ws.userId = userId
+
+    //   let match = new Match
+    //   match.newPlayer(app, ws)
+    //   match.start()
+    // })
   })
 }

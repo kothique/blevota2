@@ -2,7 +2,7 @@ const pick = require('lodash/pick')
 const { createUser } = require('./auth')
 const { resolve } = require('path')
 
-const { ifUser, ifGuest, AuthError } = require('./auth')
+const { login, ifUser, ifGuest, AuthError } = require('./auth')
 
 module.exports = (app) => {
   app.post('/api/login', ifUser({ error: true }), (req, res) => {
@@ -19,8 +19,8 @@ module.exports = (app) => {
       return
     }
 
-    req.auth.login(username, password).then(() => {
-      res.status(202).end()
+    login(username, password).then((user) => {
+      res.status(202).sendJWT(user)
     }, (err) => {
       if (err instanceof AuthError) {
         res.status(403).send({ error: err.message })
@@ -53,12 +53,6 @@ module.exports = (app) => {
         res.status(500).end()
       }
     })
-  })
-
-  app.post('/api/logout', ifGuest({ error: true }), (req, res) => {
-    req.auth.logout()
-
-    res.send({})
   })
 
   app.get('/api/user', ifGuest({ error: true }), (req, res) => {

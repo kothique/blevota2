@@ -14,15 +14,9 @@ require('./mongo')(() => {
   let app = require('express')(),
       expressWs = require('express-ws')(app)
 
-  let sessionParser = require('express-session')({
-    secret: 'my wonderful secret',
-    resave: false,
-    saveUninitialized: false
-  })
-
-  require('./middleware')(app, sessionParser)
+  require('./middleware')(app)
   require('./routes')(app)
-  require('./ws')(app, expressWs.getWss(), sessionParser)
+  require('./ws')(app, expressWs.getWss())
 
   app.listen(port, () => {
     console.log(`Server (pid: ${process.pid}) is now listening on port ${port}`)

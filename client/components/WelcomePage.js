@@ -2,8 +2,9 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 import { object, func } from 'prop-types'
+import { decode } from 'jsonwebtoken'
 
-import { logout } from '../reducers/logout'
+import { logout } from '../reducers/login'
 
 class WelcomePage extends Component {
   static propTypes = {
@@ -12,7 +13,12 @@ class WelcomePage extends Component {
   }
 
   render() {
-    const { user, onPlay, onLogout, onLogin, onRegister } = this.props
+    const { login, onPlay, onLogout, onLogin, onRegister } = this.props
+
+    let user = null
+    if (!login.isFetching && login.token) {
+      user = decode(login.token)
+    }
 
     return (
       <main id="welcome-page">
@@ -21,24 +27,28 @@ class WelcomePage extends Component {
         </h1>
         <hr />
 
-        {user
+        {login.isFetching
           ? <Fragment>
-              Hi, {user.username}!<br />
-              <a href='' onClick={onPlay}>
-                Play
-              </a><br />
-              <a href='' onClick={onLogout}>
-                Logout
-              </a>
+              Loading...
             </Fragment>
-          : <Fragment>
-              <a href='' onClick={onLogin}>
-                Login
-              </a><br />
-              <a href='' onClick={onRegister}>
-                Register
-              </a>
-            </Fragment>
+          : user
+            ? <Fragment>
+                Hi, {user.username}!<br />
+                <a href='' onClick={onPlay}>
+                  Play
+                </a><br />
+                <a href='' onClick={onLogout}>
+                  Logout
+                </a>
+              </Fragment>
+            : <Fragment>
+                <a href='' onClick={onLogin}>
+                  Login
+                </a><br />
+                <a href='' onClick={onRegister}>
+                  Register
+                </a>
+              </Fragment>
         }
       </main>
     )
@@ -47,7 +57,7 @@ class WelcomePage extends Component {
 
 export default connect(
   (state) => ({
-    user: state.user.user
+    login: state.login
   }),
   (dispatch) => ({
     onLogin: (event) => {

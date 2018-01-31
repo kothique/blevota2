@@ -3,12 +3,11 @@ const morgan = require('morgan')
 
 const auth = require('./auth')
 
-module.exports = (app, sessionParser) => {
+module.exports = (app) => {
   app.use(morgan('combined'))
   app.use(express.json())
   app.use(express.urlencoded({
     extended: true
   }))
-  app.use(sessionParser)
-  app.use(auth.middleware())
+  app.use(auth.expressMiddleware())
 }

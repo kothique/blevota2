@@ -1,10 +1,10 @@
 import axios from 'axios'
-
-import { fetchUser } from './user'
+import { decode } from 'jsonwebtoken'
 
 const defaultState = {
   isFetching: false,
-  error: undefined
+  error: undefined,
+  token: undefined
 }
 
 export const REQUEST_LOGIN = 'REQUEST_LOGIN'
@@ -13,14 +13,20 @@ const requestLogin = () => ({
 })
 
 export const SUCCESS_LOGIN = 'SUCCESS_LOGIN'
-const successLogin = () => ({
+const successLogin = (token) => ({
   type: SUCCESS_LOGIN,
+  token
 })
 
 export const FAILURE_LOGIN = 'FAILURE_LOGIN'
 const failureLogin = (error) => ({
   type: FAILURE_LOGIN,
   error
+})
+
+export const INVALIDATE_LOGIN = 'INVALIDATE_LOGIN'
+const invalidateLogin = () => ({
+  type: INVALIDATE_LOGIN
 })
 
 export const loginReducer = (state = defaultState, action) => {
@@ -34,13 +40,22 @@ export const loginReducer = (state = defaultState, action) => {
       return {
         ...state,
         isFetching: false,
-        error: undefined
+        error: undefined,
+        token: action.token
       }
     case FAILURE_LOGIN:
       return {
         ...state,
         isFetching: false,
-        error: action.error
+        error: action.error,
+        token: undefined
+      }
+    case INVALIDATE_LOGIN:
+      return {
+        ...state,
+        isFetching: false,
+        error: undefined,
+        token: undefined
       }
     default:
       return state
@@ -57,16 +72,14 @@ export const login = (username, password) => (dispatch) => {
 
   return axios.post('/api/login', data)
     .then(
-      () => {
-        dispatch(successLogin())
-        dispatch(fetchUser())
+      ({ data: { token } }) => {
+        dispatch(successLogin(token))
       },
       (error) => {
         if (error.response) {
           const message = error.response.data.error
 
           dispatch(failureLogin(message))
-          dispatch(fetchUser())
 
           throw new Error(message)
         }
@@ -75,3 +88,5 @@ export const login = (username, password) => (dispatch) => {
       }
     )
 }
+
+export const logout = invalidateLogin

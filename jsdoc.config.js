@@ -6,7 +6,7 @@ module.exports = {
       'client', 'server', 'common'
     ],
     exclude: [
-      'node_modules', 'client/public'
+      'node_modules'
     ]
   },
   opts: {

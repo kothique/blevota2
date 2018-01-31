@@ -1,38 +1,46 @@
+/**
+ * @module server/auth
+ */
+
 const bcrypt = require('bcryptjs')
 
 const User = require('./db/user')
+const { authSecret } = require('../server.config')
+const jwt = require('jsonwebtoken')
 
+/**
+ * @class
+ */
 class AuthError extends Error {
   constructor(...params) {
     super(...params)
   }
 }
-
 module.exports.AuthError = AuthError
 
-module.exports.createUser = (username, password) =>
-new Promise((resolve, reject) => {
+/**
+ * Create a new user.
+ *
+ * @param {string} username
+ * @param {string} password
+ * @return {Promise}
+ */
+module.exports.createUser = (username, password) => new Promise((resolve, reject) => {
   User.findOne({ username }, (err, user) => {
-    if (err) {
-      reject(err)
-      return
-    }
+    if (err)
+      return reject(err)
 
-    if (user) {
-      reject(new AuthError(`User "${username}" already exists`))
-      return
-    }
+    if (user)
+      return reject(new AuthError(`User "${username}" already exists`))
 
-    let newUser = new User({
+    const newUser = new User({
       username,
       password: bcrypt.hashSync(password, 8)
     })
 
-    newUser.save(err => {
-      if (err) {
-        reject(err)
-        return
-      }
+    newUser.save((err) => {
+      if (err)
+        return reject(err)
 
       console.log(`New user created(${newUser._id})`)
       resolve(newUser)
@@ -40,128 +48,147 @@ new Promise((resolve, reject) => {
   })
 })
 
-module.exports.removeUser = (username) =>
-new Promise((resolve, reject) => {
-  User.remove({ username }, err => {
-    if (err) {
-      reject(err)
-      return
-    }
+/**
+ * Remove an existing user.
+ *
+ * @param {string} username 
+ * @return {Promise}
+ */
+module.exports.removeUser = (username) => new Promise((resolve, reject) => {
+  User.remove({ username }, (err) => {
+    if (err)
+      return reject(err)
 
     resolve()
   })
 })
 
-function authenticate(req, user) {
-  if (req.session.userId) {
-    logout(req)
-  }
-
-  req.session.userId = user._id
-  console.log(`User logged in (${user._id})`)
-}
-
-function login(req, username, password) {
-  return new Promise((resolve, reject) => {
-    User.findOne({ username }, (err, user) => {
-      if (err) return reject(err)
-
-      if (!user || !bcrypt.compareSync(password, user.password)) {
-        reject(new AuthError('Wrong credentials'))
-        return
-      }
-
-      authenticate(req, user)
-      resolve()
-    })
+/**
+ * Try to login with the given credentials.
+ *
+ * @param {string} username
+ * @param {string} password
+ * @return {Promise} - Resolved with the user or rejected with an error.
+ */
+module.exports.login = (username, password) => new Promise((resolve, reject) => {
+  User.findOne({ username }, (err, user) => {
+    if (err)
+      return reject(err)
+    
+    if (!user || !bcrypt.compareSync(password, user.password))
+      return reject(new AuthError('Wrong credentials'))
+    
+    resolve(user)
   })
-}
+})
 
-function logout(req) {
-  const id = req.session.userId
+/**
+ * Create an express middleware that adds two methods for
+ * dealing with JWT authentication: req.getJWT, res.sendJWT.
+ *
+ * @param {?object} options
+ * @return {function} - The middleware.
+ */
+module.exports.expressMiddleware = (options = {}) => {
+  const {} = options
 
-  if (id) {
-    delete req.session.userId
-    console.log(`User disconnected (${id})`)
-  }
-}
+  return (req, res, next) => {
+    /**
+     * Get JWT token.
+     *
+     * @return {Promise} - Resolved with the payload or rejected with an error.
+     */
+    req.getJWT = function () {
+      return new Promise((resolve, reject) => {
+        if (!this.header('authorization'))
+          return resolve()
+        
+        const parts = this.header('authorization').split(/\s+/)
 
-function check(req) {
-  return typeof req.session.userId != 'undefined'
-}
+        if (parts.length !== 2)
+          return reject(new AuthError('Bad Authorization header format'))
 
-function guest(req) {
-  return !check(req)
-}
+        const scheme = parts[0],
+              token = parts[1]
+        
+        if (!/^Bearer$/i.test(scheme))
+          return reject(new AuthError('Bad Authorization header format'))
+        
+        jwt.verify(token, authSecret, (err, payload) => {
+          if (err)
+            return reject(new AuthError('Invalid signature'))
 
-async function user(req) {
-  if (check(req)) {
-    let user = await User.findOne({ _id: req.session.userId })
+          resolve(payload)
+        })
+      })
+    }
 
-    return user
-  }
-
-  return null
-}
-
-module.exports.middleware = () =>
-(req, res, next) => {
-  req.auth = {
-    authenticate: authenticate.bind(null, req),
-    login: login.bind(null, req),
-    logout: logout.bind(null, req),
-    check: check.bind(null, req),
-    guest: guest.bind(null, req)
-  }
-
-  if (req.session.userId) {
-    User.findById(req.session.userId, (err, user) => {
-      if (err || !user) {
-        delete req.session.userId
-        delete req.auth.user
-        delete req.auth.userId
-      } else {
-        req.auth.user = user
-        req.auth.userId = req.session.userId
+    /**
+     * Create the JWT token and send it to the client.
+     *
+     * @param {object} user - The user to authenticate.
+     */
+    res.sendJWT = function (user) {
+      const payload = {
+        id: user._id,
+        username: user.username
       }
 
-      next()
-    })
-  } else {
+      const token = jwt.sign(payload, authSecret)
+
+      this.json({ token })
+    }
+
     next()
   }
 }
 
-module.exports.ifGuest = (options) =>
-(req, res, next) => {
-  if (!req.session.userId) {
-    if (options.redirect) {
-      res.redirect(options.redirect)
-    } else if (options.error) {
-      res.status(401).send({ error: 'Unauthorized' })
-    } else {
-      throw new Error('No redirect or error options provided')
-    }
+/**
+ * An express middleware that checks if the user is not logged in.
+ *
+ * @param {?object} options  - { redirect: string } or { error: bool }.
+ */
+module.exports.ifGuest = (options = { error: true }) => {
+  const { redirect, error } = options
 
-    return
+  return (req, res, next) => {
+    req.getJWT()
+      .then(() => {
+        if (typeof redirect !== 'undefined') {
+          res.redirect(redirect)
+        } else if (error) {
+          res.status(403).send({ error: 'Must not be logged in' })
+        }
+      })
+      .catch((err) => {
+        next()
+      })
   }
-
-  next()
 }
 
-module.exports.ifUser = (options) =>
-(req, res, next) => {
-  if (req.session.userId) {
-    if (options.redirect) {
-      res.redirect(options.redirect)
-    } else if (options.error) {
-      res.status(403).send({ error: 'Must not be logged in' })
-    } else {
-      throw new Error('No redirect or error options provided')
-    }
+/**
+ * An express middleware that checks if the user is authenticated.
+ *
+ * @param {?object} options  - { redirect: string } or {error: bool }.
+ */
+module.exports.ifUser = (options = { error: true }) => {
+  const { redirect, error } = options
 
-    return
+  return (req, res, next) => {
+    req.getJWT()
+      .then(() => {
+        next()
+      })
+      .catch((err) => {
+        if (typeof redirect !== 'undefined') {
+          res.redirect(redirect)
+        } else if (error) {
+          if (err instanceof AuthError) {
+            res.status(401).send({ error: `Unauthorized (${err.message})` })
+          } else {
+            res.status(401).send({ error: 'Unauthorized' })
+          }
+        }
+      })
   }
-
-  next()
 }
