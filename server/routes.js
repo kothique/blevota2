@@ -1,10 +1,11 @@
 const pick = require('lodash/pick')
 const { createUser } = require('./auth')
+const { resolve } = require('path')
 
 const { ifUser, ifGuest, AuthError } = require('./auth')
 
 module.exports = (app) => {
-  app.post('/login', ifUser({ error: true }), (req, res) => {
+  app.post('/api/login', ifUser({ error: true }), (req, res) => {
     let username = req.body.username,
         password = req.body.password
 
@@ -29,7 +30,7 @@ module.exports = (app) => {
     })
   })
 
-  app.post('/register', ifUser({ error: true }), (req, res) => {
+  app.post('/api/register', ifUser({ error: true }), (req, res) => {
     let username = req.body.username,
         password = req.body.password
 
@@ -54,18 +55,26 @@ module.exports = (app) => {
     })
   })
 
-  app.post('/logout', ifGuest({ error: true }), (req, res) => {
+  app.post('/api/logout', ifGuest({ error: true }), (req, res) => {
     req.auth.logout()
 
     res.send({})
   })
 
-  app.get('/user', ifGuest({ error: true }), (req, res) => {
+  app.get('/api/user', ifGuest({ error: true }), (req, res) => {
     let user = pick(req.auth.user, [
       '_id',
       'username'
     ])
 
     res.send(user)
+  })
+
+  app.get('/js', (req, res) => {
+    res.sendFile(resolve(__dirname, '../dist/bundle.js'))
+  })
+
+  app.get('/*', (req, res) => {
+    res.sendFile(resolve(__dirname, '../dist/index.html'))
   })
 }

@@ -9,7 +9,7 @@
 require('./mongo')(() => {
 
   /* Run the HTTP server. */
-  const port = process.env.PORT || 3001
+  const port = process.env.PORT || 3000
 
   let app = require('express')(),
       expressWs = require('express-ws')(app)
@@ -24,7 +24,7 @@ require('./mongo')(() => {
   require('./routes')(app)
   require('./ws')(app, expressWs.getWss(), sessionParser)
 
-  app.listen(3001, () => {
+  app.listen(port, () => {
     console.log(`Server (pid: ${process.pid}) is now listening on port ${port}`)
   })
 })

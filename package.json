@@ -3,14 +3,9 @@
   "version": "0.0.1",
   "description": "",
   "scripts": {
-    "client": "yarn run concurrently 'yarn run build:client --watch' 'yarn run run:client'",
-    "run:client": "node client/app.js",
-    "build:client": "yarn run webpack --config webpack.client.config.js",
-
-    "server": "yarn run run:server",
-    "run:server": "node server/index.js",
-
-    "docs": "yarn run jsdoc -c jsdoc.conf.js"
+    "server": "node server/index.js",
+    "watch": "yarn run webpack --watch",
+    "docs": "yarn run jsdoc -c jsdoc.config.js"
   },
   "author": "Kothique Félixx",
   "license": "UNLICENSED",
@@ -52,6 +47,7 @@
     "webpack": "^3.10.0"
   },
   "devDependencies": {
+    "copy-webpack-plugin": "^4.3.1",
     "jsdoc": "^3.5.5"
   }
 }
