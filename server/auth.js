@@ -144,6 +144,46 @@ module.exports.expressMiddleware = (options = {}) => {
 }
 
 /**
+ * Create a socket.io middleware that authenticates clients.
+ *
+ * @param {?object} options - { onEmptyToken, onInvalidSignature }.
+ * @return {function} - The middleware.
+ */
+module.exports.socketIoMiddleware = (options = {}) => {
+  const { onEmptyToken, onInvalidSignature } = options
+
+  return (socket, next) => {
+    const token = socket.handshake.query.token
+
+    if (!token) {
+      const msg = 'Unauthorized'
+
+      onEmptyToken && process.nextTick(() => {
+        onEmptyToken(new AuthError(msg), socket)
+      })
+
+      return next(new Error(msg))
+    }
+
+    jwt.verify(token, authSecret, (err, payload) => {
+      if (err) {
+        const msg = 'Invalid signature'
+
+        onInvalidSignature && process.nextTick(() => {
+          onInvalidSignature(new AuthError(msg), socket)
+        })
+
+        return next(new Error(msg))
+      }
+
+      socket.handshake.user = payload
+
+      next()
+    })
+  }
+}
+
+/**
  * An express middleware that checks if the user is not logged in.
  *
  * @param {?object} options  - { redirect: string } or { error: bool }.

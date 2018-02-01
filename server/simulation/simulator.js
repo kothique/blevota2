@@ -79,6 +79,8 @@ class Simulator extends EventEmitter {
    * Start the simulation.
    */
   start() {
+    this.emit('start')
+
     this.continue = true
     this.begin = present()
 
@@ -136,7 +138,7 @@ class Simulator extends EventEmitter {
   stop() {
     this.continue = false
 
-    console.log(`Simulation stopped`)
+    this.emit('stop')
   }
 }
 

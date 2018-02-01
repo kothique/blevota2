@@ -9,15 +9,21 @@
 const Simulator = require('./simulator'),
       simulator = new Simulator
 
+simulator.on('start', () => {
+  console.log(`Simulation started (PID: ${process.pid})`)
+})
+
+simulator.on('stop', () => {
+  console.log(`Simulation stopped (PID: ${process.pid})`)
+})
+
 process.on('message', (msg) => {
   switch (msg.type) {
     case 'NEW_ORB':
       simulator.newOrb(msg.id)
       break
     case 'START':
-      simulator.start(() => {
-        console.log(`Process ${process.pid} is now running simulation`)
-      })
+      simulator.start()
       break
     case 'STOP':
       simulator.stop()

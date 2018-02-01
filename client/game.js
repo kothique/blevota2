@@ -1,14 +1,18 @@
-import merge from 'lodash/merge'
+import EventEmitter from 'events'
+import ioc from 'socket.io-client'
 import get from 'lodash/get'
 
 import Keyboard from './keyboard'
 import PlayoutBuffer from './playoutbuffer';
 
-export default class Game {
-  static host = 'ws://localhost:3000/'
+export default class Game extends EventEmitter {
+  static host = 'http://localhost:3000/'
 
-  constructor(context, userId) {
-    this.userId = userId
+  constructor(options) {
+    super()
+
+    const { context, host, token, user } = options
+    this.user = user
 
     /*
       Configure the scene
@@ -61,7 +65,7 @@ export default class Game {
       for (let id in orbs) {
         // only one user can be rendered by now,
         // but it will be fixed soon
-        if (id === this.userId) {
+        if (id === this.user.id) {
           const { x, y } = orbs[id]
 
           this.orb.setAttributeNS(null, 'cx', x)
@@ -78,41 +82,38 @@ export default class Game {
     })
 
     /*
-      Connect to the game host with WebSocket
+      Connect to the game host with socket.io
     */
-    let ws = this.ws = new WebSocket(Game.host)
+    const socket = this.socket = ioc(Game.host, {
+      query: `token=${token}`
+    })
 
-    ws.onopen = (event) => {
-      this.onopen && this.onopen(Game.host)
-    }
+    socket.on('connect', () => {
+      this.emit('connect')
+    })
 
-    ws.onerror = (event) => {
-      this.onerror && this.onerror(event.error)
-    }
+    socket.on('connect_error', (err) => {
+      this.emit('connect_error', err)
+    })
 
-    ws.onclose = (event) => {
-      this.onclose && this.onclose(event)
-    }
+    socket.on('error', (err) => {
+      this.emit('error', err)
+    })
 
-    let c = 0
+    socket.on('disconnect', () => {
+      this.emit('disconnect')
+    })
 
-    ws.onmessage = (event) => {
-      let msg = JSON.parse(event.data)
-
-      this.onmessage && this.onmessage(msg)
-
-      if (msg.type === 'ERROR') {
-        this.onerror && this.onerror(msg.error)
-      } else if (msg.type === 'FRAME') {
-        this.buffer.put(msg.frame)
-      }
-    }
+    socket.on('frame', (frame) => {
+      this.buffer.put(frame)
+    })
   }
 
   sendControls = (controls) => {
-    this.ws.send(JSON.stringify({
-      type: 'CONTROLS',
-      controls
-    }))
+    this.socket.emit('controls', controls)
+  }
+
+  stop = () => {
+    this.socket.disconnect()
   }
 }

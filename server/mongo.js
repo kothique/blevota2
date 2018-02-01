@@ -12,7 +12,7 @@ module.exports = (onOpen) => {
   let db = mongoose.connection
 
   db.on('error', (err) => {
-    console.log(err.stack)
+    console.log(err.message)
   })
 
   db.once('open', () => {

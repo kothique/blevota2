@@ -20,31 +20,47 @@ class GamePage extends Component {
     const { dispatch, login } = this.props,
           context = document.getElementById('game')
 
-    if (!login.token) {
+    const host = 'http://localhost:3000'
+
+    if (!login.user) {
       dispatch(push('/'))
       return
     }
 
-    const user = decode(login.token),
-          game = this.game = new Game(context, user.id)
+    const game = this.game = new Game({
+      host,
+      context,
+      token: login.token,
+      user: login.user
+    })
 
-    game.onopen = (host) => {
-      console.log(`Game: successfully connected to ${host}`)
-    }
+    game.on('connect', () => {
+      console.log(`Successfully connected to ${host}`)
+    })
 
-    game.onerror = (error)  => {
-      console.log(`Game: error: ${JSON.stringify(error)}`)
-      alert(error)
+    game.on('connect_error', (err) => {
+      console.log(err.stack)
       dispatch(push('/'))
-    }
+    })
 
-    game.onclose = ({ code }) => {
-      console.log(`Connection closed with code ${code}`)
+    game.on('error', (err) => {
+      console.log(err.stack)
       dispatch(push('/'))
-    }
+    })
 
-    game.onmessage = (msg) => {
-      console.log(`Message received: `, msg.frame.state.orbs)
+    game.on('disconnect', () => {
+      console.log(`Disconnected from ${host}`)
+    })
+  }
+
+  componentWillUnmount() {
+    /**
+     * If the client opens /game while not logged in, they get
+     * redirected, and Component~componentWillUnmount gets called
+     * without this.game being initialized, so we need to check it.
+     */
+    if (this.game) {
+      this.game.stop()
     }
   }
 

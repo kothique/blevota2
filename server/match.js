@@ -30,28 +30,26 @@ class Match {
   /**
    * Add a new player to the match.
    *
-   * @param {Express} app - The `express` application.
-   * @param {WebSocket} ws - The WebSocket connection corresponding to the player.
+   * @param {Socket} app - The socket.io socket corresponding to the player.
    */
-  newPlayer(app, ws) {
-    this.players.set(ws.userId, ws)
+  newPlayer(socket) {
+    const { user } = socket.handshake
 
-    app.ws('/', (ws) => {
-      ws.on('close', () => {
-        this.stop()
-      })
+    this.players.set(user.id, socket)
 
-      ws.on('message', (data) => {
-        const msg = JSON.parse(data)
-        switch (msg.type) {
-          case 'CONTROLS':
-            this.sendControls(ws, msg.controls)
-            break
-        }
-      })
+    socket.on('error', () => {
+      this.stop()
     })
 
-    this.sendNewOrb(ws)
+    socket.on('disconnect', () => {
+      this.stop()
+    })
+
+    socket.on('controls', (controls) => {
+      this.sendControls(user.id, controls)
+    })
+
+    this.sendNewOrb(user.id)
   }
 
   /**
@@ -94,12 +92,12 @@ class Match {
    * Order the simulation to add a new orb.
    * 
    * @private
-   * @param {WebSocket} ws - The WebSocket connection correspoding to the player.
+   * @param {string} id - The player's id.
    */
-  sendNewOrb(ws) {
+  sendNewOrb(id) {
     this.simulation.send({
       type: 'NEW_ORB',
-      id: ws.userId
+      id
     })
   }
 
@@ -107,13 +105,13 @@ class Match {
    * Send controls to the simulation.
    *
    * @private
-   * @param {WebSocket} ws - The WebSocket connection correspoding to the player.
+   * @param {WebSocket} ws - The player's id.
    * @param {object} controls - The player's controls data.
    */
-  sendControls(ws, controls) {
+  sendControls(id, controls) {
     this.simulation.send({
       type: 'CONTROLS',
-      id: ws.userId,
+      id,
       controls
     })
   }
@@ -125,13 +123,8 @@ class Match {
    * @param {object} frame - The frame to send.
    */
   sendFrameToAll(frame) {
-    this.players.forEach((ws) => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          type: 'FRAME',
-          frame
-        }))
-      }
+    this.players.forEach((socket) => {
+      socket.emit('frame', frame)
     })
   }
 }

@@ -41,21 +41,24 @@ export const loginReducer = (state = defaultState, action) => {
         ...state,
         isFetching: false,
         error: undefined,
-        token: action.token
+        token: action.token,
+        user: decode(action.token)
       }
     case FAILURE_LOGIN:
       return {
         ...state,
         isFetching: false,
         error: action.error,
-        token: undefined
+        token: undefined,
+        user: undefined
       }
     case INVALIDATE_LOGIN:
       return {
         ...state,
         isFetching: false,
         error: undefined,
-        token: undefined
+        token: undefined,
+        user: undefined
       }
     default:
       return state
