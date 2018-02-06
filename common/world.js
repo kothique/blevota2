@@ -2,54 +2,57 @@
  * @module common/world
  */
 
+ const Entity = require('./entity')
+ const State = require('./state')
+
+ /**
+  * @constant
+  */
+const ORB_MASS = 1
+
+/**
+ * @constant
+ */
+const ORB_MOVE_FORCE = 0.1
+
 /**
  * @class
  */
 class World {
   /**
    * Create a new world.
-   * 
-   * @param {?object} initialState - Initial state.
+   *
+   * @param {State} initialState - Initial state.
    */
-  constructor(initialState = null) {
-    this.state = initialState || { orbs: {} }
+  constructor(initialState = new State) {
+    this.state = initialState
   }
 
   /**
-   * Adds a new orb into the world.
+   * Add a new orb into the world.
    *
    * @param {string} id - The id of the new orb.
-   * @return {World} - Reference to `this`.
+   * @chainable
    */
   newOrb(id) {
-    this.state.orbs[id] = {
-      x: 0,
-      y: 0,
-      dir: 0,
-      v: 0
-    }
+    const orb = new Entity(ORB_MASS, ORB_MOVE_FORCE)
+    this.state.orbs[id] = orb
 
     return this
   }
 
   /**
-   * Set velocity and direction according to controls.
-   * 
+   * Set forces according to controls.
+   *
    * @param {number} id - The user's id.
    * @param {object} controls - The user's controls.
-   * @return {World} - Reference to `this`.
+   * @chainable
    */
-  applyControls(id, { mX, mY, lmb, rmb, wheel }) {
+  applyControls(id, controls) {
     const { orbs } = this.state
 
-    for (let id in orbs) {
-      const dx = mX - orbs[id].x,
-            dy = mY - orbs[id].y,
-            dir = Math.atan2(dy, dx)
-
-      orbs[id].dir = dir
-      orbs[id].v = lmb ? 0.5 : 0
-    }
+    for (let id in orbs)
+      orbs[id].applyControls(id, controls)
 
     return this
   }
@@ -59,17 +62,13 @@ class World {
    * 
    * @param {number} t  - Current timestamp.
    * @param {number} dt - Time delta.
-   * @return {World} - Reference to `this`.
+   * @chainable
    */
   integrate(t, dt) {
     const { orbs } = this.state
 
-    for (let id in orbs) {
-      const { x, y, dir, v } = orbs[id]
-
-      orbs[id].x += Math.cos(dir) * v * dt
-      orbs[id].y += Math.sin(dir) * v * dt
-    }
+    for (let id in orbs)
+      orbs[id].integrate(t, dt)
 
     return this
   }

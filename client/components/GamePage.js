@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { func } from 'prop-types'
 import { push } from 'react-router-redux'
@@ -18,7 +18,8 @@ class GamePage extends Component {
 
   componentDidMount() {
     const { dispatch, login } = this.props,
-          context = document.getElementById('game')
+          context = document.getElementById('game'),
+          info = document.getElementById('info')
 
     const host = 'http://localhost:3000'
 
@@ -30,6 +31,7 @@ class GamePage extends Component {
     const game = this.game = new Game({
       host,
       context,
+      info,
       token: login.token,
       user: login.user
     })
@@ -66,7 +68,10 @@ class GamePage extends Component {
 
   render() {
     return (
-      <svg id="game"></svg>
+      <Fragment>
+        <svg id="game"></svg>
+        <div id="info"></div>
+      </Fragment>
     )
   }
 }

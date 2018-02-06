@@ -1,9 +1,11 @@
 import EventEmitter from 'events'
 import ioc from 'socket.io-client'
 import get from 'lodash/get'
+import { Buffer } from 'buffer-browserify'
 
 import Keyboard from './keyboard'
 import PlayoutBuffer from './playoutbuffer';
+import State from '../common/state'
 
 export default class Game extends EventEmitter {
   static host = 'http://localhost:3000/'
@@ -11,13 +13,14 @@ export default class Game extends EventEmitter {
   constructor(options) {
     super()
 
-    const { context, host, token, user } = options
+    const { context, info, host, token, user } = options
     this.user = user
 
     /*
       Configure the scene
     */
     this.svg = context
+    this.info = info
 
     this.orb = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     this.orb.setAttributeNS(null, 'cx', 0)
@@ -66,10 +69,10 @@ export default class Game extends EventEmitter {
         // only one user can be rendered by now,
         // but it will be fixed soon
         if (id === this.user.id) {
-          const { x, y } = orbs[id]
+          const { position } = orbs[id]
 
-          this.orb.setAttributeNS(null, 'cx', x)
-          this.orb.setAttributeNS(null, 'cy', y)
+          this.orb.setAttributeNS(null, 'cx', position.x)
+          this.orb.setAttributeNS(null, 'cy', position.y)
         }
       }
     })
@@ -105,6 +108,16 @@ export default class Game extends EventEmitter {
     })
 
     socket.on('frame', (frame) => {
+      const buffer = new Buffer(frame.state.data)
+
+      frame.state = State.fromBuffer(buffer)
+      const orb = frame.state.orbs['5a58ef9aa4dcc91835c9fd23']
+      this.info.innerHTML = `
+        t: ${frame.timestamp.toFixed(4)}<br />
+        f: ${orb.force.toString(n => n.toFixed(4))}<br />
+        p: ${orb.position.toString(n => n.toFixed(4))}<br />
+        v: ${orb.velocity.toString(n => n.toFixed(4))}<br />
+        a: ${orb.acceleration.toString(n => n.toFixed(4))}<br />`
       this.buffer.put(frame)
     })
   }

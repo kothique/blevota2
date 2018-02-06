@@ -25,7 +25,7 @@ class Simulator extends EventEmitter {
 
     this.world = options.world || new World
     this.t = options.t || 0
-    this.dt = options.dt || 1000 / 120
+    this.dt = options.dt || 1000 / 120 // milliseconds
     this.accumulator = 0
 
     this.continue = true
@@ -94,7 +94,7 @@ class Simulator extends EventEmitter {
 
       let newTime = Date.now(),
           frameTime = newTime - currentTime
-      
+
       if (frameTime > 1000 / 60) {
         frameTime = 1000 / 60
       }
@@ -108,7 +108,7 @@ class Simulator extends EventEmitter {
           this.world.applyControls(id, controls)
         })
 
-        this.world.integrate(this.t, this.dt)
+        this.world.integrate(this.t, this.dt / 1000) // pass dt in seconds
         integrated = true
 
         this.t += this.dt
@@ -116,8 +116,9 @@ class Simulator extends EventEmitter {
       }
 
       if (integrated) {
+        //console.log(JSON.stringify(this.world.state))
         this.emit('frame', {
-          state: this.world.state,
+          state: this.world.state.toBuffer(),
           timestamp: this.t
         })
       }

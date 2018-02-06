@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const cluster = require('cluster')
 
 const port = process.env.MONGO_PORT || 27017
 
@@ -16,9 +15,7 @@ module.exports = (onOpen) => {
   })
 
   db.once('open', () => {
-    if (cluster.isMaster) {
-      console.log(`Successfully connected to MongoDB server`)
-    }
+    console.log(`Successfully connected to MongoDB server`)
 
     onOpen()
   })

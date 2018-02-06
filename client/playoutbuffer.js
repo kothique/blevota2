@@ -4,6 +4,7 @@ import merge from 'lodash/merge'
 import present from 'present'
 
 import World from '../common/world'
+import State from '../common/state'
 
 export default class PlayoutBuffer extends EventEmitter {
   constructor() {
@@ -78,10 +79,10 @@ export default class PlayoutBuffer extends EventEmitter {
         })
       }
 
-      requestAnimationFrame(nextFrame)
+      window.requestAnimationFrame(nextFrame)
     }
 
-    requestAnimationFrame(nextFrame)
+    window.requestAnimationFrame(nextFrame)
   }
 
   stop = () => {

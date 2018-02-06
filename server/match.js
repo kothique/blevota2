@@ -7,6 +7,11 @@ const Dict = require('collections/dict')
 const WebSocket = require('ws')
 
 /**
+ * Used to to feed different ports to different children.
+ */
+let childIndex = 1
+
+/**
  * @class
  * 
  * @description
@@ -16,7 +21,15 @@ const WebSocket = require('ws')
 class Match {
   constructor() {
     this.players = new Dict
-    this.simulation = child_process.fork('./server/simulation')
+
+    const config = {
+      env: process.env
+    }
+    if (process.env.NODE_ENV !== 'production') {
+      config.env.INSPECTOR_PORT = require('../server.config').inspector.port + childIndex++
+    }
+
+    this.simulation = child_process.fork('./server/simulation', null, config)
 
     this.simulation.on('message', (msg) => {
       switch (msg.type) {
@@ -67,7 +80,7 @@ class Match {
   }
 
   /**
-   * Order the simulation the start.
+   * Order the simulation to start.
    *
    * @private
    */

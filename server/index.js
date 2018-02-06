@@ -5,6 +5,17 @@
  * This is the entry point of the server.
  */
 
+/** Open inspector if not in production mode */
+if (process.env.NODE_ENV !== 'production') {
+  const inspector = require('inspector'),
+        config = require('../server.config')
+
+  inspector.open(config.inspector.port)
+}
+
+/** Run it before any other server code */
+process.env.WHERE = 'server'
+
 /**
  * The port to listen to. Can be provided from outside by
  * the PORT environment variable.
@@ -14,7 +25,7 @@
  */
 const port = process.env.PORT || 3000
 
-/* Connect to mongo, then do other stuff. */
+/** Connect to mongo, then do other stuff. */
 require('./mongo')(() => {
 
   /* Run the HTTP server. */
