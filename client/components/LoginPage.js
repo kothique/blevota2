@@ -4,6 +4,7 @@ import { push } from 'react-router-redux'
 import { shape, bool, string, func } from 'prop-types'
 
 import { login } from '../reducers/login'
+import '../../common/util' // Function.prototype.bindArgs
 
 class LoginPage extends Component {
   static propTypes = {

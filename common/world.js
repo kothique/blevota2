@@ -2,18 +2,8 @@
  * @module common/world
  */
 
- const Entity = require('./entity')
+ const Orb = require('./orb')
  const State = require('./state')
-
- /**
-  * @constant
-  */
-const ORB_MASS = 1
-
-/**
- * @constant
- */
-const ORB_MOVE_FORCE = 0.1
 
 /**
  * @class
@@ -35,7 +25,7 @@ class World {
    * @chainable
    */
   newOrb(id) {
-    const orb = new Entity(ORB_MASS, ORB_MOVE_FORCE)
+    const orb = new Orb
     this.state.orbs[id] = orb
 
     return this
