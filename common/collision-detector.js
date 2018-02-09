@@ -87,24 +87,28 @@ class CollisionDetector {
         if (this.worldSize) {
           if (box1.p1.x < 0) {
             collisions.push({
-              type: 'left-wall',
-              id: id1 
+              type: 'wall',
+              wall: 'left',
+              id: id1
             })
           } else if (box1.p2.x >= this.worldSize.x) {
             collisions.push({
-              type: 'right-wall',
+              type: 'wall',
+              wall: 'right',
               id: id1
             })
           }
 
           if (box1.p1.y < 0) {
             collisions.push({
-              type: 'top-wall',
+              type: 'wall',
+              wall: 'top',
               id: id1
             })
           } else if (box1.p2.y >= this.worldSize.y) {
             collisions.push({
-              type: 'bottom-wall',
+              type: 'wall',
+              wall: 'bottom',
               id: id1
             })
           }

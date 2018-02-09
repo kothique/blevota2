@@ -3,6 +3,7 @@
  */
 
 const set = require('lodash/set')
+const get = require('lodash/get')
 const merge = require('lodash/merge')
 
 const Orb = require('./orb')
@@ -99,7 +100,35 @@ class World {
    * @chainable
   */
   applyCollisionResponse() {
-    // ...
+    this.collisions.forEach((collision) => {
+      if (collision.type === 'wall') {
+        const { wall, id } = collision
+
+        const orb = this.state.orbs[id] 
+        merge(orb, get(this.diff, `orbs.${id}`))
+
+        const k = 0.8
+
+        switch (wall) {
+          case 'left':
+            set(this.diff, `orbs.${id}.velocity.x`, -k * orb.velocity.x)
+            set(this.diff, `orbs.${id}.position.x`, 30)
+            break
+          case 'right':
+            set(this.diff, `orbs.${id}.velocity.x`, -k * orb.velocity.x)
+            set(this.diff, `orbs.${id}.position.x`, this.worldSize.x - 30)
+            break
+          case 'top':
+            set(this.diff, `orbs.${id}.velocity.y`, -k * orb.velocity.y)
+            set(this.diff, `orbs.${id}.position.y`, 30)
+            break
+          case 'bottom':
+            set(this.diff, `orbs.${id}.velocity.y`, -k * orb.velocity.y)
+            set(this.diff, `orbs.${id}.position.y`, this.worldSize.y - 30)
+            break
+        }
+      }
+    })
 
     return this
   }

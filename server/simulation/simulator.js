@@ -111,7 +111,7 @@ class Simulator extends EventEmitter {
           this.world.applyControls(id, controls)
         })
 
-        this.world.integrate(this.t, this.dt / 1000) // pass dt in seconds
+        this.world.integrate(this.t, this.dt / 1000)
         integrated = true
 
         this.t += this.dt
@@ -125,6 +125,7 @@ class Simulator extends EventEmitter {
         })
 
         this.world.detectCollisions()
+        this.world.applyCollisionResponse()
       }
 
       this.world.finishIteration()
