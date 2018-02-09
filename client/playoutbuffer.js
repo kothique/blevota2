@@ -69,7 +69,7 @@ export default class PlayoutBuffer extends EventEmitter {
             frame = getFrame(currentTimestamp)
 
       if (frame) {
-        const approximatedState = new World(frame.state)
+        const approximatedState = new World(null, frame.state)
           .integrate(currentTimestamp, currentTimestamp - frame.timestamp)
           .state
 

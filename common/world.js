@@ -7,7 +7,8 @@ const merge = require('lodash/merge')
 
 const Orb = require('./orb')
 const State = require('./state')
-const { v } = require('./vector')
+const CollisionDetector = require('./collision-detector')
+const { Vector, v } = require('./vector')
 
 /**
  * @class
@@ -16,23 +17,45 @@ class World {
   /**
    * Create a new world.
    *
-   * @param {State} initialState - Initial state.
+   * @param {?Vector} worldSize - The size of the world. If left undefined,
+   *   collisions with walls will not be detected.
+   * @param {?State} initialState - Initial state.
    */
-  constructor(initialState = new State) {
+  constructor(worldSize = null, initialState = new State) {
+    this.worldSize = worldSize
     this.state = initialState
     this.diff = {}
     this.collisions = []
+    this.collisionDetector = new CollisionDetector(this.worldSize)
   }
 
   /**
    * Add a new orb into the world.
    *
-   * @param {string} id - The id of the new orb.
+   * @param {string} id - The ID of the new orb.
    * @chainable
    */
   newOrb(id) {
     const orb = new Orb
     this.state.orbs[id] = orb
+
+    this.collisionDetector.add(id, {
+      p1: v(-30, -30),
+      p2: v(30, 30)
+    })
+
+    return this
+  }
+
+  /**
+   * Delete the specified orb.
+   *
+   * @param {string} id - The ID of the orb.
+   * @chainable
+   */
+  removeOrb(id) {
+    delete this.state.orbs[id]
+    this.collisionDetector.remove(id)
 
     return this
   }
@@ -54,7 +77,7 @@ class World {
   /**
    * Set forces according to controls.
    *
-   * @param {number} id - The user's id.
+   * @param {number} id - The user's ID.
    * @param {object} controls - The user's controls.
    * @chainable
    */
@@ -74,7 +97,7 @@ class World {
    *
    * @todo
    * @chainable
-   */
+  */
   applyCollisionResponse() {
     // ...
 
@@ -94,8 +117,18 @@ class World {
     for (const id in orbs) {
       const orbDiff = orbs[id].integrate(t, dt)
 
-      if (orbDiff)
+      if (orbDiff) {
         set(this.diff, `orbs.${id}`, orbDiff)
+
+        if (orbDiff.position) {
+          const { x, y } = orbDiff.position
+
+          this.collisionDetector.set(id, {
+            p1: v(x - 30, y - 30),
+            p2: v(x + 30, y + 30)
+          })
+        }
+      }
     }
 
     return this
@@ -107,7 +140,7 @@ class World {
    * @chainable
    */
   detectCollisions() {
-    // ...
+    this.collisions = this.collisionDetector.detect()
 
     return this
   }

@@ -69,10 +69,17 @@ export default class Game extends EventEmitter {
         // only one user can be rendered by now,
         // but it will be fixed soon
         if (id === this.user.id) {
-          const { position } = orbs[id]
+          const orb = orbs[id]
 
-          this.orb.setAttributeNS(null, 'cx', position.x)
-          this.orb.setAttributeNS(null, 'cy', position.y)
+          this.info.innerHTML = `
+            t: ${timestamp.toFixed(4)}<br />
+            f: ${orb.force.toString(n => n.toFixed(4))}<br />
+            p: ${orb.position.toString(n => n.toFixed(4))}<br />
+            v: ${orb.velocity.toString(n => n.toFixed(4))}<br />
+            a: ${orb.acceleration.toString(n => n.toFixed(4))}<br />`
+
+          this.orb.setAttributeNS(null, 'cx', orb.position.x)
+          this.orb.setAttributeNS(null, 'cy', orb.position.y)
         }
       }
     })
@@ -111,13 +118,6 @@ export default class Game extends EventEmitter {
       const buffer = new Buffer(frame.state.data)
 
       frame.state = State.fromBuffer(buffer)
-      const orb = frame.state.orbs['5a58ef9aa4dcc91835c9fd23']
-      this.info.innerHTML = `
-        t: ${frame.timestamp.toFixed(4)}<br />
-        f: ${orb.force.toString(n => n.toFixed(4))}<br />
-        p: ${orb.position.toString(n => n.toFixed(4))}<br />
-        v: ${orb.velocity.toString(n => n.toFixed(4))}<br />
-        a: ${orb.acceleration.toString(n => n.toFixed(4))}<br />`
       this.buffer.put(frame)
     })
   }

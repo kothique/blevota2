@@ -204,6 +204,16 @@ class Vector {
   }
 
   /**
+   * Find the distance between two vectors.
+   *
+   * @param {Vector} v1
+   * @param {Vector} v2
+   */
+  static distance(v1, v2) {
+    return Vector.subtract(v1, v2).length
+  }
+
+  /**
    * Translate the vector to a string. If the modifier is specified,
    * apply it to the vector components.
    *
