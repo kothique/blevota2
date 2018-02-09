@@ -102,6 +102,8 @@ class Simulator extends EventEmitter {
 
       this.accumulator += frameTime
 
+      this.world.startIteration()
+
       let integrated = false
       while (this.accumulator >= this.dt) {
         this.controls.forEach((controls, id) => {
@@ -116,12 +118,13 @@ class Simulator extends EventEmitter {
       }
 
       if (integrated) {
-        //console.log(JSON.stringify(this.world.state))
         this.emit('frame', {
           state: this.world.state.toBuffer(),
           timestamp: this.t
         })
       }
+
+      this.world.finishIteration()
 
       if (Date.now() - currentTime < this.dt - 4) {
         setTimeout(loop)

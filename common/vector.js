@@ -195,6 +195,15 @@ class Vector {
   }
 
   /**
+   * Check if the vector is close to zero.
+   *
+   * @param {number} epsilon
+   */
+  isZero(epsilon) {
+    return this.length <= epsilon
+  }
+
+  /**
    * Translate the vector to a string. If the modifier is specified,
    * apply it to the vector components.
    *
