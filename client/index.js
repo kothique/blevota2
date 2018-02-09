@@ -7,8 +7,8 @@ import createHistory from 'history/createBrowserHistory'
 /** Run it before any other client code */
 process.env.WHERE = 'client'
 
-import createStore from './createStore'
-import Root from './components/Root'
+import createStore from './create-store'
+import Root from './components/root'
 
 let history = createHistory()
 let store = createStore(history)

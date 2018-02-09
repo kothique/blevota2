@@ -5,7 +5,7 @@ import { push } from 'react-router-redux'
 import { decode } from 'jsonwebtoken'
 
 import Game from '../game'
-import '../css/GamePage.css'
+import '../css/game-page.css'
 import '../css/common.css'
 
 /**

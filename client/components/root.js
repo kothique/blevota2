@@ -4,10 +4,10 @@ import { BrowserRouter, Route } from 'react-router'
 import { ConnectedRouter } from 'react-router-redux'
 import { object } from 'prop-types'
 
-import WelcomePage from './WelcomePage'
-import LoginPage from './LoginPage'
-import RegisterPage from './RegisterPage'
-import GamePage from './GamePage'
+import WelcomePage from './welcome-page'
+import LoginPage from './login-page'
+import RegisterPage from './register-page'
+import GamePage from './game-page'
 
 class Root extends Component {
   static propTypes = {
