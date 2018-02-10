@@ -3,20 +3,11 @@
  *
  * @description
  * This module accepts new socket.io connections and pass
- * then to {@link module:server/match~Match}
+ * them to {@link module:server/match~Match}.
  */
 
- const FastSet = require('collections/fast-set')
- const auth = require('./auth')
-
- const Match = require('./match')
-
-/**
- * The collection of all matches.
- *
- * @type {FastSet}
- */
-const matches = new FastSet
+const auth = require('./auth')
+const { matches } = require('./matches')
 
 /**
  * Configure the socket.io server.
@@ -35,7 +26,7 @@ module.exports = (io) => {
   }))
 
   io.on('connection', (socket) => {
-    const { address, user } = socket.handshake
+    const { address, user, query: { matchId } } = socket.handshake
 
     console.log(`A new socket.io connection established (${user.username}; ${address})`)
 
@@ -47,8 +38,11 @@ module.exports = (io) => {
       console.log(`Client disconnected: ${reason}`)
     })
 
-    let match = new Match
+    const match = matches[matchId]
+
+    if (!match)
+      return socket.disconnect()
+
     match.newPlayer(socket)
-    match.start()
   })
 }

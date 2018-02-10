@@ -67,7 +67,6 @@ export const register =
       (error) => {
         if (error.response) {
           const message = error.response.data.error
-
           dispatch(failureRegister(message))
 
           throw new Error(message)

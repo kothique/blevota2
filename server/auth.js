@@ -197,7 +197,11 @@ module.exports.ifGuest = (options = { error: true }) => {
         if (typeof redirect !== 'undefined') {
           res.redirect(redirect)
         } else if (error) {
-          res.status(403).send({ error: 'Must not be logged in' })
+          if (err instanceof AuthError) {
+            res.status(401).send({ error: `Unauthorized (${err.message})` })
+          } else {
+            res.status(401).send({ error: 'Unauthorized' })
+          }
         }
       })
       .catch((err) => {
@@ -223,11 +227,7 @@ module.exports.ifUser = (options = { error: true }) => {
         if (typeof redirect !== 'undefined') {
           res.redirect(redirect)
         } else if (error) {
-          if (err instanceof AuthError) {
-            res.status(401).send({ error: `Unauthorized (${err.message})` })
-          } else {
-            res.status(401).send({ error: 'Unauthorized' })
-          }
+          res.status(403).send({ error: 'Must not be logged in' })
         }
       })
   }

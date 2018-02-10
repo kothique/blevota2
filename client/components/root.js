@@ -25,7 +25,7 @@ class Root extends Component {
             <Route exact path="/" component={WelcomePage} />
             <Route path="/login" component={LoginPage} />
             <Route path="/register" component={RegisterPage} />
-            <Route path="/game" component={GamePage} />
+            <Route path="/match/:matchId" component={GamePage} />
           </Fragment>
         </ConnectedRouter>
       </Provider>

@@ -1,8 +1,9 @@
 const pick = require('lodash/pick')
-const { createUser } = require('./auth')
 const { resolve } = require('path')
 
+const { createUser } = require('./auth')
 const { login, ifUser, ifGuest, AuthError } = require('./auth')
+const { createMatch, matches } = require('./matches')
 
 module.exports = (app) => {
   app.post('/api/login', ifUser({ error: true }), (req, res) => {
@@ -55,13 +56,24 @@ module.exports = (app) => {
     })
   })
 
-  app.get('/api/user', ifGuest({ error: true }), (req, res) => {
-    let user = pick(req.auth.user, [
-      '_id',
-      'username'
-    ])
+  app.get('/api/matches', ifGuest({ error: true }), (req, res) => {
+    let result = []
+    for (const id in matches) {
+      result.push({
+        id,
+        players: matches[id].players.length
+      })
+    }
 
-    res.send(user)
+    res.send({ matches: result })
+  })
+
+  app.put('/api/match', ifGuest({ error: true }), (req, res) => {
+    const match = createMatch()
+
+    res.send({
+      id: match.id
+    })
   })
 
   app.get('/js', (req, res) => {

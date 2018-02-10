@@ -13,14 +13,20 @@ let childIndex = 1
 
 /**
  * @class
- * 
+ *
  * @description
  * A game match, the intermediate between the participants and
  * the world simulation running in the background.
  */
 class Match {
-  constructor() {
+  /**
+   * Create a new match.
+   *
+   * @param {string} id
+   */
+  constructor(id) {
     this.players = new Dict
+    this.id = id 
 
     const config = {
       env: process.env
@@ -43,7 +49,7 @@ class Match {
   /**
    * Add a new player to the match.
    *
-   * @param {Socket} app - The socket.io socket corresponding to the player.
+   * @param {Socket} socket - The socket.io socket corresponding to the player.
    */
   newPlayer(socket) {
     const { user } = socket.handshake
@@ -51,11 +57,11 @@ class Match {
     this.players.set(user.id, socket)
 
     socket.on('error', () => {
-      this.stop()
+      this.removePlayer(user.id)
     })
 
     socket.on('disconnect', () => {
-      this.stop()
+      this.removePlayer(user.id)
     })
 
     socket.on('controls', (controls) => {
@@ -63,6 +69,17 @@ class Match {
     })
 
     this.sendNewOrb(user.id)
+  }
+
+  /**
+   * Remove the specified player from the match.
+   *
+   * @param {string} id
+   */
+  removePlayer(id) {
+    this.players.delete(id)
+
+    this.sendRemoveOrb(id)
   }
 
   /**
@@ -85,9 +102,13 @@ class Match {
    * @private
    */
   sendStart() {
-    this.simulation.send({
-      type: 'START'
-    })
+    try {
+      this.simulation.send({
+        type: 'START'
+      })
+    } catch (err) {
+      console.log(`Match (${this.id}): ${err.message}`)
+    }
   }
 
   /**
@@ -96,22 +117,46 @@ class Match {
    * @private
    */
   sendStop() {
-    this.simulation.send({
-      type: 'STOP'
-    })
+    try {
+      this.simulation.send({
+        type: 'STOP'
+      })
+    } catch (err) {
+      console.log(`Match (${this.id}): ${err.message}`)
+    }
   }
 
   /**
    * Order the simulation to add a new orb.
-   * 
+   *
    * @private
-   * @param {string} id - The player's id.
+   * @param {string} id - The player's ID.
    */
   sendNewOrb(id) {
-    this.simulation.send({
-      type: 'NEW_ORB',
-      id
-    })
+    try {
+      this.simulation.send({
+        type: 'NEW_ORB',
+        id
+      })
+    } catch (err) {
+      console.log(`Match (${this.id}): ${err.message}`)
+    }
+  }
+
+  /**
+   * Order the simulation to remove the specified orb.
+   *
+   * @param {string} id - The player's ID.
+   */
+  sendRemoveOrb(id) {
+    try {
+      this.simulation.send({
+        type: 'REMOVE_ORB',
+        id
+      })
+    } catch (err) {
+      console.log(`Match (${this.id}): ${err.message}`)
+    }
   }
 
   /**
@@ -122,11 +167,15 @@ class Match {
    * @param {object} controls - The player's controls data.
    */
   sendControls(id, controls) {
-    this.simulation.send({
-      type: 'CONTROLS',
-      id,
-      controls
-    })
+    try {
+      this.simulation.send({
+        type: 'CONTROLS',
+        id,
+        controls
+      })
+    } catch (err) {
+      console.log(`Match (${this.id}): ${err.message}`)
+    }
   }
 
   /**
@@ -136,9 +185,13 @@ class Match {
    * @param {object} frame - The frame to send.
    */
   sendFrameToAll(frame) {
-    this.players.forEach((socket) => {
-      socket.emit('frame', frame)
-    })
+    try {
+      this.players.forEach((socket) => {
+        socket.emit('frame', frame)
+      })
+    } catch (err) {
+      console.log(`Match (${this.id}): ${err.message}`)
+    }
   }
 }
 

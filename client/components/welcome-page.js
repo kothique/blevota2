@@ -5,19 +5,79 @@ import { object, func } from 'prop-types'
 import { decode } from 'jsonwebtoken'
 
 import { logout } from '../reducers/login'
+import { matches } from '../reducers/matches'
+import { newMatch } from '../reducers/new-match'
 
 class WelcomePage extends Component {
-  static propTypes = {
-    user: object,
-    onLogout: func.isRequired
+  componentDidMount() {
+    const { login, dispatch } = this.props
+
+    const updateMatches = () => {
+      if (!login.isFetching && login.user) {
+        dispatch(matches())
+      }
+    }
+
+    updateMatches()
+    this.intervalID = window.setInterval(updateMatches, 5000)
+  }
+
+  componentWillUnmount() {
+    window.clearInterval(this.timeoutID)
   }
 
   render() {
-    const { login, onPlay, onLogout, onLogin, onRegister } = this.props
+    const { dispatch, login, matches,
+            onNewMatch, onLogout, onLogin, onRegister } = this.props
 
-    let user = null
-    if (!login.isFetching && login.token) {
-      user = decode(login.token)
+    let contentMain
+    if (login.isFetching) {
+      contentMain = 'Loading...'
+    } else if (!login.user) {
+      contentMain =
+        <Fragment>
+          <button onClick={() => dispatch(push('/login'))}>
+            Login
+          </button><br />
+          <button onClick={() => dispatch(push('/register'))}>
+            Register
+          </button>
+        </Fragment>
+    } else if (login.user) {
+      let contentMatches
+      if (matches.isFetching) {
+        contentMatches = 'Loading...'
+      } else if (matches.error) {
+        contentMatches =
+          <span style={{ color: 'red' }}>
+            Error while loading matches: {matches.error}
+          </span>
+      } else if (matches.matches) {
+        contentMatches =
+          <ul>
+            {matches.matches.map((match) =>
+              <li key={match.id}>
+                {match.id} (players: {match.players}) <button onClick={() => dispatch(push(`/match/${match.id}`))}>join</button>
+              </li>
+            )}
+          </ul>
+      }
+
+      contentMain =
+        <Fragment>
+          Hi, {login.user.username}!<br />
+          <button onClick={() => dispatch(newMatch())}>
+            Start New Match
+          </button><br />
+          <button onClick={() => dispatch(logout())}>
+            Logout
+          </button><br />
+          <span style={{ fontWeight: 800 }}>
+            Matches:
+          </span>
+
+          {contentMatches}
+        </Fragment>
     }
 
     return (
@@ -27,29 +87,7 @@ class WelcomePage extends Component {
         </h1>
         <hr />
 
-        {login.isFetching
-          ? <Fragment>
-              Loading...
-            </Fragment>
-          : user
-            ? <Fragment>
-                Hi, {user.username}!<br />
-                <a href='' onClick={onPlay}>
-                  Play
-                </a><br />
-                <a href='' onClick={onLogout}>
-                  Logout
-                </a>
-              </Fragment>
-            : <Fragment>
-                <a href='' onClick={onLogin}>
-                  Login
-                </a><br />
-                <a href='' onClick={onRegister}>
-                  Register
-                </a>
-              </Fragment>
-        }
+        {contentMain}
       </main>
     )
   }
@@ -57,28 +95,7 @@ class WelcomePage extends Component {
 
 export default connect(
   (state) => ({
-    login: state.login
-  }),
-  (dispatch) => ({
-    onLogin: (event) => {
-      event.preventDefault()
-
-      dispatch(push('/login'))
-    },
-    onRegister: (event) => {
-      event.preventDefault()
-
-      dispatch(push('/register'))
-    },
-    onPlay: (event) => {
-      event.preventDefault()
-
-      dispatch(push('/game'))
-    },
-    onLogout: (event) => {
-      event.preventDefault()
-
-      dispatch(logout())
-    },
+    login: state.login,
+    matches: state.matches
   })
 )(WelcomePage)

@@ -1,12 +1,10 @@
 ## ROADMAP
 
 - physics
-  - collision detection
   - collision response
-- multiplayer
 - game mechanics
 - ui
-  - persistent
+  - persistent redux state
   - moving camera
   - welcome page
   - login page

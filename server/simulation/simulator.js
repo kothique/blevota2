@@ -60,9 +60,9 @@ class Simulator extends EventEmitter {
   }
 
   /**
-   * Add a new orb to the world.
+   * Add a new orb to the simulation.
    *
-   * @param {string} id - The id of the new orb.
+   * @param {string} id - The ID of the new orb.
    */
   newOrb(id) {
     this.world.newOrb(id)
@@ -74,6 +74,15 @@ class Simulator extends EventEmitter {
       wheel: false,
       rmb: false
     })
+  }
+
+  /**
+   * Remove the specified orb from the simulation.
+   *
+   * @param {string} id - The ID of the orb.
+   */
+  removeOrb(id) {
+    this.world.removeOrb(id)
   }
 
   /**
@@ -111,7 +120,7 @@ class Simulator extends EventEmitter {
           this.world.applyControls(id, controls)
         })
 
-        this.world.integrate(this.t, this.dt / 1000)
+        this.world.integrate(this.t / 1000, this.dt / 1000)
         integrated = true
 
         this.t += this.dt

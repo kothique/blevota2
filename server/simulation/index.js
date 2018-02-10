@@ -29,6 +29,9 @@ process.on('message', (msg) => {
     case 'NEW_ORB':
       simulator.newOrb(msg.id)
       break
+    case 'REMOVE_ORB':
+      simulator.removeOrb(msg.id)
+      break
     case 'START':
       simulator.start()
       break

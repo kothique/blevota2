@@ -6,6 +6,7 @@ import { Buffer } from 'buffer-browserify'
 import Keyboard from './keyboard'
 import PlayoutBuffer from './playoutbuffer';
 import State from '../common/state'
+import OrbPool from './orb-pool'
 
 export default class Game extends EventEmitter {
   static host = 'http://localhost:3000/'
@@ -13,21 +14,17 @@ export default class Game extends EventEmitter {
   constructor(options) {
     super()
 
-    const { context, info, host, token, user } = options
+    const { context, info, host, token, user, matchId } = options
     this.user = user
+    this.matchId = matchId
 
     /*
       Configure the scene
     */
     this.svg = context
     this.info = info
-
-    this.orb = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-    this.orb.setAttributeNS(null, 'cx', 0)
-    this.orb.setAttributeNS(null, 'cy', 0)
-    this.orb.setAttributeNS(null, 'r', 30)
-    this.orb.style.fill = 'rbg(150, 0, 30)'
-    this.svg.appendChild(this.orb)
+    this.orbPool = new OrbPool(this.svg)
+    this.orbs = {}
 
     const buttonName = {
       0: 'lmb',
@@ -65,22 +62,22 @@ export default class Game extends EventEmitter {
     this.buffer.on('frame', ({ state, timestamp }) => {
       const { orbs } = state
 
-      for (let id in orbs) {
-        // only one user can be rendered by now,
-        // but it will be fixed soon
-        if (id === this.user.id) {
-          const orb = orbs[id]
-
-          this.info.innerHTML = `
-            t: ${timestamp.toFixed(4)}<br />
-            f: ${orb.force.toString(n => n.toFixed(4))}<br />
-            p: ${orb.position.toString(n => n.toFixed(4))}<br />
-            v: ${orb.velocity.toString(n => n.toFixed(4))}<br />
-            a: ${orb.acceleration.toString(n => n.toFixed(4))}<br />`
-
-          this.orb.setAttributeNS(null, 'cx', orb.position.x)
-          this.orb.setAttributeNS(null, 'cy', orb.position.y)
+      for (const id in orbs) {
+        if (!this.orbs[id]) {
+          this.orbs[id] = this.orbPool.get()
         }
+
+        const orb = orbs[id]
+
+        this.info.innerHTML = `
+          t: ${timestamp.toFixed(4)}<br />
+          f: ${orb.force.toString(n => n.toFixed(4))}<br />
+          p: ${orb.position.toString(n => n.toFixed(4))}<br />
+          v: ${orb.velocity.toString(n => n.toFixed(4))}<br />
+          a: ${orb.acceleration.toString(n => n.toFixed(4))}<br />`
+
+        this.orbs[id].setAttributeNS(null, 'cx', orb.position.x)
+        this.orbs[id].setAttributeNS(null, 'cy', orb.position.y)
       }
     })
 
@@ -95,7 +92,10 @@ export default class Game extends EventEmitter {
       Connect to the game host with socket.io
     */
     const socket = this.socket = ioc(Game.host, {
-      query: `token=${token}`
+      query: {
+        token,
+        matchId: this.matchId
+      }
     })
 
     socket.on('connect', () => {
