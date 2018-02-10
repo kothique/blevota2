@@ -63,10 +63,6 @@ export default class Game extends EventEmitter {
       const { orbs } = state
 
       for (const id in orbs) {
-        if (!this.orbs[id]) {
-          this.orbs[id] = this.orbPool.get()
-        }
-
         const orb = orbs[id]
 
         this.info.innerHTML = `
@@ -76,8 +72,10 @@ export default class Game extends EventEmitter {
           v: ${orb.velocity.toString(n => n.toFixed(4))}<br />
           a: ${orb.acceleration.toString(n => n.toFixed(4))}<br />`
 
-        this.orbs[id].setAttributeNS(null, 'cx', orb.position.x)
-        this.orbs[id].setAttributeNS(null, 'cy', orb.position.y)
+        if (this.orbs[id]) {
+          this.orbs[id].setAttributeNS(null, 'cx', orb.position.x)
+          this.orbs[id].setAttributeNS(null, 'cy', orb.position.y)
+        }
       }
     })
 
@@ -119,6 +117,17 @@ export default class Game extends EventEmitter {
 
       frame.state = State.fromBuffer(buffer)
       this.buffer.put(frame)
+    })
+
+    socket.on('new-orb', (id) => {
+      this.orbs[id] = this.orbPool.get()
+    })
+
+    socket.on('remove-orb', (id) => {
+      console.log(`Orb removed: ${id}`)
+
+      this.orbPool.return(this.orbs[id])
+      delete this.orbs[id]
     })
   }
 

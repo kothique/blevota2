@@ -49,22 +49,32 @@ class Match {
   /**
    * Add a new player to the match.
    *
-   * @param {Socket} socket - The socket.io socket corresponding to the player.
+   * @param {Socket} newSocket - The socket.io socket corresponding to the player.
    */
-  newPlayer(socket) {
-    const { user } = socket.handshake
+  newPlayer(newSocket) {
+    const { user } = newSocket.handshake
 
-    this.players.set(user.id, socket)
+    /** Send the new player all already existing orbs */
+    this.players.forEach((socket, id) => {
+      newSocket.emit('new-orb', id)
+    })
 
-    socket.on('error', () => {
+    this.players.set(user.id, newSocket)
+
+    /** Notify all players of the new orb */
+    this.players.forEach((socket) => {
+      socket.emit('new-orb', user.id)
+    })
+
+    newSocket.on('error', () => {
       this.removePlayer(user.id)
     })
 
-    socket.on('disconnect', () => {
+    newSocket.on('disconnect', () => {
       this.removePlayer(user.id)
     })
 
-    socket.on('controls', (controls) => {
+    newSocket.on('controls', (controls) => {
       this.sendControls(user.id, controls)
     })
 
@@ -78,6 +88,10 @@ class Match {
    */
   removePlayer(id) {
     this.players.delete(id)
+
+    this.players.forEach((socket) => {
+      socket.emit('remove-orb', id)
+    })
 
     this.sendRemoveOrb(id)
   }

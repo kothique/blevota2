@@ -83,6 +83,7 @@ class Simulator extends EventEmitter {
    */
   removeOrb(id) {
     this.world.removeOrb(id)
+    this.controls.delete(id)
   }
 
   /**
