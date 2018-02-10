@@ -195,6 +195,16 @@ class Vector {
   }
 
   /**
+   * Set the length of the vector.
+   *
+   * @param {number} n
+   * @chainable
+   */
+  setLength(n) {
+    return this.normalize().multiply(n)
+  }
+
+  /**
    * Check if the vector is close to zero.
    *
    * @param {number} epsilon
@@ -210,7 +220,7 @@ class Vector {
    * @param {Vector} v2
    */
   static distance(v1, v2) {
-    return Vector.subtract(v1, v2).length
+    return Vector.subtract(v1, v2).length()
   }
 
   /**

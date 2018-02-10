@@ -100,14 +100,14 @@ class World {
    * @chainable
   */
   applyCollisionResponse() {
+    const k = 0.8
+
     this.collisions.forEach((collision) => {
       if (collision.type === 'wall') {
         const { wall, id } = collision
 
         const orb = this.state.orbs[id] 
         merge(orb, get(this.diff, `orbs.${id}`))
-
-        const k = 0.8
 
         switch (wall) {
           case 'left':
@@ -127,6 +127,48 @@ class World {
             set(this.diff, `orbs.${id}.position.y`, this.worldSize.y - 30)
             break
         }
+      } else if (collision.type === 'object') {
+        const { id1, id2 } = collision
+
+        const orb1 = this.state.orbs[id1],
+              orb2 = this.state.orbs[id2]
+        merge(orb1, get(this.diff, `orbs.${id1}`))
+        merge(orb2, get(this.diff, `orbs.${id2}`))
+
+        const dr = 30 + 30 - Vector.distance(orb1.position, orb2.position)
+
+        /** If only bounding boxes collide, not the orbs themselves. */
+        if (dr < 0) {
+          return
+        }
+
+        /** Move the orbs so that they only overlap in one point. */
+        const m = orb1.mass + orb2.mass,
+              dr1 = orb1.mass / m * dr,
+              dr2 = orb2.mass / m * dr,
+              p = Vector.subtract(orb2.position, orb1.position).normalize(),
+              p1 = Vector.multiply(p, -dr1),
+              p2 = Vector.multiply(p, dr2)
+
+        set(this.diff, `orbs.${id1}.position`, Vector.add(orb1.position, p1))
+        set(this.diff, `orbs.${id2}.position`, Vector.add(orb2.position, p2))
+
+        /** Mutate velocity so that the orbs bounce off each other. */
+        const l = new Vector(-p.y, p.x),
+              v1 = orb1.velocity,
+              k1 = 2 * Vector.dot(v1, l) / Vector.dot(l, l),
+              newV1 = Vector.multiply(l, k1).subtract(v1),
+              v2 = orb2.velocity,
+              k2 = 2 * Vector.dot(v2, l) / Vector.dot(l ,l),
+              newV2 = Vector.multiply(l, k2).subtract(v2)
+
+        const v = newV1.length() + newV2.length()
+
+        newV1.setLength(v / 2 * k)
+        newV2.setLength(v / 2 * k)
+        
+        set(this.diff, `orbs.${id1}.velocity`, newV1)
+        set(this.diff, `orbs.${id2}.velocity`, newV2)
       }
     })
 

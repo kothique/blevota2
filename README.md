@@ -1,7 +1,5 @@
 ## ROADMAP
 
-- physics
-  - collision response
 - game mechanics
 - ui
   - persistent redux state
