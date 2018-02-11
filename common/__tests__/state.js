@@ -32,10 +32,11 @@ describe('State', () => {
           world = new World(null, state)
             .newOrb(idA)
             .newOrb(idB)
-            .startIteration()
 
     for (let i = 0; i < 120; i++) {
-      world.applyControls(idA, {
+      world
+      .startIteration()
+      .applyControls(idA, {
         mX: 150,
         mY: 12,
         lmb: true,
