@@ -105,8 +105,8 @@ class World {
   /**
    * Advance the physics by `dt`.
    * 
-   * @param {number} t  - Current timestamp.
-   * @param {number} dt - Timestep.
+   * @param {number} t  - Current timestamp in seconds.
+   * @param {number} dt - Timestep in seconds.
    * @chainable
    */
   integrate(t, dt) {

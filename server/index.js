@@ -13,9 +13,6 @@ if (process.env.NODE_ENV !== 'production') {
   inspector.open(config.inspector.port)
 }
 
-/** Run it before any other server code */
-process.env.WHERE = 'server'
-
 /**
  * The port to listen to. Can be provided from outside by
  * the PORT environment variable.

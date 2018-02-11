@@ -20,6 +20,17 @@ class Orb extends Entity {
       moveForce: Orb.moveForce
     })
   }
+
+  static fromBuffer(buffer, offset) {
+    const entity = Entity.fromBuffer(buffer, offset)
+    let orb = new Orb({
+            radius: entity.radius
+          })
+
+    Object.assign(orb, entity)
+
+    return orb
+  }
 }
 
 /**

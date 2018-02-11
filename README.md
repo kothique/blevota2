@@ -1,8 +1,10 @@
 ## ROADMAP
 
+- physics
+  - relative static contanct
+  - sliding
 - game mechanics
   - hp, mp
-  - different orb sizes
   - skills
 - ui
   - persistent redux state
@@ -12,3 +14,9 @@
   - register page
 - data compression
 - UDP
+- tests
+  - client/**
+  - common/
+      - vector.js: finish
+      - world.js
+  - server/**

@@ -21,7 +21,8 @@ class Entity {
    *  mass:       number,
    *  moveForce: ?number = 0,
    *  position:  ?Vector = V(0, 0),
-   *  velocity:  ?Vector = V(0, 0)
+   *  velocity:  ?Vector = V(0, 0),
+   *  force:  ?Vector = V(0, 0)
    */
   constructor(options) {
     this.radius       = options.radius
@@ -30,7 +31,7 @@ class Entity {
     this.position     = options.position     || V(0, 0)
     this.velocity     = options.velocity     || V(0, 0)
     this.force        = options.force        || V(0, 0)
-    this.acceleration = options.acceleration || V(0, 0)
+    this.acceleration = V(0, 0)
   }
 
   /**
@@ -53,8 +54,8 @@ class Entity {
    * Advance the physics of the entity by the timestep `dt`.
    * It uses semi-implicit Euler method.
    *
-   * @param {number} t - Current timestamp.
-   * @param {number} dt - Timestep.
+   * @param {number} t - Current timestamp in seconds.
+   * @param {number} dt - Timestep in seconds.
    * @chainable
    */
   integrate(t, dt) {
@@ -97,7 +98,7 @@ class Entity {
    * @return {Entity} - The resulting entity object.
    */
   static fromBuffer(buffer, offset) {
-    const entity = new Entity({
+    let entity = new Entity({
       radius:    buffer.readDoubleBE(offset + 8 * 0),
       mass:      buffer.readDoubleBE(offset + 8 * 1),
       moveForce: buffer.readDoubleBE(offset + 8 * 2),
@@ -112,7 +113,7 @@ class Entity {
       force: V(
         buffer.readDoubleBE(offset + 8 * 7),
         buffer.readDoubleBE(offset + 8 * 8)
-      )
+      ),
     })
 
     return entity
