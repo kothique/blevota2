@@ -24,7 +24,7 @@ class State {
     buffer.writeDoubleBE(ids.length, 0)
 
     let offset = 8
-    for (const id of ids) {
+    for (const id in this.orbs) {
       buffer.write(id, offset, 24)
       this.orbs[id].writeToBuffer(buffer, offset + 24)
 

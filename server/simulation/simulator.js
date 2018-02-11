@@ -7,7 +7,7 @@ const present = require('present')
 const Dict = require('collections/dict')
 
 const World = require('../../common/world')
-const { Vector, v } = require('../../common/vector')
+const { Vector, V } = require('../../common/vector')
 
 /**
  * @class
@@ -24,7 +24,7 @@ class Simulator extends EventEmitter {
   constructor(options = {}) {
     super()
 
-    this.world = options.world || new World(v(800, 600))
+    this.world = options.world || new World(V(800, 600))
     this.t = options.t || 0
     this.dt = options.dt || 1000 / 120 // milliseconds
     this.accumulator = 0

@@ -30,9 +30,6 @@ class OrbPool {
     for (let i = 0; i < n; i++) {
       const orb = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
       orb.style.fill = 'rgb(150, 0, 30)'
-      orb.setAttributeNS(null, 'cx', 0)
-      orb.setAttributeNS(null, 'cy', 0)
-      orb.setAttributeNS(null, 'r', 30)
       orb.setAttributeNS(null, 'visibility', 'hidden')
       
       this.buffer.push(orb)

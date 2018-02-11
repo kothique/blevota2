@@ -207,10 +207,10 @@ class Vector {
   /**
    * Check if the vector is close to zero.
    *
-   * @param {number} epsilon
+   * @param {?number} epsilon
    */
-  isZero(epsilon) {
-    return this.length <= epsilon
+  isZero(epsilon = 0) {
+    return this.length() <= epsilon
   }
 
   /**
@@ -224,7 +224,7 @@ class Vector {
   }
 
   /**
-   * Translate the vector to a string. If the modifier is specified,
+   * Translate the vector into a string. If the modifier is specified,
    * apply it to the vector components.
    *
    * @param {function} modifier
@@ -243,8 +243,8 @@ module.exports.Vector = Vector
  * @param {number} x
  * @param {number} y
  */
-function v(x, y) {
+function V(x, y) {
   return new Vector(x, y)
 }
 
-module.exports.v = v
+module.exports.V = V

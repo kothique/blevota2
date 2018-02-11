@@ -75,6 +75,7 @@ export default class Game extends EventEmitter {
         if (this.orbs[id]) {
           this.orbs[id].setAttributeNS(null, 'cx', orb.position.x)
           this.orbs[id].setAttributeNS(null, 'cy', orb.position.y)
+          this.orbs[id].setAttributeNS(null, 'r', orb.radius)
         }
       }
     })
@@ -120,7 +121,12 @@ export default class Game extends EventEmitter {
     })
 
     socket.on('new-orb', (id) => {
-      this.orbs[id] = this.orbPool.get()
+      const orb = this.orbPool.get()
+      orb.setAttributeNS(null, 'cx', 0)
+      orb.setAttributeNS(null, 'cy', 0)
+      orb.setAttributeNS(null, 'r', 0)
+
+      this.orbs[id] = orb
     })
 
     socket.on('remove-orb', (id) => {

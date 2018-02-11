@@ -4,7 +4,7 @@
 
 const merge = require('lodash/merge')
 
-const { Vector, v } = require('./vector')
+const { Vector, V } = require('./vector')
 
 /**
  * @class

@@ -8,8 +8,17 @@ const Entity = require('./entity')
  * @class
  */
 class Orb extends Entity {
-  constructor() {
-    super(Orb.mass, Orb.moveForce)
+  /**
+   * Create a new orb.
+   *
+   * @param {object} options - Options { radius: number }.
+   */
+  constructor(options) {
+    super({
+      ...options,
+      mass: Orb.mass,
+      moveForce: Orb.moveForce
+    })
   }
 }
 
