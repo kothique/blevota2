@@ -46,9 +46,9 @@ class World {
       radius,
       position: V(x, y),
       maxHp: 100,
-      hp: 100,
+      hp: 80,
       maxMp: 100,
-      mp: 100
+      mp: 70
     })
 
     this.state.orbs[id] = orb

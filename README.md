@@ -24,3 +24,5 @@
   - server/**
 - misc
   - use Object.create(null) instead of {} for dictionaries
+- fix bugs
+  - latency grows slowly as the game continues

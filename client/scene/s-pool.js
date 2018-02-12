@@ -31,7 +31,7 @@ export default class SPool {
       const orb = new SOrb().setVisibility('hidden')
       
       this.orbBuffer.push(orb)
-      this.svg.appendChild(orb.element)
+      this.svg.appendChild(orb.getNode())
     }
   }
 

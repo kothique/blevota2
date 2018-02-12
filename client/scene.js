@@ -20,7 +20,7 @@ export default class Scene {
   newOrb(id) {
     const orb = this.pool.getOrb()
 
-    this.svg.appendChild(orb.element)
+    this.svg.appendChild(orb.getNode())
     this.orbs[id] = orb
   }
 
@@ -43,7 +43,7 @@ export default class Scene {
    */
   removeOrb(id) {
     if (this.orbs[id]) {
-      this.svg.removeChild(this.orbs[id].element)
+      this.svg.removeChild(this.orbs[id].getNode())
       delete this.orbs[id]
     }
   }

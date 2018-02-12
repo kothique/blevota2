@@ -74,8 +74,12 @@ export default class Game extends EventEmitter {
           mp: ${orb.mp} / ${orb.maxMp}<br />`
 
         this.scene.updateOrb(id, {
-          radius: orb.radius,
-          position: orb.position
+          radius:   orb.radius,
+          position: orb.position,
+          maxHp:    orb.maxHp,
+          hp:       orb.hp,
+          maxMp:    orb.maxMp,
+          mp:       orb.mp
         })
       }
     })
