@@ -10,6 +10,11 @@ export default class SOrb {
    * Create a new SOrb.
    */
   constructor() {
+    this.position = V(0, 0)
+    this.radius = 0
+    this.hpValue = 0
+    this.mpValue = 0
+
     this.circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     this.circle.setAttributeNS(null, 'fill', 'rgb(50, 150, 80)')
     this.circle.setAttributeNS(null, 'fill-opacity', '0.7')
@@ -54,20 +59,27 @@ export default class SOrb {
    *  mp:       number
    */
   render(options) {
-      const {
-        radius,
-        position,
-        maxHp, hp,
-        maxMp, mp
-      } = options
+    const { radius, position, maxHp, hp, maxMp, mp } = options,
+          hpValue = hp / maxHp,
+          mpValue = mp / maxMp
 
-      this.hp.setAttributeNS(null, 'd', SVG.circleBar(V(0, 0), radius * 0.8, radius, hp / maxHp))
-      this.mp.setAttributeNS(null, 'd', SVG.circleBar(V(0, 0), radius * 0.6, radius * 0.8, mp / maxMp))
-
+    if (!radius.equals(this.radius, 1e-1)) {
       this.circle.setAttributeNS(null, 'r', radius)
 
-      const { x, y } = position
-      this.group.setAttributeNS(null, 'transform', `translate(${x} ${y})`)
+      if (!hpValue.equals(this.hpValue) || !mpValue.equals(this.mpValue)) {
+        this.hp.setAttributeNS(null, 'd', SVG.circleBar(V(0, 0), radius * 0.8, radius, hpValue))
+        this.mp.setAttributeNS(null, 'd', SVG.circleBar(V(0, 0), radius * 0.6, radius * 0.8, mpValue))
+      }
+    }
+
+    if (!position.equals(this.position, 1e-2)) {
+      this.group.setAttributeNS(null, 'transform', `translate(${position.x} ${position.y})`)
+    }
+
+    this.position = position
+    this.radius = radius
+    this.hpValue = hp / maxHp
+    this.mpValue = mp / maxMp
 
     return this
   }

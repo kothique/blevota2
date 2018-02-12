@@ -20,16 +20,25 @@ describe('Vector', () => {
     expect(V(-1, 2).length()).toBeCloseTo(2.2360)
   })
 
-  test('equals() is like (===) on vector components', () => {
-    expect(V(0, 0).equals(V(0, 0))).toBeTruthy()
-    expect(V(-0, +0).equals(V(0, 0))).toBeTruthy()
-    expect(V(NaN, 0).equals(V(NaN, 0))).toBeFalsy()
-  })
+  describe('equals()', () => {
+    test('should be like (===) on vector components', () => {
+      expect(V(0, 0).equals(V(0, 0))).toBeTruthy()
+      expect(V(-0, +0).equals(V(0, 0))).toBeTruthy()
+      expect(V(NaN, 0).equals(V(NaN, 0))).toBeFalsy()
+    })
 
-  test('Vector.equal(v1, v2) === v1.equals(v2)', () => {
-    expect(Vector.equal(V(0, 0), V(0, 0))).toBeTruthy()
-    expect(Vector.equal(V(-0, +0), V(0, 0))).toBeTruthy()
-    expect(Vector.equal(V(NaN, 0), V(NaN, 0))).toBeFalsy()
+    test('Vector.equal(v1, v2) === v1.equals(v2)', () => {
+      expect(Vector.equal(V(0, 0), V(0, 0))).toBeTruthy()
+      expect(Vector.equal(V(-0, +0), V(0, 0))).toBeTruthy()
+      expect(Vector.equal(V(NaN, 0), V(NaN, 0))).toBeFalsy()
+    })
+
+    test('with specified accuracy', () => {
+      expect(V(1.234, 1.853).equals(V(1.235, 1.856), 1e-2)).toBeTruthy()
+      expect(V(1.234, 1.853).equals(V(1.235, 1.856), 1e-3)).toBeFalsy()
+      expect(V(-1.23, 1.85).equals(V(-1.23, 1.85), 1e-2)).toBeTruthy()
+      expect(V(1.23, 1.85).equals(V(-1.23, 1.85), 1e-2)).toBeFalsy()
+    })
   })
 
   describe('angle()', () => {

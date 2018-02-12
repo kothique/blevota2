@@ -22,5 +22,3 @@
       - vector.js: finish
       - world.js
   - server/**
-- fix bugs
-  - latency grows slowly as the game continues

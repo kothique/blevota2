@@ -2,6 +2,8 @@
  * @module common/vector
  */
 
+require('./util')
+
 /**
  * @class
  *
@@ -42,9 +44,10 @@ class Vector {
    * Vector equality.
    *
    * @param {Vector} v
+   * @param {?number} e - Accuracy.
    */
-  equals(v) {
-    return this.x === v.x && this.y === v.y
+  equals(v, e = 0) {
+    return this.x.equals(v.x, e) && this.y.equals(v.y, e)
   }
 
   /**

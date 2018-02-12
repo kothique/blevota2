@@ -15,8 +15,23 @@ const { Vector, V } = require('./vector')
  * @param {...*} boundArgs - The arguments to be bound.
  * @return {function} - The resulting function.
  */
-Function.prototype.bindArgs = function bindArgs(...boundArgs) {
+Function.prototype.bindArgs = function (...boundArgs) {
   return (...args) => this.call(this, ...boundArgs, ...args)
+}
+
+/**
+ * Compare two floats.
+ *
+ * @name Number#equals
+ * @method
+ * @memberof! <global>
+ *
+ * @param {number} n
+ * @param {?number} e - Accuracy.
+ * @return {bool}
+ */
+Number.prototype.equals = function (n, e = 1e-2) {
+  return Math.abs(this - n) <= e
 }
 
 const SVG = {
