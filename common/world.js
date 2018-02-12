@@ -44,7 +44,11 @@ class World {
     const orb = new Orb({
       mass,
       radius,
-      position: V(x, y)
+      position: V(x, y),
+      maxHp: 100,
+      hp: 100,
+      maxMp: 100,
+      mp: 100
     })
 
     this.state.orbs[id] = orb

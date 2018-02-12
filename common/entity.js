@@ -9,20 +9,20 @@ const set = require('lodash/set')
  * @class
  *
  * @description
- * An entity is a physical object that can have position and move.
+ * An entity is a physical object.
  */
 class Entity {
   /**
    * Create a new entity.
    *
    * @param {object} options - Options.
-   * The next options are possible:
+   * The options are as follows:
    *  radius:     number,
    *  mass:       number,
    *  moveForce: ?number = 0,
    *  position:  ?Vector = V(0, 0),
    *  velocity:  ?Vector = V(0, 0),
-   *  force:  ?Vector = V(0, 0)
+   *  force:     ?Vector = V(0, 0)
    */
   constructor(options) {
     this.radius       = options.radius
@@ -70,10 +70,10 @@ class Entity {
   }
 
   /**
-   * Translate the object into a buffer.
+   * Write the entity's binary representation into a buffer.
    *
    * @param {Buffer} buffer - The buffer to write to.
-   * @param {number} offset - The offset.
+   * @param {number} offset
    */
   writeToBuffer(buffer, offset) {
     buffer.writeDoubleBE(this.radius,     offset + 8 * 0)
@@ -94,7 +94,7 @@ class Entity {
    * Create an entity from a buffer.
    *
    * @param {Buffer} buffer - The buffer to create the entitiy from.
-   * @param {number} offset - The offset starting with which to read the entity.
+   * @param {number} offset - Offset in bytes.
    * @return {Entity} - The resulting entity object.
    */
   static fromBuffer(buffer, offset) {

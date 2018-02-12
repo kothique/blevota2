@@ -52,6 +52,7 @@
     "babel-jest": "^22.2.2",
     "copy-webpack-plugin": "^4.3.1",
     "jest": "^22.2.2",
-    "jsdoc": "^3.5.5"
+    "jsdoc": "^3.5.5",
+    "jsdom": "^11.6.2"
   }
 }

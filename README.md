@@ -6,7 +6,6 @@
   - relative static contanct
   - sliding
 - game mechanics
-  - hp, mp
   - skills
 - ui
   - persistent redux state
@@ -14,6 +13,7 @@
   - welcome page
   - login page
   - register page
+  - host can be entered by user
 - data compression
 - UDP
 - tests
@@ -22,3 +22,5 @@
       - vector.js: finish
       - world.js
   - server/**
+- misc
+  - use Object.create(null) instead of {} for dictionaries

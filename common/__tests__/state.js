@@ -14,11 +14,19 @@ describe('State', () => {
     const state = new State
 
     state.orbs['a'.repeat(24)] = new Orb({
-      radius: 30
+      radius: 30,
+      maxHp: 100,
+      hp: 90,
+      maxMp: 150,
+      mp: 75
     })
 
     state.orbs['b'.repeat(24)] = new Orb({
-      radius: 30
+      radius: 30,
+      maxHp: 120,
+      hp: 113,
+      maxMp: 120,
+      mp: 91
     })
 
     const buffer = state.toBuffer()

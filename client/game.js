@@ -6,7 +6,7 @@ import { Buffer } from 'buffer-browserify'
 import Keyboard from './keyboard'
 import PlayoutBuffer from './playoutbuffer';
 import State from '../common/state'
-import OrbPool from './orb-pool'
+import Scene from './scene'
 
 export default class Game extends EventEmitter {
   static host = 'http://localhost:3000/'
@@ -23,8 +23,7 @@ export default class Game extends EventEmitter {
     */
     this.svg = context
     this.info = info
-    this.orbPool = new OrbPool(this.svg)
-    this.orbs = {}
+    this.scene = new Scene(this.svg)
 
     const buttonName = {
       0: 'lmb',
@@ -70,13 +69,14 @@ export default class Game extends EventEmitter {
           f: ${orb.force.toString(n => n.toFixed(4))}<br />
           p: ${orb.position.toString(n => n.toFixed(4))}<br />
           v: ${orb.velocity.toString(n => n.toFixed(4))}<br />
-          a: ${orb.acceleration.toString(n => n.toFixed(4))}<br />`
+          a: ${orb.acceleration.toString(n => n.toFixed(4))}<br />
+          hp: ${orb.hp} / ${orb.maxHp}<br />
+          mp: ${orb.mp} / ${orb.maxMp}<br />`
 
-        if (this.orbs[id]) {
-          this.orbs[id].setAttributeNS(null, 'cx', orb.position.x)
-          this.orbs[id].setAttributeNS(null, 'cy', orb.position.y)
-          this.orbs[id].setAttributeNS(null, 'r', orb.radius)
-        }
+        this.scene.updateOrb(id, {
+          radius: orb.radius,
+          position: orb.position
+        })
       }
     })
 
@@ -121,19 +121,11 @@ export default class Game extends EventEmitter {
     })
 
     socket.on('new-orb', (id) => {
-      const orb = this.orbPool.get()
-      orb.setAttributeNS(null, 'cx', 0)
-      orb.setAttributeNS(null, 'cy', 0)
-      orb.setAttributeNS(null, 'r', 0)
-
-      this.orbs[id] = orb
+      this.scene.newOrb(id)
     })
 
     socket.on('remove-orb', (id) => {
-      console.log(`Orb removed: ${id}`)
-
-      this.orbPool.return(this.orbs[id])
-      delete this.orbs[id]
+      this.scene.removeOrb(id)
     })
   }
 
