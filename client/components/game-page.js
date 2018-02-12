@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { func, string } from 'prop-types'
 import { push } from 'react-router-redux'
@@ -70,7 +70,7 @@ class GamePage extends Component {
 
   render() {
     return (
-      <Fragment>
+      <main id="game-page">
         <svg
           id="game"
           version="1.1"
@@ -79,7 +79,7 @@ class GamePage extends Component {
           >
         </svg>
         <div id="info"></div>
-      </Fragment>
+      </main>
     )
   }
 }

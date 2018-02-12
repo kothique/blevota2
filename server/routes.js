@@ -76,6 +76,10 @@ module.exports = (app) => {
     })
   })
 
+  app.get('/bg', (req, res) => {
+    res.sendFile(resolve(__dirname, '../dist/images/bg.png'))
+  })
+
   app.get('/js', (req, res) => {
     res.sendFile(resolve(__dirname, '../dist/bundle.js'))
   })

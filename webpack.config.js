@@ -9,7 +9,8 @@ module.exports = {
   },
   plugins: [
     new CopyWebpackPlugin([
-      { from: './client/index.html', to: './index.html' }
+      { from: './client/index.html', to: './index.html' },
+      { from: './client/images/', to: './images/' }
     ])
   ],
   module: {
