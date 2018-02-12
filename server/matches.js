@@ -11,7 +11,7 @@ const Match = require('./match')
  *
  * @type {object}
  */
-const matches = {}
+const matches = Object.create(null)
 module.exports.matches = matches
 
 function createMatch() {

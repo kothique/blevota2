@@ -21,7 +21,7 @@ class Simulator extends EventEmitter {
    *
    * @param {object} options - Options: { world: World, t: number, dt: number }.
    */
-  constructor(options = {}) {
+  constructor(options = Object.create(null)) {
     super()
 
     this.world = options.world || new World(V(800, 600))

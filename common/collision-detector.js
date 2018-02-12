@@ -17,7 +17,7 @@ class CollisionDetector {
    *  collisions with walls will not be detected.
    */
   constructor(worldSize = null) {
-    this.boxes = {}
+    this.boxes = Object.create(null)
     this.worldSize = worldSize
   }
 

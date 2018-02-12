@@ -9,7 +9,7 @@ const Orb = require('./orb')
  */
 class State {
   constructor() {
-    this.orbs = {}
+    this.orbs = Object.create(null)
   }
 
   /**

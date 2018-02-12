@@ -1,8 +1,8 @@
 export default class Keyboard {
-  static keys = {}
-  static keysData = {}
+  static keys = Object.create(null)
+  static keysData = Object.create(null)
   static onchange = null
-  static aliases = {}
+  static aliases = Object.create(null)
 
   static listen = (keyCode, alias = undefined, onPress = undefined, onRelease = undefined) => {
     Keyboard.addKeyListener(keyCode)
@@ -75,7 +75,7 @@ export default class Keyboard {
   }
 
   static getControls() {
-    let result = {}
+    let result = Object.create(null)
     for (let keyCode of Object.keys(Keyboard.keys)) {
       result[Keyboard.aliases[keyCode] || keyCode] = Keyboard.keys[keyCode]
     }

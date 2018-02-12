@@ -89,7 +89,7 @@ module.exports.login = (username, password) => new Promise((resolve, reject) => 
  * @param {?object} options
  * @return {function} - The middleware.
  */
-module.exports.expressMiddleware = (options = {}) => {
+module.exports.expressMiddleware = (options = Object.create(null)) => {
   const {} = options
 
   return (req, res, next) => {
@@ -149,7 +149,7 @@ module.exports.expressMiddleware = (options = {}) => {
  * @param {?object} options - { onEmptyToken, onInvalidSignature }.
  * @return {function} - The middleware.
  */
-module.exports.socketIoMiddleware = (options = {}) => {
+module.exports.socketIoMiddleware = (options = Object.create(null)) => {
   const { onEmptyToken, onInvalidSignature } = options
 
   return (socket, next) => {
