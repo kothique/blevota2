@@ -15,7 +15,9 @@
   - register page
   - host can be entered by user
 - data compression
-- UDP
+- performance
+  - UDP
+  - write a benchmark to find out the real FPS
 - tests
   - client/**
   - common/

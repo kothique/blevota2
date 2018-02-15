@@ -66,10 +66,15 @@ describe('State', () => {
 
     const buffer = state.toBuffer()
 
-    // acceleration should not be transmitted
-    state.orbs[idA].acceleration = expect.anything()
-    state.orbs[idB].acceleration = expect.anything()
+    const deserialized = State.fromBuffer(buffer)
 
-    expect(State.fromBuffer(buffer)).toMatchObject(state)
+    // acceleration and effects should not be transmitted
+    new Array(idA, idB).forEach((id) => {
+      state.orbs[id].acceleration = expect.anything()
+      state.orbs[id].effects = expect.anything()
+    })
+
+    expect(deserialized).toBeInstanceOf(State)
+    expect(deserialized).toMatchObject(state)
   })
 })

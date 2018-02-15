@@ -1,22 +1,11 @@
 const Entity = require('../entity')
+const Effect = require('../effect')
 const { V } = require('../vector')
 
+jest.mock('../effect')
+
 describe('Entity', () => {
-  test('construction with default options', () => {
-    const entity = new Entity({
-      radius: 1,
-      mass: 2
-    })
-
-    expect(entity.radius).toBe(1)
-    expect(entity.mass).toBe(2)
-    expect(entity.moveForce).toBe(0)
-    expect(entity.position).toEqual(V(0 ,0))
-    expect(entity.velocity).toEqual(V(0 ,0))
-    expect(entity.force).toEqual(V(0 ,0))
-  })
-
-  test('construction with custom options', () => {
+  test('construction', () => {
     const entity = new Entity({
       radius: 1,
       mass: 2,
@@ -133,6 +122,59 @@ describe('Entity', () => {
     expect(entity.position.y).toBeGreaterThan(100)
   })
 
+  test('should receive effects', () => {
+    const entity = new Entity({
+      radius: 30,
+      mass: 1,
+      moveForce: 0.1,
+      position: V(100, 100)
+    })
+
+    const effect = new Object
+    effect.apply = jest.fn()
+
+    entity.receive(effect)
+    expect(entity.effects.length).toBe(1)
+
+    entity.applyEffects(0.01)
+    entity.applyEffects(0.01)
+
+    expect(effect.apply.mock.calls.length).toBe(2)
+    expect(effect.apply.mock.calls[0][0]).toBe(entity)
+    expect(effect.apply.mock.calls[1][0]).toBe(entity)
+  })
+
+  test('should remove dead effects', () => {
+    const entity = new Entity({
+      radius: 30,
+      mass: 1,
+      moveForce: 0.1,
+      position: V(100, 100)
+    })
+
+    const effect = new Object
+    effect.timeToDie = 0.02
+    effect.alive = true
+    effect.apply = jest.fn(function (target, timestep) {
+      this.timeToDie -= timestep
+
+      if (this.timeToDie <= 0) {
+        this.alive = false
+      }
+    })
+
+    entity.receive(effect)
+    expect(entity.effects.length).toBe(1)
+
+    entity.applyEffects(0.01)
+    expect(entity.effects.length).toBe(1)
+
+    entity.applyEffects(0.01)
+    entity.applyEffects(0.01) // to make sure effect.timeToDie < 0.02
+    expect(effect.alive).toBeFalsy()
+    expect(entity.effects.length).toBe(0)
+  })
+
   test('serialization', () => {
     const buffer = Buffer.allocUnsafe(Entity.binaryLength)
 
@@ -148,6 +190,7 @@ describe('Entity', () => {
     original.writeToBuffer(buffer, 0)
     const entity = Entity.fromBuffer(buffer, 0)
 
+    expect(entity).toBeInstanceOf(Entity)
     expect(entity.radius).toBe(1)
     expect(entity.mass).toBe(2)
     expect(entity.moveForce).toBe(3)

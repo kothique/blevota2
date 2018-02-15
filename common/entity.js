@@ -4,6 +4,7 @@
 
 const { Vector, V } = require('../common/vector')
 const set = require('lodash/set')
+const { Set } = require('collections/set')
 
 /**
  * @class
@@ -32,6 +33,8 @@ class Entity {
     this.velocity     = options.velocity     || V(0, 0)
     this.force        = options.force        || V(0, 0)
     this.acceleration = V(0, 0)
+
+    this.effects = new Set
   }
 
   /**
@@ -48,6 +51,30 @@ class Entity {
     }
 
     return this
+  }
+
+  /**
+   * Receive an effect.
+   *
+   * @param {Effect} effect
+   */
+  receive(effect) {
+    this.effects.add(effect)
+  }
+
+  /**
+   * Apply the entity's effects.
+   *
+   * @param {number} dt - Timestep in seconds.
+   */
+  applyEffects(dt) {
+    this.effects.forEach((effect) => {
+      effect.apply(this, dt)
+
+      if (effect.alive === false) {
+        this.effects.remove(effect)
+      }
+    })
   }
 
   /**

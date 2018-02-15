@@ -65,11 +65,13 @@ export default class SOrb {
 
     if (!radius.equals(this.radius, 1e-1)) {
       this.circle.setAttributeNS(null, 'r', radius)
+      this.hp.setAttributeNS(null, 'd', SVG.circleBar(V(0, 0), radius * 0.8, radius, hpValue))
+      this.mp.setAttributeNS(null, 'd', SVG.circleBar(V(0, 0), radius * 0.6, radius * 0.8, mpValue))
+    }
 
-      if (!hpValue.equals(this.hpValue) || !mpValue.equals(this.mpValue)) {
-        this.hp.setAttributeNS(null, 'd', SVG.circleBar(V(0, 0), radius * 0.8, radius, hpValue))
-        this.mp.setAttributeNS(null, 'd', SVG.circleBar(V(0, 0), radius * 0.6, radius * 0.8, mpValue))
-      }
+    if (!hpValue.equals(this.hpValue) || !mpValue.equals(this.mpValue)) {
+      this.hp.setAttributeNS(null, 'd', SVG.circleBar(V(0, 0), radius * 0.8, radius, hpValue))
+      this.mp.setAttributeNS(null, 'd', SVG.circleBar(V(0, 0), radius * 0.6, radius * 0.8, mpValue))
     }
 
     if (!position.equals(this.position, 1e-2)) {

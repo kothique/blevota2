@@ -8,7 +8,8 @@ const merge = require('lodash/merge')
 
 const Orb = require('./orb')
 const State = require('./state')
-const CollisionDetector = require('./collision-detector')
+const InstantDamage = require('./effects/instant-damage')
+const CollisionDetector = require('./collision-detector') 
 const { Vector, V } = require('./vector')
 
 /**
@@ -118,6 +119,7 @@ class World {
 
     for (const id in orbs) {
       orbs[id].integrate(t, dt)
+      orbs[id].applyEffects(dt)
 
       const position = orbs[id].position,
             radius = orbs[id].radius
@@ -156,6 +158,8 @@ class World {
 
         const orb = this.state.orbs[id] 
 
+        orb.receive(new InstantDamage(5))
+
         switch (wall) {
           case 'left':
             orb.velocity.x *= -k
@@ -179,6 +183,9 @@ class World {
 
         const orb1 = this.state.orbs[id1],
               orb2 = this.state.orbs[id2]
+
+        orb1.receive(new InstantDamage(orb2.mass * 10))
+        orb2.receive(new InstantDamage(orb1.mass * 10))
 
         const dr = orb1.radius + orb2.radius - Vector.distance(orb1.position, orb2.position)
 

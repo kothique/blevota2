@@ -22,8 +22,8 @@ class Orb extends Entity {
   constructor(options) {
     super({
       ...options,
-      mass: Orb.mass,
-      moveForce: Orb.moveForce
+      mass:      options.mass      || 1,
+      moveForce: options.moveForce || 0.1
     })
 
     this.maxHp = options.maxHp
@@ -71,18 +71,6 @@ class Orb extends Entity {
     return orb
   }
 }
-
-/**
- * @type {number}
- * @static
- */
-Orb.mass = 1
-
-/**
- * @type {number}
- * @static
- */
-Orb.moveForce = 0.1
 
 /**
  * @type {number}
