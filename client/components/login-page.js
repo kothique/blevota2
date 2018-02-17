@@ -5,6 +5,7 @@ import { shape, bool, string, func } from 'prop-types'
 
 import { login } from '../reducers/login'
 import '../../common/util' // Function.prototype.bindArgs
+import '../styles/login-page.styl'
 
 class LoginPage extends Component {
   static propTypes = {
@@ -24,27 +25,41 @@ class LoginPage extends Component {
     const { login, onLogin } = this.props
     const { username, password } = this.state
 
+    let error
+    if (!login.isFetching && login.error) {
+      error = <div id="error">{login.error}</div>
+    }
+
     return (
-      <main id="login-page">
-        {login.isFetching
-          ? 'Fetching...'
-          : login.error
-         }
-        <form onSubmit={onLogin.bindArgs(username, password)}>
-          <input
-            type="text"
-            value={username}
-            onChange={event => this.setState({ username: event.target.value })}
-            autoFocus />
-          <br />
-          <input
-            type="password"
-            value={password}
-            onChange={event => this.setState({ password: event.target.value })} />
-          <br />
-          <button type="submit">
-            Login
+      <main id="lp-page">
+        <div id="lp-header">
+          <img id="lp-logo" src="/logo" /> Blevota 2
+        </div>
+
+        <form id="lp-form" onSubmit={onLogin.bindArgs(username, password)}>
+          <div id="">
+            <input
+              class="text-field"
+              type="text"
+              value={username}
+              onChange={event => this.setState({ username: event.target.value })}
+              autoFocus />
+            <br />
+            <input
+              class="text-field"
+              type="password"
+              value={password}
+              onChange={event => this.setState({ password: event.target.value })} />
+            <br />
+          </div>
+          <button
+            class="button"
+            id="login-button"
+            type="submit">
+            LOGIN
           </button>
+
+          {error}
         </form>
       </main>
     )

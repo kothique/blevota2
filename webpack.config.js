@@ -23,7 +23,29 @@ module.exports = {
       {
         test: /\.css$/,
         exclude: resolve(__dirname, 'node_modules'),
-        loader: ['style-loader', 'css-loader']
+        loader: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: false
+            }
+          }
+        ]
+      },
+      {
+        test: /\.styl$/,
+        exclude: resolve(__dirname, 'node_modules'),
+        loader: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: false
+            }
+          },
+          'stylus-loader'
+        ]
       }
     ]
   }

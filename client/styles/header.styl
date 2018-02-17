@@ -1,0 +1,66 @@
+@import './_variables'
+
+#h-header
+  height header-height
+  padding 0
+  background-color header-color
+  border-bottom 3px solid header-border-color
+  z-index header-z
+  text-align center
+  // position sticky
+  // top 0
+
+#h-container
+  @media xs
+    width 100%
+
+  @media sm
+    width 100%
+
+  @media md
+    width 100%
+
+  @media lg
+    width 100%
+
+  @media xl
+    max-width 1200px
+
+  margin 0 auto
+  padding 0 16px
+
+#h-logo
+  img
+    width 56px
+    height 56px
+    margin-top 8px
+
+  margin 0
+
+#h-brandname
+  font-size 24px
+  padding-top 22px
+
+#h-menu-button
+  img
+    width 32px
+    height 32px
+    margin-top 20px
+
+.h-box
+  display inline-block
+  margin 0 8px
+  padding 0
+  height header-height
+  float left
+
+  &-text
+    color white
+    text-transform uppercase
+    padding-top 28px
+
+  &-space
+    min-width 64px
+
+  &-right
+    float right

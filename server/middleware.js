@@ -5,6 +5,7 @@ const auth = require('./auth')
 
 module.exports = (app) => {
   app.use(morgan('combined'))
+  app.use(express.static('dist'))
   app.use(express.json())
   app.use(express.urlencoded({
     extended: true

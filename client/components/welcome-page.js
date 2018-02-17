@@ -1,12 +1,16 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
-import { object, func } from 'prop-types'
-import { decode } from 'jsonwebtoken'
 
 import { logout } from '../reducers/login'
 import { matches } from '../reducers/matches'
 import { newMatch } from '../reducers/new-match'
+import Header from './header'
+import Menu from './menu'
+import MainSection from './main-section'
+import Footer from './footer'
+
+import '../styles/welcome-page.styl'
 
 class WelcomePage extends Component {
   componentDidMount() {
@@ -19,7 +23,7 @@ class WelcomePage extends Component {
     }
 
     updateMatches()
-    this.intervalID = window.setInterval(updateMatches, 5000)
+    this.intervalID = window.setInterval(updateMatches, 10000)
   }
 
   componentWillUnmount() {
@@ -27,8 +31,18 @@ class WelcomePage extends Component {
   }
 
   render() {
-    const { dispatch, login, matches,
-            onNewMatch, onLogout, onLogin, onRegister } = this.props
+    const { dispatch, login, matches } = this.props
+
+    return (
+      <Fragment>
+        <Header />
+        <Menu />
+        <div id="content">
+          <MainSection />
+        </div>
+        <Footer />
+      </Fragment>
+    )
 
     let contentMain
     if (login.isFetching) {

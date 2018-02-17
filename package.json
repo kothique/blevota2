@@ -53,6 +53,8 @@
     "copy-webpack-plugin": "^4.3.1",
     "jest": "^22.2.2",
     "jsdoc": "^3.5.5",
-    "jsdom": "^11.6.2"
+    "jsdom": "^11.6.2",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1"
   }
 }

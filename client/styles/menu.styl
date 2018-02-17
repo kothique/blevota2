@@ -1,0 +1,60 @@
+@import './_variables'
+
+#m-menu
+  position absolute
+  top header-height
+  right 0
+  bottom 0
+  width menu-item-size
+  z-index menu-z
+  text-align center
+
+#m-item-news
+  background-color rgb(245, 230, 24)
+  transition-delay 0ms
+
+  .hidden &
+    transition-delay 3 * (menu-duration + menu-pause)
+
+#m-item-wiki
+  background-color rgb(245, 182, 65)
+  transition-delay menu-duration + menu-pause
+
+  .hidden &
+    transition-delay 2 * (menu-duration + menu-pause)
+
+#m-item-login
+  background-color rgb(54, 160, 202)
+  transition-delay 2 * (menu-duration + menu-pause)
+
+  .hidden &
+    transition-delay menu-duration + menu-pause
+
+#m-item-join
+  background-color rgb(193, 107, 158)
+  transition-delay 3 * (menu-duration + menu-pause)
+
+  .hidden &
+    transition-delay 0ms
+
+.m-item
+  display block
+  width menu-item-size
+  height menu-item-size
+  padding 16px 0
+  text-transform uppercase
+  color orb-border-color
+  font-size 20px
+  for side in left right bottom
+    border-{side} 3px solid menu-border-color
+
+  position relative
+  right 8px
+  transition right menu-duration linear
+
+  .hidden &
+    right menu-item-size * -1
+
+  img
+    width menu-item-size * 0.5
+    height menu-item-size * 0.5

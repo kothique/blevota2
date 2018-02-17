@@ -9,6 +9,8 @@ import LoginPage from './login-page'
 import RegisterPage from './register-page'
 import GamePage from './game-page'
 
+import '../styles/common.styl'
+
 class Root extends Component {
   static propTypes = {
     store: object.isRequired,

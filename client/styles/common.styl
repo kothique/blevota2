@@ -1,0 +1,47 @@
+@import './_mixins'
+@import './_variables'
+
+*
+  prefix(box-sizing, border-box, webkit moz)
+  font-family roboto,Tahoma,arial
+
+body, html
+  margin 0
+  padding 0
+  height 100%
+  overflow-x hidden
+
+#root
+  min-height 100%
+  position relative
+
+#content
+  padding-bottom footer-height
+  z-index content-z
+
+a
+  text-decoration none
+  cursor pointer
+
+.xs, .sm, .md, .lg, .xl
+  display none
+
+@media xs
+  .xs
+    display initial !important
+
+@media sm
+  .sm
+    display initial !important
+
+@media md
+  .md
+    display initial !important
+
+@media lg
+  .lg
+    display initial !important
+
+@media xl
+  .xl
+    display initial !important
