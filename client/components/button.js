@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { string, func } from 'prop-types'
+import { string, func, object } from 'prop-types'
 
 import '../styles/button.styl'
 
@@ -8,7 +8,8 @@ class Button extends Component {
     id: string,
     className: string,
     onClick: func,
-    type: string
+    type: string,
+    attrs: object
   }
 
   render() {
@@ -21,6 +22,7 @@ class Button extends Component {
         onClick={onClick}
         type={type}
         {...attrs}>
+
        {children}
       </button>
     )

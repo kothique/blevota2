@@ -9,6 +9,9 @@
   - skills
 - ui
   - 404 not found page
+  - CheckButton component
+  - Label component
+  - user profile
   - persistent redux state
   - moving camera
   - host can be entered by user

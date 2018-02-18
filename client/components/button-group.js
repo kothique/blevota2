@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
-import { string } from 'prop-types'
+import { string, object } from 'prop-types'
 
 import '../styles/button-group.styl'
 
 class ButtonGroup extends Component {
   static propTypes = {
     id: string,
-    className: string
+    className: string,
+    attrs: object
   }
 
   render() {
