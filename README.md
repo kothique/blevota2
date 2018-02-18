@@ -8,6 +8,7 @@
 - game mechanics
   - skills
 - ui
+  - 404 not found page
   - persistent redux state
   - moving camera
   - host can be entered by user
