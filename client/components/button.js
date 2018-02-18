@@ -1,24 +1,26 @@
 import React, { Component } from 'react'
-import { string, func, arrayOf, node } from 'prop-types'
+import { string, func } from 'prop-types'
 
 import '../styles/button.styl'
 
 class Button extends Component {
   static propTypes = {
     id: string,
-    onClick: func,
     className: string,
-    children: arrayOf(node)
+    onClick: func,
+    type: string
   }
 
   render() {
-    const { id, onClick, className, children } = this.props
+    const { id, onClick, type, className, children, attrs } = this.props
 
     return (
       <button
         id={id}
         className={`button ${className || ''}`}
-        onClick={onClick}>
+        onClick={onClick}
+        type={type}
+        {...attrs}>
        {children}
       </button>
     )
