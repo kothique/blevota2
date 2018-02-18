@@ -10,10 +10,10 @@
 - ui
   - persistent redux state
   - moving camera
-  - welcome page
-  - login page
-  - register page
+  - register form
   - host can be entered by user
+  - loading animation
+  - mobile menu
 - data compression
 - performance
   - UDP

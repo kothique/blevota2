@@ -1,0 +1,49 @@
+@import './_variables'
+
+#login-form
+  z-index login-form-z
+  visibility hidden
+  transition opacity 300ms
+  opacity 0
+
+  /* position and size */
+  width login-form-width
+  position fixed
+  left "calc(50% - %s / 2)" % @width
+  top header-height
+
+  @media xs
+    width 90%
+    left 5%
+
+  /* */
+
+  background-color login-form-color
+  border 1px solid rgba(0, 0, 0, 0.3)
+  border-top none
+
+  &.open
+    visibility visible
+    transition opacity 300ms
+    opacity 255
+
+#lf-form
+  text-align center
+  margin 16px
+
+#lf-error
+  color rgba(255, 0, 0, 0.5)
+  font-weight 700
+  text-align left
+  font-size 80%
+  margin-top -8px
+
+#lf-buttons
+  width: 60%
+  margin-left "calc(100% - %s)" % @width
+  margin-top 32px
+
+#lf-close
+  background-color rgba(255, 0, 0, 0.1)
+  width 32px
+  flex none

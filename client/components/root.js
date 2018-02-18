@@ -5,7 +5,6 @@ import { ConnectedRouter } from 'react-router-redux'
 import { object } from 'prop-types'
 
 import WelcomePage from './welcome-page'
-import LoginPage from './login-page'
 import RegisterPage from './register-page'
 import GamePage from './game-page'
 
@@ -25,7 +24,6 @@ class Root extends Component {
         <ConnectedRouter history={history}>
           <Fragment>
             <Route exact path="/" component={WelcomePage} />
-            <Route path="/login" component={LoginPage} />
             <Route path="/register" component={RegisterPage} />
             <Route path="/match/:matchId" component={GamePage} />
           </Fragment>
