@@ -9,7 +9,6 @@
   - skills
 - ui
   - 404 not found page
-  - CheckButton component
   - user profile
   - persistent redux state
   - moving camera
