@@ -3,9 +3,10 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
 import { toggleMenu } from '../reducers/menu'
-import { toggleLoginForm } from '../reducers/login-form'
+import { openRegisterForm, openLoginForm } from '../reducers/modals'
 import { logout } from '../reducers/login'
 import LoginForm from './login-form'
+import RegisterForm from './register-form'
 
 import '../styles/header.styl'
 
@@ -29,12 +30,12 @@ class Header extends Component {
       userBox =
         <Fragment>
           <a className="h-box h-box-text h-box-right"
-            onClick={() => dispatch(push('/register'))}>
+            onClick={() => dispatch(openRegisterForm())}>
             Join
           </a>
           <div id="h-separator" className="h-box h-box-right"></div>
           <a className="h-nox h-box-text h-box-right"
-            onClick={() => dispatch(toggleLoginForm())}>
+            onClick={() => dispatch(openLoginForm())}>
             Login
           </a>
         </Fragment>
@@ -73,6 +74,7 @@ class Header extends Component {
           </div>
         </header>
         <LoginForm />
+        <RegisterForm />
       </Fragment>
     )
   }

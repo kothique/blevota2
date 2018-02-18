@@ -10,7 +10,6 @@
 - ui
   - persistent redux state
   - moving camera
-  - register form
   - host can be entered by user
   - loading animation
   - mobile menu

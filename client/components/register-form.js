@@ -2,16 +2,17 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
-import { login } from '../reducers/login'
-import { hideModals, LOGIN_FORM } from '../reducers/modals'
+import { register } from '../reducers/register'
+import { hideModals, REGISTER_FORM } from '../reducers/modals'
 import AnimationLoading from './animation-loading'
 
-import '../styles/login-form.styl'
+import '../styles/register-form.styl'
 
-class LoginForm extends Component {
+class RegisterForm extends Component {
   state = {
     username: '',
-    password: ''
+    password: '',
+    passwordRepeated: ''
   }
 
   componentDidUpdate(prevProps) {
@@ -26,7 +27,7 @@ class LoginForm extends Component {
 
   render() {
     const { dispatch, error, isFetching, open } = this.props
-    const { username, password } = this.state
+    const { username, password, passwordRepeated } = this.state
 
     const errorMessage = error ? <div id="lf-error">{error}</div> : ''
 
@@ -38,7 +39,7 @@ class LoginForm extends Component {
       content =
         <Fragment>
           <div className="label">
-            Username:  
+            Username:
           </div>
           <input
             className="text-field"
@@ -54,14 +55,22 @@ class LoginForm extends Component {
             type="password"
             value={password}
             onChange={event => this.setState({ password: event.target.value })} />
+          <div className="label">
+            Repeat your password:
+          </div>
+          <input
+            className="text-field"
+            type="password"
+            value={passwordRepeated}
+            onChange={event => this.setState({ passwordRepeated: event.target.value })} />
 
           {errorMessage}
         </Fragment>
     }
 
-    return(
-      <div id="login-form" className={'modal-shadow' + (open ? ' open' : '')}>
-        <form id="lf-form"
+    return (
+      <div id="register-form" className={'modal-shadow' + (open ? ' open' : '')}>
+        <form id="rf-form"
           onKeyUp={(event) => {
             if (event.keyCode === 27) {
               dispatch(hideModals())
@@ -70,7 +79,7 @@ class LoginForm extends Component {
           onSubmit={(event) => {
             event.preventDefault()
 
-            dispatch(login(username, password))
+            dispatch(register(username, password, passwordRepeated))
               .then(
                 () => dispatch(hideModals()),
                 () => this.focusTextUsername()
@@ -78,17 +87,17 @@ class LoginForm extends Component {
           }}>
 
           {content}
-          <div id="lf-buttons" className="button-group">
+          <div id="rf-buttons" className="button-group">
             <button
               className="button"
-              id="lf-submit"
+              id="rf-submit"
               type="submit"
               disabled={isFetching}>
-              LOGIN
+              JOIN
             </button>
             <button
               className="button"
-              id="lf-close"
+              id="rf-close"
               type="button"
               onClick={() => dispatch(hideModals())}>
               ×
@@ -101,9 +110,9 @@ class LoginForm extends Component {
 }
 
 export default connect(
-  ({ login, modals }) => ({
-    error: !login.isFetching && login.error,
-    isFetching: login.isFetching,
-    open: modals.openModal === LOGIN_FORM
+  ({ register, modals }) => ({
+    error: !register.isFetching && register.error,
+    isFetching: register.isFetching,
+    open: modals.openModal === REGISTER_FORM
   })
-)(LoginForm)
+)(RegisterForm)
