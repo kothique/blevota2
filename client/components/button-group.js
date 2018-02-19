@@ -10,11 +10,15 @@ class ButtonGroup extends Component {
     attrs: object
   }
 
+  static defaultProps = {
+    className: ''
+  }
+
   render() {
     const { id, className, children, attrs } = this.props
 
     return (
-      <div id={id} className={`button-group ${className || ''}`}
+      <div id={id} className={`button-group ${className}`}
         {...attrs}>
         {children}
       </div>

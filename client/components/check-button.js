@@ -12,12 +12,9 @@ class CheckButton extends Component {
     attrs: object
   }
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      checked: false
-    }
+  static defaultProps = {
+    className: '',
+    checked: false
   }
 
   componentWillReceiveProps(nextProps) {
@@ -32,7 +29,7 @@ class CheckButton extends Component {
     const { onChange } = this.props
 
     this.setState({ checked: !this.state.checked })
-    onChange(this.state.checked)
+    onChange && window.setImmediate(onChange(this.state.checked))
   }
 
   render() {
@@ -42,7 +39,7 @@ class CheckButton extends Component {
     return (
       <button
         id={id}
-        className={`check-button ${checked ? 'checked' : ''} ${className || ''}`}
+        className={`check-button ${checked ? 'checked' : ''} ${className}`}
         onClick={this.toggle.bind(this)}
         {...attrs}>
 

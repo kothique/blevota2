@@ -14,6 +14,10 @@ class TextField extends Component {
     attrs: object
   }
 
+  static defaultProps = {
+    className: ''
+  }
+
   render() {
     const { id, className, type, value, onChange, inputRef,
             attrs, children } = this.props
@@ -21,7 +25,7 @@ class TextField extends Component {
     return (
       <input
         id={id}
-        className={`text-field ${className || ''}`}
+        className={`text-field ${className}`}
         type={type || 'text'}
         value={value}
         onChange={onChange}

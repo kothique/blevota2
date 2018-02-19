@@ -11,13 +11,17 @@ class Label extends Component {
     attrs: object
   }
 
+  static defaultProps = {
+    className: ''
+  }
+
   render() {
     const { id, className, attrs, children } = this.props
 
     return (
       <div
         id={id}
-        className={`label ${className || ''}`}
+        className={`label ${className}`}
         {...attrs}>
 
         {children}

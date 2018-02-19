@@ -12,13 +12,17 @@ class Button extends Component {
     attrs: object
   }
 
+  static defaultProps = {
+    className: ''
+  }
+
   render() {
     const { id, onClick, type, className, children, attrs } = this.props
 
     return (
       <button
         id={id}
-        className={`button ${className || ''}`}
+        className={`button ${className}`}
         onClick={onClick}
         type={type}
         {...attrs}>
