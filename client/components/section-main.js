@@ -1,17 +1,27 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { push } from 'react-router-redux'
 
-import '../styles/main-section.styl'
+import '../styles/section-main.styl'
 
-class MainSection extends Component {
+class SectionMain extends Component {
   render() {
+    const { dispatch } = this.props
+
     return (
-      <section id="ms-section">
-        <img id="ms-logo" src="/images/logo.svg" />
-        <h1 id="ms-title">Blevota 2</h1>
-        <h2 id="ms-small">Join the battle</h2>
+      <section id="sm-section">
+        <img id="sm-logo" src="/images/logo.svg" />
+        <h1 id="sm-title">Blevota 2</h1>
+        <button
+          id="sm-join-the-battle"
+          className="button"
+          onClick={() => dispatch(push('/matches'))}>
+
+          <h2 id="sm-small">Join the battle</h2>
+        </button>
       </section>
     )
   }
 }
 
-export default MainSection
+export default connect()(SectionMain)

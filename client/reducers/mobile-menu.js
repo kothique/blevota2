@@ -2,34 +2,34 @@ const defaultState = {
   hidden: true
 }
 
-export const HIDE_MENU = 'HIDE_MENU'
-export const hideMenu = () => ({
-  type: HIDE_MENU
+export const HIDE_MOBILE_MENU = 'HIDE_MOBILE_MENU'
+export const hideMobileMenu = () => ({
+  type: HIDE_MOBILE_MENU
 })
 
-export const SHOW_MENU = 'SHOW_MENU'
-export const showMenu = () => ({
-  type: SHOW_MENU
+export const SHOW_MOBILE_MENU = 'SHOW_MOBILE_MENU'
+export const showMobileMenu = () => ({
+  type: SHOW_MOBILE_MENU
 })
 
-export const TOGGLE_MENU = 'TOGGLE_MENU'
-export const toggleMenu = () => ({
-  type: TOGGLE_MENU
+export const TOGGLE_MOBILE_MENU = 'TOGGLE_MOBILE_MENU'
+export const toggleMobileMenu = () => ({
+  type: TOGGLE_MOBILE_MENU
 })
 
-export const menuReducer = (state = defaultState, action) => {
+export const mobileMenuReducer = (state = defaultState, action) => {
   switch (action.type) {
-    case HIDE_MENU:
+    case HIDE_MOBILE_MENU:
       return {
         ...state,
         hidden: true
       }
-    case SHOW_MENU:
+    case SHOW_MOBILE_MENU:
       return {
         ...state,
         hidden: false
       }
-    case TOGGLE_MENU:
+    case TOGGLE_MOBILE_MENU:
       return {
         ...state,
         hidden: !state.hidden

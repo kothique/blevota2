@@ -8,6 +8,7 @@
 - game mechanics
   - skills
 - ui
+  - dark background around login- and register forms
   - 404 not found page
   - user profile
   - persistent redux state

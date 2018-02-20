@@ -1,6 +1,6 @@
 @import './_variables'
 
-#ms-section
+#sm-section
   padding-top 32px
   height 500px
   text-align center
@@ -8,7 +8,7 @@
   @media xs
     height 280px
 
-#ms-logo
+#sm-logo
   width 256px
   height 256px
 
@@ -16,7 +16,7 @@
     width 128px
     height 128px
 
-#ms-title
+#sm-title
   margin 0
   font-size 80px
   color orb-border-color
@@ -24,9 +24,19 @@
   @media xs
     font-size 30px
 
-#ms-small
+#sm-small
   text-transform uppercase
-  color orb-color
+  color white
 
   @media xs
     font-size 70%
+
+#sm-join-the-battle
+  height 60px
+  for side in left right
+    padding-{side} 32px
+  margin-top 16px
+  background-color orb-color
+
+  @media xs
+    height 30px

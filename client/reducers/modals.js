@@ -45,7 +45,7 @@ export const modalsReducer = (state = defaultState, action) => {
         ...state,
         openModal: state.openModal === LOGIN_FORM
           ? null
-          : REGISTER_FORM
+          : LOGIN_FORM
       }
     case OPEN_REGISTER_FORM:
       return {

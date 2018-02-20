@@ -17,10 +17,17 @@ class CheckButton extends Component {
     checked: false
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { checked } = this.state
+  constructor(props) {
+    super(props)
 
-    if (nextProps.checked !== checked) {
+    const { checked } = this.props
+    this.state = {
+      checked
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.checked !== this.state.checked) {
       this.toggle()
     }
   }
@@ -29,7 +36,7 @@ class CheckButton extends Component {
     const { onChange } = this.props
 
     this.setState({ checked: !this.state.checked })
-    onChange && window.setImmediate(onChange(this.state.checked))
+    onChange && window.setImmediate(() => onChange(this.state.checked) )
   }
 
   render() {

@@ -61,7 +61,12 @@ module.exports = (app) => {
     for (const id in matches) {
       result.push({
         id,
-        players: matches[id].players.length
+        state: 'open',
+        players: matches[id].players.map((player) => ({
+          id: player.id,
+          username: player.username
+        })),
+        createdAt: matches[id].createdAt
       })
     }
 

@@ -2,23 +2,23 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
-import '../styles/menu.styl'
+import '../styles/mobile-menu.styl'
 
-class Menu extends Component {
+class MobileMenu extends Component {
   render() {
     const { hidden, dispatch } = this.props
 
     return (
-      <nav id="m-menu" className={'xs sm' + (hidden ? ' hidden' : '')}>
-        <a id="m-item-wiki" className="m-item"
+      <nav id="mm-menu" className={'xs sm' + (hidden ? ' hidden' : '')}>
+        <a id="mm-item-wiki" className="mm-item"
           onClick={() => dispatch(push('/wiki'))}>
           <img src="/images/icons/open-book.svg" />
         </a>
-        <a id="m-item-login" className="m-item"
+        <a id="mm-item-login" className="mm-item"
           onClick={() => dispatch(push('/login'))}>
           <img src="/images/icons/open-book.svg" />
         </a>
-        <a id="m-item-join" className="m-item"
+        <a id="mm-item-join" className="mm-item"
           onClick={() => dispatch(push('/register'))}>
           <img src="/images/icons/open-book.svg" />
         </a>
@@ -29,6 +29,6 @@ class Menu extends Component {
 
 export default connect(
   (state) => ({
-    hidden: state.menu.hidden
+    hidden: state.mobileMenu.hidden
   })
-)(Menu)
+)(MobileMenu)

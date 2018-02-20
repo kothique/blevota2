@@ -1,10 +1,13 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { func, string } from 'prop-types'
 import { push } from 'react-router-redux'
 import { decode } from 'jsonwebtoken'
 
 import Game from '../game'
+import Header from './header'
+import MobileMenu from './mobile-menu'
+import Footer from './footer'
 import '../styles/game-page.styl'
 
 /**
@@ -18,8 +21,8 @@ class GamePage extends Component {
   componentDidMount() {
     const { dispatch, login, match } = this.props,
           { params: { matchId } } = match,
-          context = document.getElementById('game'),
-          info = document.getElementById('info')
+          context = document.getElementById('gp-game'),
+          info = document.getElementById('gp-info')
     const host = 'http://localhost:3000'
 
     if (!login.user) {
@@ -69,16 +72,22 @@ class GamePage extends Component {
 
   render() {
     return (
-      <main id="game-page">
-        <svg
-          id="game"
-          version="1.1"
-          baseProfile="full"
-          xmlns="http://www.w3.org/2000/svg"
-          >
-        </svg>
-        <div id="info"></div>
-      </main>
+      <Fragment>
+        <Header />
+        <MobileMenu />
+        <div id="content">
+          <svg
+            id="gp-game"
+            version="1.1"
+            baseProfile="full"
+            xmlns="http://www.w3.org/2000/svg"
+            >
+          </svg>
+
+          <div id="gp-info"></div>
+        </div>
+        <Footer />
+      </Fragment>
     )
   }
 }

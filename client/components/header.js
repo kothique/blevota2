@@ -2,8 +2,8 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
-import { toggleMenu } from '../reducers/menu'
-import { openRegisterForm, openLoginForm } from '../reducers/modals'
+import { toggleMobileMenu } from '../reducers/mobile-menu'
+import { toggleRegisterForm, toggleLoginForm } from '../reducers/modals'
 import { logout } from '../reducers/login'
 import LoginForm from './login-form'
 import RegisterForm from './register-form'
@@ -30,12 +30,12 @@ class Header extends Component {
       userBox =
         <Fragment>
           <a className="h-box h-box-text h-box-right"
-            onClick={() => dispatch(openRegisterForm())}>
+            onClick={() => dispatch(toggleRegisterForm())}>
             Join
           </a>
           <div id="h-separator" className="h-box h-box-right"></div>
           <a className="h-nox h-box-text h-box-right"
-            onClick={() => dispatch(openLoginForm())}>
+            onClick={() => dispatch(toggleLoginForm())}>
             Login
           </a>
         </Fragment>
@@ -59,11 +59,15 @@ class Header extends Component {
                 onClick={() => dispatch(push('/wiki'))}>
                 Wiki
               </a>
+              <a className="h-box h-box-text"
+                onClick={() => dispatch(push('/matches'))}>
+                Play
+              </a>
             </div>
 
             <div className="xs sm">
-              <a id="h-menu-button" className="h-box h-box-right"
-                onClick={() => dispatch(toggleMenu())}>
+              <a id="h-mobile-menu-button" className="h-box h-box-right"
+                onClick={() => dispatch(toggleMobileMenu())}>
 
                 <img src="/images/icons/menu-button.svg" />
               </a>

@@ -26,7 +26,8 @@ class Match {
    */
   constructor(id) {
     this.players = new Dict
-    this.id = id 
+    this.id = id
+    this.createdAt = Date.now()
 
     const config = {
       env: process.env

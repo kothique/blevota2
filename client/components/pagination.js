@@ -38,7 +38,7 @@ class Pagination extends Component {
     const { onChange } = this.props
 
     this.setState({ page })
-    onChange && window.setImmediate(onChange(page))
+    onChange && window.setImmediate(() => onChange(page))
   }
 
   getButtons() {
@@ -46,10 +46,10 @@ class Pagination extends Component {
           { page } = this.state
     let buttons = []
 
+    const maxLeft = page - start,
+          maxRight = end - page
     let left = Math.floor((maxPages - 1) / 2),
         right = Math.ceil((maxPages - 1) / 2)
-
-    console.log(left, maxLeft, right, maxRight)
 
     if (maxLeft + maxRight < maxPages) {
       for (let i = start; i <= end; i++) {

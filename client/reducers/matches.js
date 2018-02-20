@@ -4,7 +4,7 @@ import { REQUEST_LOGIN } from './login';
 const defaultState = {
   isFetching: false,
   error: undefined,
-  matches: []
+  matches: undefined
 }
 
 export const REQUEST_MATCHES = 'REQUEST_MATCHES'

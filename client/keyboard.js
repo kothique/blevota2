@@ -41,8 +41,8 @@ export default class Keyboard {
         Keyboard.keys[keyCode] = true
 
         if (emit) {
-          Keyboard.keysData[keyCode].onPress && setTimeout(Keyboard.keysData[keyCode].onPress)
-          Keyboard.onchange && setTimeout(() => { Keyboard.onchange('down', keyCode) })
+          Keyboard.keysData[keyCode].onPress && window.setImmediate(() => Keyboard.keysData[keyCode].onPress)
+          Keyboard.onchange && window.setImmediate(() => Keyboard.onchange('down', keyCode))
         }
       }
     }
@@ -53,8 +53,8 @@ export default class Keyboard {
         Keyboard.keys[keyCode] = false
 
         if (emit) {
-          Keyboard.keysData[keyCode].onRelease && setTimeout(Keyboard.keysData[keyCode].onRelease())
-          Keyboard.onchange && setTimeout(() => { Keyboard.onchange('up', keyCode) })
+          Keyboard.keysData[keyCode].onRelease && window.setImmediate(() => Keyboard.keysData[keyCode].onRelease())
+          Keyboard.onchange && window.setImmediate(() => Keyboard.onchange('up', keyCode))
         }
       }
     }
