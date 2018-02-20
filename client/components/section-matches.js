@@ -61,12 +61,16 @@ class SectionMatches extends Component {
       const pages = Math.ceil(matches.length / pageSize)
       matches = matches.slice((page - 1) * pageSize, page * pageSize)
 
+      const pagination = pages > 1
+        ? <Pagination id="smt-pagination"
+            start={1} end={pages} page={page}
+            onChange={page => dispatch(push(`/matches/${page}`))} />
+        : ''
+
       content =
         <Fragment>
           <ListMatches matches={matches} />
-          <Pagination id="smt-pagination"
-            start={1} end={pages} page={page}
-            onChange={page => dispatch(push(`/matches/${page}`))} />
+          {pagination}
         </Fragment>
     } else if (isFetching) {
       content = <AnimationLoading />

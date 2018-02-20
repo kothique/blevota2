@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
+import Button from './button'
 import '../styles/section-main.styl'
 
 class SectionMain extends Component {
@@ -12,13 +13,12 @@ class SectionMain extends Component {
       <section id="sm-section">
         <img id="sm-logo" src="/images/logo.svg" />
         <h1 id="sm-title">Blevota 2</h1>
-        <button
+        <Button
           id="sm-join-the-battle"
-          className="button"
           onClick={() => dispatch(push('/matches'))}>
 
           <h2 id="sm-small">Join the battle</h2>
-        </button>
+        </Button>
       </section>
     )
   }

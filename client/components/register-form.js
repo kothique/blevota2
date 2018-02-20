@@ -5,6 +5,8 @@ import { push } from 'react-router-redux'
 import { register } from '../reducers/register'
 import { hideModals, REGISTER_FORM } from '../reducers/modals'
 import AnimationLoading from './animation-loading'
+import Button from './button'
+import TextField from './text-field'
 
 import '../styles/register-form.styl'
 
@@ -41,25 +43,21 @@ class RegisterForm extends Component {
           <div className="label">
             Username:
           </div>
-          <input
-            className="text-field"
+          <TextField
             ref={input => this.textUsername = input}
-            type="text"
             value={username}
             onChange={event => this.setState({ username: event.target.value })} />
           <div className="label">
             Password:
           </div>
-          <input
-            className="text-field"
+          <TextField
             type="password"
             value={password}
             onChange={event => this.setState({ password: event.target.value })} />
           <div className="label">
             Repeat your password:
           </div>
-          <input
-            className="text-field"
+          <TextField
             type="password"
             value={passwordRepeated}
             onChange={event => this.setState({ passwordRepeated: event.target.value })} />
@@ -88,20 +86,18 @@ class RegisterForm extends Component {
 
           {content}
           <div id="rf-buttons" className="button-group">
-            <button
-              className="button"
+            <Button
               id="rf-submit"
               type="submit"
-              disabled={isFetching}>
+              attrs={{ disabled: isFetching }}>
               JOIN
-            </button>
-            <button
-              className="button"
+            </Button>
+            <Button
               id="rf-close"
               type="button"
               onClick={() => dispatch(hideModals())}>
               ×
-            </button>
+            </Button>
           </div>
         </form>
       </div>

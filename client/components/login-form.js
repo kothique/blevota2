@@ -5,6 +5,8 @@ import { push } from 'react-router-redux'
 import { login } from '../reducers/login'
 import { hideModals, LOGIN_FORM } from '../reducers/modals'
 import AnimationLoading from './animation-loading'
+import Button from './button'
+import TextField from './text-field'
 
 import '../styles/login-form.styl'
 
@@ -40,17 +42,14 @@ class LoginForm extends Component {
           <div className="label">
             Username:  
           </div>
-          <input
-            className="text-field"
-            ref={input => this.textUsername = input}
-            type="text"
+          <TextField
+            inputRef={input => this.textUsername = input}
             value={username}
             onChange={event => this.setState({ username: event.target.value })} />
           <div className="label">
             Password:
           </div>
-          <input
-            className="text-field"
+          <TextField
             type="password"
             value={password}
             onChange={event => this.setState({ password: event.target.value })} />
@@ -79,20 +78,18 @@ class LoginForm extends Component {
 
           {content}
           <div id="lf-buttons" className="button-group">
-            <button
-              className="button"
+            <Button
               id="lf-submit"
               type="submit"
-              disabled={isFetching}>
+              attrs={{ disabled: isFetching }}>
               LOGIN
-            </button>
-            <button
-              className="button"
+            </Button>
+            <Button
               id="lf-close"
               type="button"
               onClick={() => dispatch(hideModals())}>
               ×
-            </button>
+            </Button>
           </div>
         </form>
       </div>
