@@ -20,33 +20,59 @@ class SectionMatches extends Component {
   static propTypes = {
     page: number,
     error: string,
+    token: string,
     allMatches: arrayOf(object),
     isFetching: bool.isRequired,
-    filter: object.isRequired
+    filter: object.isRequired,
   }
 
   static defaultProps = {
     page: 1
   }
 
-  componentDidMount() {
+  startFetchingMatches(token) {
     const { dispatch } = this.props
 
-    const getMatches = () => {
-      dispatch(matches())
+    const fetchMatches = () => {
+      dispatch(matches(token))
         .catch(() => {})
     }
 
-    this.intervalID = window.setInterval(getMatches, 10000)
-    getMatches()
+    if (this.intervalID)
+      window.clearInterval(this.intervalID)
+    this.intervalID = window.setInterval(fetchMatches, 10000)
+    fetchMatches()
+  }
+
+  stopFetchingMatches() {
+    if (this.intervalID)
+      window.clearInterval(this.intervalID)
+  }
+
+  componentDidMount() {
+    const { token } = this.props
+
+    if (token) {
+      this.startFetchingMatches(token)
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { dispatch, token } = this.props
+
+    if (token && !prevProps.token) {
+      this.startFetchingMatches(token)
+    } else if (!token && prevProps.token) {
+      this.stopFetchingMatches()
+    }
   }
 
   componentWillUnmount() {
-    window.clearInterval(this.intervalID)
+    this.stopFetchingMatches()
   }
 
   render() {
-    const { dispatch, page,
+    const { dispatch, page, token,
             error, isFetching, allMatches, filter } = this.props
 
     let content
@@ -78,28 +104,27 @@ class SectionMatches extends Component {
 
     return (
       <section id="smt-section">
-        <Fragment>
-          <div id="smt-controls">
-            <FilterMatches />
-            <Button
-              id="smt-new-match"
-              onClick={() => dispatch(newMatch())}>
-              +
-            </Button>
-          </div>
+        <div id="smt-controls">
+          <FilterMatches />
+          <Button
+            id="smt-new-match"
+            onClick={() => dispatch(newMatch(token))}>
+            +
+          </Button>
+        </div>
 
-          {content}
-        </Fragment>
+        {content}
       </section>
     )
   }
 }
 
 export default connect(
-  ({ matches, filterMatches }) => ({
+  ({ matches, filterMatches, login }) => ({
     error: matches.error,
     allMatches: matches.matches,
     isFetching: matches.isFetching,
-    filter: filterMatches
+    filter: filterMatches,
+    token: login.token
   })
 )(SectionMatches)

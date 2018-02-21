@@ -4,6 +4,7 @@ import Header from './header'
 import MobileMenu from './mobile-menu'
 import SectionMatches from './section-matches'
 import Footer from './footer'
+import Access from './access'
 
 import '../styles/matches-page.styl'
 
@@ -16,7 +17,9 @@ class MatchesPage extends Component {
         <Header />
         <MobileMenu />
         <div id="content" className="page-container">
-          <SectionMatches page={page} />
+          <Access users>
+            <SectionMatches page={page} />
+          </Access>
         </div>
         <Footer />
       </Fragment>

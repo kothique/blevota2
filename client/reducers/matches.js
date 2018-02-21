@@ -50,10 +50,12 @@ export const matchesReducer = (state = defaultState, action) => {
   }
 }
 
-export const matches = () => (dispatch) => {
+export const matches = (token) => (dispatch) => {
   dispatch(requestMatches())
 
-  return axios.get('/api/matches')
+  return axios.get('/api/matches', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
     .then(
       ({ data: { matches } }) => {
         dispatch(successMatches(matches))

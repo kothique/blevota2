@@ -101,7 +101,7 @@ module.exports.expressMiddleware = (options = Object.create(null)) => {
     req.getJWT = function () {
       return new Promise((resolve, reject) => {
         if (!this.header('authorization'))
-          return resolve()
+          return reject(new AuthError('No Authorization header'))
         
         const parts = this.header('authorization').split(/\s+/)
 
@@ -193,20 +193,22 @@ module.exports.ifGuest = (options = { error: true }) => {
 
   return (req, res, next) => {
     req.getJWT()
-      .then(() => {
-        if (typeof redirect !== 'undefined') {
-          res.redirect(redirect)
-        } else if (error) {
-          if (err instanceof AuthError) {
-            res.status(401).send({ error: `Unauthorized (${err.message})` })
-          } else {
-            res.status(401).send({ error: 'Unauthorized' })
+      .then(
+        () => {
+          next()
+        },
+        (err) => {
+          if (typeof redirect !== 'undefined') {
+            res.redirect(redirect)
+          } else if (error) {
+            if (err instanceof AuthError) {
+              res.status(401).send({ error: `Unauthorized (${err.message})` })
+            } else {
+              res.status(401).send({ error: 'Unauthorized' })
+            }
           }
         }
-      })
-      .catch((err) => {
-        next()
-      })
+      )
   }
 }
 
@@ -221,14 +223,14 @@ module.exports.ifUser = (options = { error: true }) => {
   return (req, res, next) => {
     req.getJWT()
       .then(() => {
-        next()
-      })
-      .catch((err) => {
         if (typeof redirect !== 'undefined') {
           res.redirect(redirect)
         } else if (error) {
           res.status(403).send({ error: 'Must not be logged in' })
         }
+      })
+      .catch((err) => {
+        next()
       })
   }
 }

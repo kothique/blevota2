@@ -51,14 +51,16 @@ export const newMatchReducer = (state = defaultState, action) => {
   }
 }
 
-export const newMatch = () => (dispatch) => {
+export const newMatch = (token) => (dispatch) => {
   dispatch(requestNewMatch())
 
-  return axios.put('/api/match')
+  return axios.put('/api/match', null, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
     .then(
       ({ data: { id } }) => {
         dispatch(successNewMatch(id))
-        dispatch(matches())
+        dispatch(matches(token))
       },
       (error) => {
         if (error.response) {

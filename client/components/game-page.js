@@ -8,6 +8,8 @@ import Game from '../game'
 import Header from './header'
 import MobileMenu from './mobile-menu'
 import Footer from './footer'
+import Access from './access'
+
 import '../styles/game-page.styl'
 
 /**
@@ -18,24 +20,19 @@ class GamePage extends Component {
     dispatch: func.isRequired
   }
 
-  componentDidMount() {
-    const { dispatch, login, match } = this.props,
-          { params: { matchId } } = match,
+  initialize() {
+    const { dispatch, match, token, user } = this.props
+    const { params: { matchId } } = match,
           context = document.getElementById('gp-game'),
-          info = document.getElementById('gp-info')
-    const host = 'http://localhost:3000'
-
-    if (!login.user) {
-      dispatch(push('/'))
-      return
-    }
+          info = document.getElementById('gp-info'),
+          host = 'http://localhost:3000'
 
     const game = this.game = new Game({
       host,
       context,
       info,
-      token: login.token,
-      user: login.user,
+      token,
+      user,
       matchId
     })
 
@@ -59,15 +56,24 @@ class GamePage extends Component {
     })
   }
 
-  componentWillUnmount() {
-    /**
-     * If the client opens /game while not logged in, they get
-     * redirected, and Component~componentWillUnmount gets called
-     * without this.game being initialized, so we need to check it.
-     */
+  deinitialize() {
     if (this.game) {
       this.game.stop()
     }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { dispatch, isFetching, user, token, match } = this.props
+
+    if (user && !prevProps.user) {
+      this.initialize()
+    } else if (!user && prevProps.user) {
+      this.deinitialize()
+    }
+  }
+
+  componentWillUnmount() {
+    this.deinitialize()
   }
 
   render() {
@@ -76,24 +82,27 @@ class GamePage extends Component {
         <Header />
         <MobileMenu />
         <div id="content">
-          <svg
-            id="gp-game"
-            version="1.1"
-            baseProfile="full"
-            xmlns="http://www.w3.org/2000/svg"
-            >
-          </svg>
+          <Access users>
+              <svg
+                id="gp-game"
+                version="1.1"
+                baseProfile="full"
+                xmlns="http://www.w3.org/2000/svg"
+                >
+              </svg>
 
-          <div id="gp-info"></div>
+              <div id="gp-info"></div>
+          </Access>
         </div>
         <Footer />
-      </Fragment>
+    </Fragment>
     )
   }
 }
 
 export default connect(
-  (state) => ({
-    login: state.login
+  ({ login }) => ({
+    user: login.user,
+    token: login.token
   })
 )(GamePage)

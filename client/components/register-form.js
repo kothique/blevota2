@@ -44,7 +44,7 @@ class RegisterForm extends Component {
             Username:
           </div>
           <TextField
-            ref={input => this.textUsername = input}
+            inputRef={input => this.textUsername = input}
             value={username}
             onChange={event => this.setState({ username: event.target.value })} />
           <div className="label">
