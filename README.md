@@ -7,6 +7,7 @@
   - sliding
 - game mechanics
   - skills
+  - effect creators
 - ui
   - dark background around login- and register forms
   - 404 not found page

@@ -44,10 +44,10 @@ class Entity {
    * @chainable
    */
   applyControls(controls) {
-    const { mX, mY, lmb, rmb, wheel } = controls
+    const { pX, pY, move } = controls
 
-    if (lmb && this.moveForce) {
-      this.force.add(V(mX, mY).subtract(this.position).setLength(this.moveForce))
+    if (move && this.moveForce) {
+      this.force.add(V(pX,pY).subtract(this.position).setLength(this.moveForce))
     }
 
     return this
@@ -57,9 +57,21 @@ class Entity {
    * Receive an effect.
    *
    * @param {Effect} effect
+   * @return {func} - Function that removes the effect from the entity.
    */
   receive(effect) {
     this.effects.add(effect)
+
+    return () => this.removeEffect(effect)
+  }
+
+  /**
+   * Remove the specified effect.
+   *
+   * @param {Effect} effect
+   */
+  removeEffect(effect) {
+    this.effects.remove(effect)
   }
 
   /**
@@ -72,7 +84,7 @@ class Entity {
       effect.apply(this, dt)
 
       if (effect.alive === false) {
-        this.effects.remove(effect)
+        this.removeEffect(effect)
       }
     })
   }

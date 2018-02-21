@@ -45,22 +45,39 @@ class Simulator extends EventEmitter {
    * @param {object} controls - The controls.
    */
   setControls(id, controls) {
-    const { mX, mY, lmb, wheel, rmb } = controls
+    const { pX, pY, move,
+            skill1, skill2, skill3,
+            skill4, skill5, skill6 } = controls
 
-    if (typeof mX !== 'undefined')
-      this.controls.get(id).mX = mX
+    console.log(JSON.stringify(controls))
 
-    if (typeof mY !== 'undefined')
-      this.controls.get(id).mY = mY
+    if (typeof pX !== 'undefined')
+      this.controls.get(id).pX = pX
 
-    if (typeof lmb !== 'undefined')
-      this.controls.get(id).lmb = lmb
+    if (typeof pY !== 'undefined')
+      this.controls.get(id).pY = pY
 
-    if (typeof wheel !== 'undefined')
-      this.controls.get(id).wheel = wheel
+    if (typeof move !== 'undefined')
+      this.controls.get(id).move = move
 
-    if (typeof rmb !== 'undefined')
-      this.controls.get(id).rmb = rmb
+    if (typeof skill1 !== 'undefined')
+      this.controls.get(id).skill1 = skill1
+
+    if (typeof skill2 !== 'undefined')
+      this.controls.get(id).skill2 = skill2
+
+    if (typeof skill3 !== 'undefined')
+      this.controls.get(id).skill3 = skill3
+
+    if (typeof skill4 !== 'undefined')
+      this.controls.get(id).skill4 = skill4
+
+    if (typeof skill5 !== 'undefined')
+      this.controls.get(id).skill5 = skill5
+
+    if (typeof skill6 !== 'undefined')
+      this.controls.get(id).skill6 = skill6
+
   }
 
   /**
@@ -72,11 +89,15 @@ class Simulator extends EventEmitter {
     this.world.newOrb(id)
 
     this.controls.set(id, {
-      mX: 0,
-      mY: 0,
-      lmb: false,
-      wheel: false,
-      rmb: false
+      pX: 0,
+      pY: 0,
+      move: false,
+      skill1: false,
+      skill2: false,
+      skill3: false,
+      skill4: false,
+      skill5: false,
+      skill6: false,
     })
   }
 

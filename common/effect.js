@@ -13,8 +13,8 @@ class Effect {
   /**
    * Apply the effect to the target.
    *
-   * @param {entity} target
-   * @param {?number} dt - Timestep.
+   * @param {Entity} target
+   * @param {?number} dt - Timestep in seconds.
    */
   apply(target, dt = 0) {}
 

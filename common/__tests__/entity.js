@@ -31,11 +31,9 @@ describe('Entity', () => {
     })
 
     entity.applyControls({
-      mX: 150,
-      mY: 150,
-      lmb: true,
-      rmb: false,
-      wheel: false
+      pX: 150,
+      pY: 150,
+      move: true
     })
     entity.integrate(0, 1)
 
@@ -51,11 +49,9 @@ describe('Entity', () => {
     })
 
     entity.applyControls({
-      mX: 50,
-      mY: 100,
-      lmb: true,
-      rmb: false,
-      wheel: false
+      pX: 50,
+      pY: 100,
+      move: true
     })
     entity.integrate(0, 1)
 
@@ -71,11 +67,9 @@ describe('Entity', () => {
     })
 
     entity.applyControls({
-      mX: 150,
-      mY: 100,
-      lmb: true,
-      rmb: false,
-      wheel: false
+      pX: 150,
+      pY: 100,
+      move: true
     })
     entity.integrate(0, 1)
 
@@ -91,11 +85,9 @@ describe('Entity', () => {
     })
 
     entity.applyControls({
-      mX: 100,
-      mY: 50,
-      lmb: true,
-      rmb: false,
-      wheel: false
+      pX: 100,
+      pY: 50,
+      move: true
     })
     entity.integrate(0, 1)
 
@@ -111,11 +103,9 @@ describe('Entity', () => {
     })
 
     entity.applyControls({
-      mX: 100,
-      mY: 150,
-      lmb: true,
-      rmb: false,
-      wheel: false
+      pX: 100,
+      pY: 150,
+      move: true
     })
     entity.integrate(0, 1)
 
@@ -173,6 +163,29 @@ describe('Entity', () => {
     entity.applyEffects(0.01) // to make sure effect.timeToDie < 0.02
     expect(effect.alive).toBeFalsy()
     expect(entity.effects.length).toBe(0)
+  })
+
+  test('should return callback to remove the effect', () => {
+    const entity = new Entity({
+      radius: 30,
+      mass: 1,
+      moveForce: 0.1,
+      position: V(100, 100)
+    })
+
+    const effect = new Object
+    effect.apply = jest.fn()
+    effect.alive = true
+
+    const removeEffect = entity.receive(effect)
+    expect(entity.effects.length).toBe(1)
+
+    entity.applyEffects(0.01)
+    expect(effect.apply.mock.calls.length).toBe(1)
+
+    removeEffect()
+    entity.applyEffects(0.01)
+    expect(effect.apply.mock.calls.length).toBe(1)
   })
 
   test('serialization', () => {

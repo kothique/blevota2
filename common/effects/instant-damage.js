@@ -19,6 +19,11 @@ class InstantDamage extends Effect {
     this.value = value
   }
 
+  /**
+   * @param {Entity} target
+   * @param {number} dt
+   * @override
+   */
   apply(target, dt = 0) {
     target.hp -= this.value
 

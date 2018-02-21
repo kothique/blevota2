@@ -25,33 +25,63 @@ export default class Game extends EventEmitter {
     this.info = info
     this.scene = new Scene(this.svg)
 
-    const buttonName = {
-      0: 'lmb',
-      1: 'wheel',
-      2: 'rmb'
-    }
-
     this.svg.addEventListener('mousemove', ({ offsetX, offsetY }) => {
       this.sendControls({
-        mX: offsetX,
-        mY: offsetY
+        pX: offsetX,
+        pY: offsetY
       })
     })
 
     this.svg.addEventListener('mouseup', ({ offsetX, offsetY, button }) => {
-      this.sendControls({
-        mX: offsetX,
-        mY: offsetY,
-        [buttonName[button]]: false
-      })
+      const controls = {
+        pX: offsetX,
+        pY: offsetY
+      }
+
+      if (button === 0) {
+        controls.move = false
+      }
+
+      this.sendControls(controls)
     })
 
     this.svg.addEventListener('mousedown', ({ offsetX, offsetY, button }) => {
-      this.sendControls({
-        mX: offsetX,
-        mY: offsetY,
-        [buttonName[button]]: true
-      })
+      const controls = {
+        pX: offsetX,
+        pY: offsetY
+      }
+
+      if (button === 0) {
+        controls.move = true
+      }
+
+      this.sendControls(controls)
+    })
+
+    document.addEventListener('keyup', (event) => {
+      const controls = Object.create(null)
+
+      if (event.keyCode === 32) {
+        controls.skill1 = false
+        event.preventDefault()
+      }
+
+      if (Object.keys(controls).length !== 0) {
+        this.sendControls(controls)
+      }
+    })
+
+    document.addEventListener('keydown', (event) => {
+      const controls = Object.create(null)
+
+      if (event.keyCode === 32) {
+        controls.skill1 = true
+        event.preventDefault()
+      }
+
+      if (Object.keys(controls).length !== 0) {
+        this.sendControls(controls)
+      }
     })
 
     /*

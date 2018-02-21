@@ -32,6 +32,19 @@ class Orb extends Entity {
     this.mp = options.mp
   }
 
+  applyControls(controls) {
+    const { skill1 } = controls,
+          moveForce_ = this.moveForce
+
+    if (skill1)
+      this.moveForce *= 1.5
+
+    super.applyControls(controls)
+
+    if (skill1)
+      this.moveForce = moveForce_
+  }
+
   /**
    * Write the orb's binary representation into a buffer.
    *

@@ -45,18 +45,14 @@ describe('State', () => {
       world
       .startIteration()
       .applyControls(idA, {
-        mX: 150,
-        mY: 12,
-        lmb: true,
-        rmb: true,
-        wheel: false
+        pX: 150,
+        pY: 12,
+        move: true
       })
       .applyControls(idB, {
-        mX: 200,
-        mY: 123,
-        lmb: false,
-        rmb: true,
-        wheel: true
+        pX: 200,
+        pY: 123,
+        move: false
       })
       .integrate(i * 1 / 120, 1 / 120)
       .detectCollisions()
