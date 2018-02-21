@@ -145,6 +145,24 @@ class Entity {
 
     return entity
   }
+
+  /**
+   * Linear extrapolation by the previous state.
+   *
+   * @param {Frame} prevFrame - Previous frame.
+   * @param {number} currentTimestamp - Current timestamp.
+   * @param {number} nextTimestamp - Desired timestmap.
+   */
+  extrapolate(prevFrame, currentTimestamp, nextTimestamp) {
+    const prevEntity = prevFrame.state,
+          prevTimestamp = prevFrame.timestamp
+
+    this.position.add(
+        Vector.subtract(this.position, prevEntity.position)
+          .divide(currentTimestamp - prevTimestamp)
+          .multiply(nextTimestamp - currentTimestamp)
+    )
+  }
 }
 
 /**

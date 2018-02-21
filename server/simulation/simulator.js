@@ -12,6 +12,10 @@ const { Vector, V } = require('../../common/vector')
 /**
  * @class
  *
+ * @event start
+ * @event frame - { state, timestamp }
+ * @event stop
+ *
  * @description
  * Update the world state as the time goes by.
  */

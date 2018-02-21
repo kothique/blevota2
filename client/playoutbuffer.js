@@ -3,6 +3,7 @@ import List from 'collections/list'
 import merge from 'lodash/merge'
 import present from 'present'
 
+import { V } from '../common/vector'
 import World from '../common/world'
 import State from '../common/state'
 
@@ -13,6 +14,9 @@ export default class PlayoutBuffer extends EventEmitter {
     this.stop = false
     this.latency = 60
     this.frames = new List
+    this.previous = [null, null]
+ 
+    this.firstFrame = true
   }
 
   clear = () => {
@@ -20,19 +24,18 @@ export default class PlayoutBuffer extends EventEmitter {
   }
 
   put = ({ state, timestamp }) => {
-    const firstFrame = !this.frames.peek()
-
-    if (firstFrame) {
+    if (this.firstFrame) {
       this.beginFrames = timestamp
     }
-    
+
     this.frames.push({
       state,
       timestamp: timestamp - this.beginFrames
     })
 
-    if (firstFrame) {
+    if (this.firstFrame) {
       setTimeout(this.start, this.latency)
+      this.firstFrame = false
     }
   }
 
@@ -47,16 +50,25 @@ export default class PlayoutBuffer extends EventEmitter {
      * @returns {object|null}
      */
     const getFrame = (currentTimestamp) => {
-      let previousFrame, currentFrame
+      let currentFrame
 
       while (currentFrame = this.frames.peek()) {
         if (currentFrame.timestamp < currentTimestamp) {
           this.frames.shift()
         } else {
-          return previousFrame
+          return {
+            frame: this.previous[0],
+            prevFrame: this.previous[1]
+          }
         }
 
-        previousFrame = currentFrame
+        this.previous[1] = this.previous[0]
+        this.previous[0] = currentFrame
+      }
+
+      return {
+        frame: this.previous[0],
+        prevFrame: this.previous[1]
       }
     }
 
@@ -66,15 +78,15 @@ export default class PlayoutBuffer extends EventEmitter {
       }
 
       const currentTimestamp = present() - this.begin,
-            frame = getFrame(currentTimestamp)
+            { frame, prevFrame } = getFrame(currentTimestamp)
 
       if (frame) {
-        const approximatedState = new World(null, frame.state)
-          .integrate(currentTimestamp, currentTimestamp - frame.timestamp)
-          .state
+        let { state } = prevFrame
+          ? new World(V(800, 600), frame.state).extrapolate(prevFrame, frame.timestamp, currentTimestamp)
+          : frame
 
         this.emit('frame', {
-          state: approximatedState,
+          state,
           timestamp: currentTimestamp
         })
       }

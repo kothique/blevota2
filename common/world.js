@@ -236,6 +236,32 @@ class World {
   finishIteration() {
     return this
   }
+
+  /**
+   * Linear extrapolation of the world state by the previous state.
+   *
+   * @param {Frame} prevFrame - Previous frame.
+   * @param {number} currentTimestamp - Current timestamp.
+   * @param {number} nextTimestamp - Desired timestamp.
+   * @chainable
+   */
+  extrapolate(prevFrame, currentTimestamp, nextTimestamp) {
+    for (const id in this.state.orbs) {
+      if (prevFrame.state.orbs[id]) {
+
+        this.state.orbs[id].extrapolate(
+          {
+            state: prevFrame.state.orbs[id],
+            timestamp: prevFrame.timestamp
+          },
+          currentTimestamp,
+          nextTimestamp
+        )
+      }
+    }
+
+    return this
+  }
 }
 
 module.exports = World

@@ -31,25 +31,25 @@ export default class Game extends EventEmitter {
       2: 'rmb'
     }
 
-    this.svg.addEventListener('mousemove', ({ clientX, clientY }) => {
+    this.svg.addEventListener('mousemove', ({ offsetX, offsetY }) => {
       this.sendControls({
-        mX: clientX,
-        mY: clientY
+        mX: offsetX,
+        mY: offsetY
       })
     })
 
-    this.svg.addEventListener('mouseup', ({ clientX, clientY, button }) => {
+    this.svg.addEventListener('mouseup', ({ offsetX, offsetY, button }) => {
       this.sendControls({
-        mX: clientX,
-        mY: clientY,
+        mX: offsetX,
+        mY: offsetY,
         [buttonName[button]]: false
       })
     })
 
-    this.svg.addEventListener('mousedown', ({ clientX, clientY, button }) => {
+    this.svg.addEventListener('mousedown', ({ offsetX, offsetY, button }) => {
       this.sendControls({
-        mX: clientX,
-        mY: clientY,
+        mX: offsetX,
+        mY: offsetY,
         [buttonName[button]]: true
       })
     })
