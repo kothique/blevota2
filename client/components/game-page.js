@@ -62,6 +62,14 @@ class GamePage extends Component {
     }
   }
 
+  componentDidMount() {
+    const { user } = this.props
+
+    if (user) {
+      this.initialize()
+    }
+  }
+
   componentDidUpdate(prevProps) {
     const { dispatch, isFetching, user, token, match } = this.props
 

@@ -190,11 +190,60 @@ describe('Vector', () => {
     expect(Vector.dot(V(1, 2), V(3, -4))).toBeCloseTo(-5)
   })
 
-  // test normalize
-  // test normalized
-  // test setLength
-  // test isZero
-  // test static distance
+  describe('normalize()', () => {
+    test('some arbitrary data', () => {
+      expect(V(0, 0).normalize().length()).toBeCloseTo(0)
+      expect(V(2.11, 3).normalize().length()).toBeCloseTo(1)
+      expect(V(0, -3).normalize().length()).toBeCloseTo(1)
+      expect(V(-4.1, 8).normalize().length()).toBeCloseTo(1)
+    })
+
+    test('should mutate the instance', () => {
+      const v = V(10, 15)
+
+      v.normalize()
+      expect(v.length()).toBeCloseTo(1)
+    })
+  })
+
+  describe('normalized()', () => {
+    test('some arbitrary data', () => {
+      expect(V(0, 0).normalized().length()).toBeCloseTo(0)
+      expect(V(2.11, 3).normalized().length()).toBeCloseTo(1)
+      expect(V(0, -3).normalized().length()).toBeCloseTo(1)
+      expect(V(-4.1, 8).normalized().length()).toBeCloseTo(1)
+    })
+
+    test('should not mutate the instance', () => {
+      const v = V(3, 4)
+
+      expect(v.length()).toBeCloseTo(5)
+      v.normalized()
+      expect(v.length()).not.toBeCloseTo(1)
+    })
+  })
+
+  test('setLength()', () => {
+    const v = V(3, 4)
+
+    expect(v.length()).toBeCloseTo(5)
+    v.setLength(12.3)
+    expect(v.length()).toBeCloseTo(12.3)
+  })
+
+  test('isZero()', () => {
+    expect(V(0, 0).isZero()).toBeTruthy()
+    expect(V(1, 2).isZero()).toBeFalsy()
+    expect(V(0.1, 0).isZero()).toBeFalsy()
+    expect(V(0.1, 0).isZero(1e-1)).toBeTruthy()
+  })
+
+  test('static distance()', () => {
+    expect(Vector.distance(V(0, 0), V(10, 5))).toBeCloseTo(V(10, 5).length())
+    expect(Vector.distance(V(0, 5), V(0, 10.5))).toBeCloseTo(5.5)
+    expect(Vector.distance(V(5, 0), V(10.5, 0))).toBeCloseTo(5.5)
+    expect(Vector.distance(V(1, 1), V(4, 5))).toBeCloseTo(5)
+  })
   
   describe('toString()', () => {
     test('without modifier', () => {
