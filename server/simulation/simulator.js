@@ -49,8 +49,6 @@ class Simulator extends EventEmitter {
             skill1, skill2, skill3,
             skill4, skill5, skill6 } = controls
 
-    console.log(JSON.stringify(controls))
-
     if (typeof pX !== 'undefined')
       this.controls.get(id).pX = pX
 
