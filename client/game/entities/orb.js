@@ -51,37 +51,44 @@ Entity.register({
     this.mp.setAttributeNS(null, 'stroke-width', '0')
     this.mp.setAttributeNS(null, 'transform', 'rotate(210)')
     
-    this.group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-    this.group.appendChild(this.circle)
-    this.group.appendChild(this.hp)
-    this.group.appendChild(this.mp)
+    this.node = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    this.node.appendChild(this.circle)
+    this.node.appendChild(this.hp)
+    this.node.appendChild(this.mp)
   },
 
   parse(buffer, offset) {
     this.toRender = true
 
+    /** 0-7: this.radius */
     this.radius = buffer.readDoubleBE(offset)
     offset += 8
 
+    /** 8-15: this.mass */
     this.mass = buffer.readDoubleBE(offset)
     offset += 8
 
+    /** 16-23: this.moveForce */
     this.moveForce = buffer.readDoubleBE(offset)
     offset += 8
 
     this.previous.position = this.position.clone()
 
     this.position = V(
+      /** 24-31: this.position.x */
       buffer.readDoubleBE(offset),
+      /** 32-39: this.position.y */
       buffer.readDoubleBE(offset + 8),
     )
     offset += 16
 
     this.effects.clear()
 
+    /** 40-40: number of effects */
     const effectsCount = buffer.readUInt8(offset)
     offset += 1
 
+    /** 41-?: effects */
     for (let i = 0; i < effectsCount; i++) {
       const result = Effect.deserialize(buffer, offset)
 
@@ -89,15 +96,19 @@ Entity.register({
       this.effects.add(result.effect)
     }
 
+    /** ? + 0-7: this.maxHp */
     this.maxHp = buffer.readDoubleBE(offset)
     offset += 8
 
+    /** ? + 8-15: this.hp */
     this.hp = buffer.readDoubleBE(offset)
     offset += 8
 
+    /** ? + 16-23: this.maxMp */
     this.maxMp = buffer.readDoubleBE(offset)
     offset += 8
 
+    /** ? + 24-31: this.mp */
     this.mp = buffer.readDoubleBE(offset)
     offset += 8
 
@@ -126,6 +137,6 @@ Entity.register({
     this.circle.setAttributeNS(null, 'r', radius)
     this.hp.setAttributeNS(null, 'd', SVG.circleBar(V(0, 0), radius * 0.8, radius, hpValue))
     this.mp.setAttributeNS(null, 'd', SVG.circleBar(V(0, 0), radius * 0.6, radius * 0.8, mpValue))
-    this.group.setAttributeNS(null, 'transform', `translate(${position.x} ${position.y})`)
+    this.node.setAttributeNS(null, 'transform', `translate(${position.x} ${position.y})`)
   }
 })

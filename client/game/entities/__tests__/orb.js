@@ -6,6 +6,26 @@ import '../../effects/speedup'
 import { Vector, V } from '../../../../common/vector'
 
 describe('Orb', () => {
+  test('has Orb.prototype.node property', () => {
+    const buffer = Buffer.alloc(10 + 98)
+    buffer.writeUInt8(ORB, 10)
+    buffer.write('a'.repeat(24), 10 + 1, 24)
+    buffer.writeDoubleBE(101, 10 + 1 + 24)
+    buffer.writeDoubleBE(102, 10 + 1 + 24 + 8)
+    buffer.writeDoubleBE(103, 10 + 1 + 24 + 8 + 8)
+    buffer.writeDoubleBE(104, 10 + 1 + 24 + 8 + 8 + 8)
+    buffer.writeDoubleBE(105, 10 + 1 + 24 + 8 + 8 + 8 + 8)
+    buffer.writeUInt8   (0,   10 + 1 + 24 + 8 + 8 + 8 + 8 + 8)
+    buffer.writeDoubleBE(106, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 8 + 1)
+    buffer.writeDoubleBE(107, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 8 + 1 + 8)
+    buffer.writeDoubleBE(108, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 8 + 1 + 8 + 8)
+    buffer.writeDoubleBE(109, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 8 + 1 + 8 + 8 + 8)
+
+    const { entity: orb, offset } = Entity.deserialize(buffer, 10)
+
+    expect(orb.node).toBeDefined()
+  })
+
   test('deserializes correctly', () => {
     const buffer = Buffer.alloc(10 + 98)
     buffer.writeUInt8(ORB, 10)

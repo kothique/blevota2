@@ -4,9 +4,12 @@ import merge from 'lodash/merge'
 import present from 'present'
 
 import { V } from '../common/vector'
-import World from '../common/world'
-import State from '../common/state'
 
+/**
+ * @class
+ *
+ * @emits frame - { frame, currentTimestamp }
+ */
 export default class PlayoutBuffer extends EventEmitter {
   constructor() {
     super()
@@ -16,26 +19,26 @@ export default class PlayoutBuffer extends EventEmitter {
     this.frames = new List
     this.previous = [null, null]
  
-    this.firstFrame = true
+    this.isFirstFrame = true
   }
 
   clear = () => {
     this.frames.clear()
   }
 
-  put = ({ state, timestamp }) => {
-    if (this.firstFrame) {
+  put = ({ buffer, timestamp }) => {
+    if (this.isFirstFrame) {
       this.beginFrames = timestamp
     }
 
     this.frames.push({
-      state,
+      buffer,
       timestamp: timestamp - this.beginFrames
     })
 
-    if (this.firstFrame) {
+    if (this.isFirstFrame) {
       setTimeout(this.start, this.latency)
-      this.firstFrame = false
+      this.isFirstFrame = false
     }
   }
 
@@ -47,7 +50,7 @@ export default class PlayoutBuffer extends EventEmitter {
      * Find the frame in the queue closest to the current moment.
      * 
      * @param {number} currentTimestamp
-     * @returns {object|null}
+     * @return {object|null}
      */
     const getFrame = (currentTimestamp) => {
       let currentFrame
@@ -56,19 +59,11 @@ export default class PlayoutBuffer extends EventEmitter {
         if (currentFrame.timestamp < currentTimestamp) {
           this.frames.shift()
         } else {
-          return {
-            frame: this.previous[0],
-            prevFrame: this.previous[1]
-          }
+          return
         }
 
         this.previous[1] = this.previous[0]
         this.previous[0] = currentFrame
-      }
-
-      return {
-        frame: this.previous[0],
-        prevFrame: this.previous[1]
       }
     }
 
@@ -77,19 +72,15 @@ export default class PlayoutBuffer extends EventEmitter {
         return
       }
 
-      const currentTimestamp = present() - this.begin,
-            { frame, prevFrame } = getFrame(currentTimestamp)
+      const currentTimestamp = present() - this.begin
 
-      if (frame) {
-        let { state } = prevFrame
-          ? new World(V(800, 600), frame.state).extrapolate(prevFrame, frame.timestamp, currentTimestamp)
-          : frame
+      getFrame(currentTimestamp)
 
-        this.emit('frame', {
-          state,
-          timestamp: currentTimestamp
-        })
-      }
+      this.emit('frame', {
+        previousFrame: this.previous[1],
+        frame: this.previous[0],
+        currentTimestamp
+      })
 
       window.requestAnimationFrame(nextFrame)
     }

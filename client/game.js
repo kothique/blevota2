@@ -5,8 +5,9 @@ import { Buffer } from 'buffer-browserify'
 
 import Keyboard from './keyboard'
 import PlayoutBuffer from './playoutbuffer';
-import State from '../common/state'
-import Scene from './scene'
+import World from './game/world'
+
+import * as entities from '../common/entities'
 
 export default class Game extends EventEmitter {
   static host = 'http://localhost:3000/'
@@ -23,7 +24,8 @@ export default class Game extends EventEmitter {
     */
     this.svg = context
     this.info = info
-    this.scene = new Scene(this.svg)
+
+    World.init(this.svg, this.info)
 
     this.svg.addEventListener('mousemove', ({ offsetX, offsetY }) => {
       this.sendControls({
@@ -88,29 +90,43 @@ export default class Game extends EventEmitter {
       Configure playout buffer
     */
     this.buffer = new PlayoutBuffer()
-    this.buffer.on('frame', ({ state, timestamp }) => {
-      const { orbs } = state
+    this.buffer.on('frame', (
+      previousFrame,
+      frame,
+      currentTimestamp
+    ) => {
+      if (frame) {
+        World.parse(frame.buffer)
 
-      for (const id in orbs) {
-        const orb = orbs[id]
+        if (previousFrame) {
+          World.extrapolate(
+            previousFrame.timestamp,
+            frame.timestmap,
+            currentTimestamp
+          )
+        }
 
-        this.info.innerHTML = `
-          t: ${timestamp.toFixed(4)}<br />
-          f: ${orb.force.toString(n => n.toFixed(4))}<br />
-          p: ${orb.position.toString(n => n.toFixed(4))}<br />
-          v: ${orb.velocity.toString(n => n.toFixed(4))}<br />
-          a: ${orb.acceleration.toString(n => n.toFixed(4))}<br />
-          hp: ${orb.hp} / ${orb.maxHp}<br />
-          mp: ${orb.mp} / ${orb.maxMp}<br />`
+        // for (const id in World.entities) {
+        //   const orb = orbs[id]
 
-        this.scene.updateOrb(id, {
-          radius:   orb.radius,
-          position: orb.position,
-          maxHp:    orb.maxHp,
-          hp:       orb.hp,
-          maxMp:    orb.maxMp,
-          mp:       orb.mp
-        })
+        //   this.info.innerHTML = `
+        //     t: ${timestamp.toFixed(4)}<br />
+        //     f: ${orb.force.toString(n => n.toFixed(4))}<br />
+        //     p: ${orb.position.toString(n => n.toFixed(4))}<br />
+        //     v: ${orb.velocity.toString(n => n.toFixed(4))}<br />
+        //     a: ${orb.acceleration.toString(n => n.toFixed(4))}<br />
+        //     hp: ${orb.hp} / ${orb.maxHp}<br />
+        //     mp: ${orb.mp} / ${orb.maxMp}<br />`
+
+        //   this.scene.updateOrb(id, {
+        //     radius:   orb.radius,
+        //     position: orb.position,
+        //     maxHp:    orb.maxHp,
+        //     hp:       orb.hp,
+        //     maxMp:    orb.maxMp,
+        //     mp:       orb.mp
+        //   })
+        // }
       }
     })
 
@@ -148,18 +164,18 @@ export default class Game extends EventEmitter {
     })
 
     socket.on('frame', (frame) => {
-      const buffer = new Buffer(frame.state.data)
-
-      frame.state = State.fromBuffer(buffer)
-      this.buffer.put(frame)
+      this.buffer.put({
+        buffer: new Buffer(frame.buffer.data),
+        timestamp: frame.timetamp
+      })
     })
 
     socket.on('new-orb', (id) => {
-      this.scene.newOrb(id)
+      World.new(id, entities.ORB)
     })
 
     socket.on('remove-orb', (id) => {
-      this.scene.removeOrb(id)
+      World.remove(id)
     })
   }
 
@@ -168,6 +184,7 @@ export default class Game extends EventEmitter {
   }
 
   stop = () => {
+    World.clear()
     this.socket.disconnect()
   }
 }

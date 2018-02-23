@@ -2,8 +2,8 @@
  * @module client/game/entity
  */
 
-const entities = Object.create(null),
-      factories = Object.create(null)
+let entities = Object.create(null)
+const factories = Object.create(null)
 
 const Entity = {
   /**
@@ -102,7 +102,7 @@ const Entity = {
   },
 
   /**
-   * Get the orb with the specified id.
+   * Get the entity with the specified id.
    *
    * @param {string} id
    */
@@ -111,12 +111,19 @@ const Entity = {
   },
 
   /**
-   * Remove the orb with the specified id.
+   * Remove the entity with the specified id.
    *
    * @param {string} id
    */
   remove(id) {
     delete entities[id]
+  },
+
+  /**
+   * Remove all entities.
+   */
+  clear() {
+    entities = Object.create(null)
   }
 }
 
