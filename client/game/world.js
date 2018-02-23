@@ -92,7 +92,7 @@ const World = {
 
     this.clear()
     this.svg = svg
-    this.info
+    this.info = info
   },
 
   /**

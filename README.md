@@ -2,6 +2,8 @@
 
 ## ROADMAP
 
+- refactoring
+  - allow composition for effects and entities
 - physics
   - relative static contanct
   - sliding
@@ -22,6 +24,4 @@
   - UDP
 - tests
   - client/**
-  - common/
-      - world.js
   - server/**
