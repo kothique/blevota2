@@ -2,6 +2,8 @@
  * @module client/game/entity
  */
 
+import _ from 'lodash'
+
 let entities = Object.create(null)
 const factories = Object.create(null)
 
@@ -28,7 +30,7 @@ const Entity = {
             })
 
             /** Instance properties. */
-            Object.assign(entity, {
+            _.extend(entity, {
               id
             })
 
