@@ -127,6 +127,27 @@ describe('compose2', () => {
       expect(obj.hello()).toBe('hello')
       expect(obj.bye()).toBe('bye')
     })
+
+    test('the "parent" prototype is passed as this._parentProto', () => {
+      const obj = compose2(
+        stamp({
+          proto: {
+            hello() {
+              return 'hello'
+            }
+          }
+        }),
+        stamp({
+          proto: {
+            hello() {
+              return this._parentProto.hello.call(this) + 'lolo!'
+            }
+          }
+        })
+      ).create()
+
+      expect(obj.hello()).toBe('hellololo!')
+    })
   })
 
   describe('mixins', () => {

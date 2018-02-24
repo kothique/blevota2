@@ -38,17 +38,19 @@ const stamp = function stamp(options = {}) {
      * @return {object}
      */
     create(...args) {
+      const { init, proto, instance, enclose } = this.meta
+
       /** Delegate prototype. */
-      const obj = _.create(this.meta.proto)
+      const obj = _.create(proto)
 
       /** Instance properties. */
-      _.extend(obj, this.meta.instance)
+      _.extend(obj, instance)
 
       /** Create enclosed private data. */
-      this.meta.enclose.call(obj)
+      enclose.call(obj)
 
       /** Initialize. */
-      this.meta.init.apply(obj, args)
+      init.apply(obj, args)
 
       return obj
     }
@@ -64,7 +66,14 @@ module.exports.stamp = stamp
  */
 const compose2 = function (stamp1, stamp2) {
   const proto = _.create(stamp1.meta.proto)
-  _.extend(proto, stamp2.meta.proto)
+
+  _.extend(
+    proto,
+    stamp2.meta.proto,
+    {
+      _parentProto: stamp1.meta.proto
+    }
+  )
 
   return stamp({
     init(...args) {
