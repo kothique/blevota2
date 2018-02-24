@@ -95,7 +95,7 @@ describe('stamp', () => {
 })
 
 describe('compose2', () => {
-  test('should compose inits', () => {
+  test('should only run the last init', () => {
     const obj = compose2(
       stamp({
         init() { this.v1 = 10 }
@@ -105,7 +105,7 @@ describe('compose2', () => {
       })
     ).create()
 
-    expect(obj.v1).toBe(10)
+    expect(obj.v1).toBeUndefined()
     expect(obj.v2).toBe(11)
   })
 
@@ -128,9 +128,12 @@ describe('compose2', () => {
       expect(obj.bye()).toBe('bye')
     })
 
-    test('the "parent" prototype is passed as this._parentProto', () => {
+    test('the "parent" stamp\'s meta is passed as this._parent', () => {
       const obj = compose2(
         stamp({
+          init() {
+            this.value = 42
+          },
           proto: {
             hello() {
               return 'hello'
@@ -138,15 +141,20 @@ describe('compose2', () => {
           }
         }),
         stamp({
+          init() {
+            this._parent.init.call(this)
+            this.value += 1
+          },
           proto: {
             hello() {
-              return this._parentProto.hello.call(this) + 'lolo!'
+              return this._parent.proto.hello.call(this) + 'lolo!'
             }
           }
         })
       ).create()
 
       expect(obj.hello()).toBe('hellololo!')
+      expect(obj.value).toBe(43)
     })
   })
 

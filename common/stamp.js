@@ -71,13 +71,13 @@ const compose2 = function (stamp1, stamp2) {
     proto,
     stamp2.meta.proto,
     {
-      _parentProto: stamp1.meta.proto
+      _parent: stamp1.meta
     }
   )
 
   return stamp({
     init(...args) {
-      stamp1.meta.init.apply(this, args)
+      // Only run the last init
       stamp2.meta.init.apply(this, args)
     },
     proto,
