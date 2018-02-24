@@ -4,6 +4,7 @@ const { INSTANT_DAMAGE } = require('../../../common/effects')
 
 const InstantDamage = compose2(Effect, stamp({
   init(value) {
+    this._parent.init.call(this)
     this.value = value
   },
 
@@ -15,8 +16,8 @@ const InstantDamage = compose2(Effect, stamp({
     },
 
     serialize(buffer, offset = 0) {
-      this._parentProto.serialize.call(this, buffer, offset)
-      offset += this._parentProto.serializedLength.call(this)
+      this._parent.proto.serialize.call(this, buffer, offset)
+      offset += this._parent.proto.serializedLength.call(this)
 
       buffer.writeUInt8(INSTANT_DAMAGE, offset)
       offset += 1
@@ -28,7 +29,7 @@ const InstantDamage = compose2(Effect, stamp({
     },
 
     serializedLength() {
-      return this._parentProto.serializedLength.call(this) + 9
+      return this._parent.proto.serializedLength.call(this) + 9
     }
   }
 }))

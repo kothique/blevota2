@@ -4,7 +4,7 @@ require('../../../client/game/effects/speedup')
 const { SPEEDUP } = require('../../../common/effects')
 
 describe('SpeedUp effect serialization', () => {
-  test('deserialized effect should match the serialized one', () => {
+  test('deserialized effect should match the original one', () => {
     const serverEffect = ServerSpeedUp.create(42),
           serverLength = serverEffect.serializedLength(),
           buffer = Buffer.alloc(serverLength)

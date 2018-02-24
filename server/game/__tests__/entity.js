@@ -1,9 +1,10 @@
 const Entity = require('../entity')
+const { ENTITY } = require('../../../common/entities')
 const { V, Vector } = require('../../../common/vector')
 
 describe('Entity', () => {
   test('applyControls() should set force', () => {
-    const entity = Entity.create({
+    const entity = Entity.create('a'.repeat(24), {
       radius:    30,
       mass:      0.5,
       moveForce: 0.1
@@ -19,7 +20,7 @@ describe('Entity', () => {
   })
 
   describe('receiveEffect() & removeEffect()', () => {
-    const entity = Entity.create({
+    const entity = Entity.create('a'.repeat(24), {
       radius: 30,
       mass: 0.5
     })
@@ -46,7 +47,7 @@ describe('Entity', () => {
   })
 
   describe('applyEffects()', () => {
-    const entity = Entity.create({
+    const entity = Entity.create('a'.repeat(24), {
       radius: 30,
       mass: 0.5
     })
@@ -77,7 +78,7 @@ describe('Entity', () => {
     let entity
 
     beforeEach(() => {
-      entity = Entity.create({
+      entity = Entity.create('a'.repeat(), {
         radius: 30,
         mass: 1,
         moveForce: 0.1,
@@ -125,7 +126,7 @@ describe('Entity', () => {
   })
 
   describe('serialization', () => {
-    const entity = Entity.create({
+    const entity = Entity.create('a'.repeat(24), {
       radius:    10,
       mass:      11,
       moveForce: 12,
@@ -153,7 +154,7 @@ describe('Entity', () => {
     })
 
     test('should return correct serialized length', () => {
-      expect(entity.serializedLength()).toBe(41 + 10 + 15)
+      expect(entity.serializedLength()).toBe(66 + 10 + 15)
     })
 
     test('should serialize correctly', () => {
@@ -161,6 +162,12 @@ describe('Entity', () => {
       entity.serialize(buffer, 10)
 
       let offset = 10
+
+      expect(buffer.readUInt8(offset)).toBe(ENTITY)
+      offset += 1
+
+      expect(buffer.toString('utf8', offset, offset + 24)).toBe('a'.repeat(24))
+      offset += 24
 
       expect(buffer.readDoubleBE(offset)).toBe(10)
       offset += 8

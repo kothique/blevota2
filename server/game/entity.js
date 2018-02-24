@@ -1,5 +1,6 @@
 const Set = require('collections/set')
 
+const { ENTITY } = require('../../common/entities')
 const { stamp } = require('../../common/stamp')
 const { V, Vector } = require('../../common/vector')
 
@@ -7,15 +8,19 @@ const Entity = stamp({
   /**
    * Initialize the new entity.
    *
-   * @param {object}  options
-   * @param {number}  options.radius
-   * @param {number}  options.mass
-   * @param {?number} options.moveForce
-   * @param {?Vector} options.position
-   * @param {?Vector} options.velocity
-   * @param {?Vector} options.force
+   * @param {string}   id
+   * @param {object}   options
+   * @param {?number}  options.type
+   * @param {number}   options.radius
+   * @param {number}   options.mass
+   * @param {?number}  options.moveForce
+   * @param {?Vector}  options.position
+   * @param {?Vector}  options.velocity
+   * @param {?Vector}  options.force
    */
-  init(options) {
+  init(id, options) {
+    this.id         = id
+    this.type       = options.type         || ENTITY
     this.radius     = options.radius
     this.mass       = options.mass
     this.moveForce  = options.moveForce    || 0
@@ -117,6 +122,12 @@ const Entity = stamp({
      * @chainable
      */
     serialize(buffer, offset = 0) {
+      buffer.writeUInt8(this.type, offset)
+      offset += 1
+
+      buffer.write(this.id, offset, offset + 24)
+      offset += 24
+
       buffer.writeDoubleBE(this.radius, offset)
       offset += 8
 
@@ -155,7 +166,7 @@ const Entity = stamp({
         0
       )
 
-      return 8 * 5 + 1 + effectsLength
+      return 1 + 24 + 8 * 5 + 1 + effectsLength
     }
   }
 })
