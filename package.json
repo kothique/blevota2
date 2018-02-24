@@ -6,7 +6,7 @@
     "server": "node server/index.js",
     "watch": "yarn run webpack --watch",
     "docs": "yarn run jsdoc -c jsdoc.config.js",
-    "test": "yarn run jest"
+    "test": "yarn run jest --watch"
   },
   "author": "Kothique Félixx",
   "license": "UNLICENSED",

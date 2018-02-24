@@ -3,7 +3,7 @@ import '../instant-damage'
 import { INSTANT_DAMAGE } from '../../../../common/effects'
 
 describe('InstantDamage', () => {
-  test('deserializes correctly', () => {
+  test('should deserialize correctly', () => {
     const buffer = Buffer.alloc(10 + 1 + 8)
     buffer.writeUInt8(INSTANT_DAMAGE, 10 + 0)
     buffer.writeDoubleBE(42, 10 + 1)

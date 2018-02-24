@@ -26,7 +26,7 @@ describe('Orb', () => {
     expect(orb.node).toBeDefined()
   })
 
-  test('deserializes correctly', () => {
+  test('should deserialize correctly', () => {
     const buffer = Buffer.alloc(10 + 98)
     buffer.writeUInt8(ORB, 10)
     buffer.write('a'.repeat(24), 10 + 1, 24)
@@ -56,7 +56,7 @@ describe('Orb', () => {
     expect(orb.mp).toBe(109)
   })
 
-  test('deserializes correctly with effects', () => {
+  test('should deserialize correctly with effects', () => {
     const buffer = Buffer.alloc(10 + 116)
     buffer.writeUInt8(ORB, 10)
     buffer.write('a'.repeat(24), 10 + 1, 24)

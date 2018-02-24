@@ -25,3 +25,4 @@
 - tests
   - client/**
   - server/**
+  - test compatibility between serializing and deserializing

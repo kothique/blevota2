@@ -15,7 +15,7 @@ const World = {
    */
   new(id, type) {
     const entity = Entity.new(id, type)
-    this.entities[id] = entity
+    Entity.entities[id] = entity
     this.svg.appendChild(entity.node)
 
     return this
@@ -28,8 +28,8 @@ const World = {
    * @chainable
    */
   remove(id) {
-    this.svg.removeChild(this.entities[id].node)
-    delete this.entities[id]
+    this.svg.removeChild(Entity.entities[id].node)
+    delete Entity.entities[id]
     Entity.remove(id)
 
     return this
@@ -72,8 +72,8 @@ const World = {
    * @chainable
    */
   extrapolate(timestamp) {
-    for (const id in this.entites) {
-      this.entities[id].extrapolate(timestamp)
+    for (const id in Entity.entites) {
+      Entity.entities[id].extrapolate(timestamp)
     }
 
     return this
@@ -103,7 +103,7 @@ const World = {
   clear() {
     this.svg = null
     this.size = V(0, 0)
-    this.entities = Object.create(null)
+    Entity.entities = Object.create(null)
     Entity.clear()
 
     return this

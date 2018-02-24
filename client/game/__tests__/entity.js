@@ -3,7 +3,7 @@ beforeEach(() => {
 })
 
 describe('Entity', () => {
-  test('correctly deserializes an entity after registration', done => {
+  test('should correctly deserialize an entity after registration', done => {
     import('../entity').then(({ default: Entity }) => {
       Entity.register({
         type: 42,
@@ -62,7 +62,7 @@ describe('Entity', () => {
       expect(Entity.get(id)).toBeUndefined()
       Entity.new(id, 42)
       expect(Entity.get(id)).toBeDefined()
-      Enttiy.remove(id)
+      Entity.remove(id)
       expect(Entity.get(id)).toBeUndefined()
     })
   })

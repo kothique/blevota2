@@ -3,7 +3,7 @@ beforeEach(() => {
 })
 
 describe('Effect', () => {
-  test('correctly deserializes an effect after registration', done => {
+  test('should correctly deserialize an effect after registration', done => {
     import('../effect').then(({ default: Effect }) => {
       Effect.register({
         type: 42,

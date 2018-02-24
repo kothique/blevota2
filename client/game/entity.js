@@ -4,7 +4,6 @@
 
 import _ from 'lodash'
 
-let entities = Object.create(null)
 const factories = Object.create(null)
 
 const Entity = {
@@ -67,10 +66,10 @@ const Entity = {
       }
     }
 
-    if (!entities[id]) {
-      entities[id] = factory(id)
+    if (!Entity.entities[id]) {
+      Entity.entities[id] = factory(id)
     }
-    const entity = entities[id]
+    const entity = Entity.entities[id]
     offset = entity.parse(buffer, offset)
 
     return { entity, offset }
@@ -98,7 +97,7 @@ const Entity = {
       Entity.remove(id)
     }
 
-    const entity = entities[id] = factory(id)
+    const entity = Entity.entities[id] = factory(id)
 
     return entity
   },
@@ -109,7 +108,7 @@ const Entity = {
    * @param {string} id
    */
   get(id) {
-    return entities[id]
+    return Entity.entities[id]
   },
 
   /**
@@ -118,15 +117,20 @@ const Entity = {
    * @param {string} id
    */
   remove(id) {
-    delete entities[id]
+    delete Entity.entities[id]
   },
 
   /**
    * Remove all entities.
    */
   clear() {
-    entities = Object.create(null)
-  }
+    Entity.entities = Object.create(null)
+  },
+
+  /**
+   * All entities in the world.
+   */
+  entities: Object.create(null)
 }
 
 export default Entity
