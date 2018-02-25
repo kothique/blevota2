@@ -6,7 +6,7 @@
     "server": "node server/index.js",
     "watch": "yarn run webpack --watch",
     "docs": "yarn run jsdoc -c jsdoc.config.js",
-    "test": "yarn run jest"
+    "test": "yarn run jest --watch"
   },
   "author": "Kothique Félixx",
   "license": "UNLICENSED",
@@ -50,6 +50,8 @@
   },
   "devDependencies": {
     "babel-jest": "^22.2.2",
+    "babel-plugin-dynamic-import-node": "^1.2.0",
+    "babel-plugin-dynamic-import-webpack": "^1.0.2",
     "benchmark": "^2.1.4",
     "copy-webpack-plugin": "^4.3.1",
     "jest": "^22.2.2",

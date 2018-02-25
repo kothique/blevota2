@@ -6,7 +6,8 @@ const EventEmitter = require('events')
 const present = require('present')
 const Dict = require('collections/dict')
 
-const World = require('../../common/world')
+const World = require('../game/world')
+const Orb = require('../game/entities/orb')
 const { Vector, V } = require('../../common/vector')
 
 /**
@@ -28,14 +29,14 @@ class Simulator extends EventEmitter {
   constructor(options = Object.create(null)) {
     super()
 
-    this.world = options.world || new World(V(800, 600))
+    this.world = options.world || World.create(V(800, 600))
     this.t = options.t || 0
     this.dt = options.dt || 1000 / 120 // milliseconds
     this.accumulator = 0
 
     this.continue = true
 
-    this.controls = new Dict
+    this.controls = Object.create(null)
   }
 
   /**
@@ -49,34 +50,32 @@ class Simulator extends EventEmitter {
             skill1, skill2, skill3,
             skill4, skill5, skill6 } = controls
 
-    console.log(JSON.stringify(controls))
-
     if (typeof pX !== 'undefined')
-      this.controls.get(id).pX = pX
+      this.controls[id].pX = pX
 
     if (typeof pY !== 'undefined')
-      this.controls.get(id).pY = pY
+      this.controls[id].pY = pY
 
     if (typeof move !== 'undefined')
-      this.controls.get(id).move = move
+      this.controls[id].move = move
 
     if (typeof skill1 !== 'undefined')
-      this.controls.get(id).skill1 = skill1
+      this.controls[id].skill1 = skill1
 
     if (typeof skill2 !== 'undefined')
-      this.controls.get(id).skill2 = skill2
+      this.controls[id].skill2 = skill2
 
     if (typeof skill3 !== 'undefined')
-      this.controls.get(id).skill3 = skill3
+      this.controls[id].skill3 = skill3
 
     if (typeof skill4 !== 'undefined')
-      this.controls.get(id).skill4 = skill4
+      this.controls[id].skill4 = skill4
 
     if (typeof skill5 !== 'undefined')
-      this.controls.get(id).skill5 = skill5
+      this.controls[id].skill5 = skill5
 
     if (typeof skill6 !== 'undefined')
-      this.controls.get(id).skill6 = skill6
+      this.controls[id].skill6 = skill6
 
   }
 
@@ -86,9 +85,19 @@ class Simulator extends EventEmitter {
    * @param {string} id - The ID of the new orb.
    */
   newOrb(id) {
-    this.world.newOrb(id)
+    this.world.new(Orb.create(id, {
+      radius: 20 + Math.random() * 30,
+      maxHp: 100,
+      hp: 80,
+      maxMp: 100,
+      mp: 80,
+      position: V(
+        50 + Math.random() * 700,
+        50 + Math.random() * 500
+      )
+    }))
 
-    this.controls.set(id, {
+    this.controls[id] = {
       pX: 0,
       pY: 0,
       move: false,
@@ -97,8 +106,8 @@ class Simulator extends EventEmitter {
       skill3: false,
       skill4: false,
       skill5: false,
-      skill6: false,
-    })
+      skill6: false
+    }
   }
 
   /**
@@ -107,8 +116,8 @@ class Simulator extends EventEmitter {
    * @param {string} id - The ID of the orb.
    */
   removeOrb(id) {
-    this.world.removeOrb(id)
-    this.controls.delete(id)
+    this.world.remove(id)
+    delete this.controls[id]
   }
 
   /**
@@ -138,15 +147,14 @@ class Simulator extends EventEmitter {
 
       this.accumulator += frameTime
 
-      this.world.startIteration()
+      this.world.clearForces()
 
       let integrated = false
       while (this.accumulator >= this.dt) {
-        this.controls.forEach((controls, id) => {
-          this.world.applyControls(id, controls)
-        })
-
-        this.world.integrate(this.t / 1000, this.dt / 1000)
+        this.world
+          .applyControls(this.controls)
+          .integrate(this.t / 1000, this.dt / 1000)
+          .applyEffects(this.t / 1000, this.dt / 1000)
         integrated = true
 
         this.t += this.dt
@@ -155,15 +163,14 @@ class Simulator extends EventEmitter {
 
       if (integrated) {
         this.emit('frame', {
-          state: this.world.state.toBuffer(),
+          buffer: this.world.toBuffer(),
           timestamp: this.t
         })
 
-        this.world.detectCollisions()
-        this.world.applyCollisionResponse()
+        this.world
+          .detectCollisions()
+          .applyCollisionResponse()
       }
-
-      this.world.finishIteration()
 
       if (Date.now() - currentTime < this.dt - 4) {
         setTimeout(loop)

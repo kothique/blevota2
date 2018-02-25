@@ -3,5 +3,16 @@
   "plugins": [
     "transform-class-properties",
     "transform-object-rest-spread"
-  ]
+  ],
+  "env": {
+    "developments": {
+      "plugins": ["dynamic-import-webpack"]
+    },
+    "production": {
+      "plugins": ["dynamic-import-webpack"]
+    },
+    "test": {
+      "plugins": ["dynamic-import-node"]
+    }
+  }
 }
