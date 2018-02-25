@@ -45,14 +45,14 @@ const World = {
   parse(buffer, offset = 0) {
     this.size = V(
       /** 0-7: this.size.x */
-      buffer.readInt16BE(offset),
+      buffer.readUInt16BE(offset),
       /** 8-15: this.size.y */
-      buffer.readInt16BE(offset + 8)
+      buffer.readUInt16BE(offset + 2)
     )
     offset += 4
 
     /** 16-17: number of entities */
-    const entitiesCount = buffer.readUInt16(offset)
+    const entitiesCount = buffer.readUInt16BE(offset)
     offset += 2
 
     /** 18-?: entities */
