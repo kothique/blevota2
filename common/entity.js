@@ -109,7 +109,7 @@ class Entity {
   }
 
   /**
-   * Write the entity's binary representation into a buffer.
+   * Write the entity to a buffer.
    *
    * @param {Buffer} buffer - The buffer to write to.
    * @param {number} offset

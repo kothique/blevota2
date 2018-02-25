@@ -3,26 +3,29 @@
 ## ROADMAP
 
 - refactoring
-  - allow composition for effects and entities
+  - split common/ between client and server (!)
+  - define CollisionDetector using stamps (!)
+  - allow composition for effects and entities (!)
+  - /** @module ... */
+  - define Vector using stamps
 - physics
-  - relative static contanct
-  - sliding
+  - relative static contanct (!)
+  - sliding (!)
 - game mechanics
-  - skills
-  - effect creators
+  - skills (!)
 - ui
   - dark background around login- and register forms
   - 404 not found page
   - user profile
   - persistent redux state
   - moving camera
-  - host can be entered by user
   - loading animation
   - mobile menu
-- data compression
-- performance
-  - UDP
+- optimization
+  - data compression
+  - UDP (WebRTC??)
+  - profiling
 - tests
   - client/**
   - server/**
-  - test compatibility between serializing and deserializing
+  - test compatibility between serializing and deserializing (!)

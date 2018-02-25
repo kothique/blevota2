@@ -46,7 +46,7 @@ class Orb extends Entity {
   }
 
   /**
-   * Write the orb's binary representation into a buffer.
+   * Write the orb to a buffer.
    *
    * @param {Buffer} buffer - The buffer to write to.
    * @param {number} offset

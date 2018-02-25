@@ -70,7 +70,7 @@ describe('Entity', () => {
 
     test('should remove effect right after its death', () => {
       expect(effect.alive).toBeFalsy()
-      expect(entity.effects.length).toBe(0)
+      expect(entity.effects).toHaveLength(0)
     })
   })
 
@@ -151,10 +151,6 @@ describe('Entity', () => {
       serialize(buffer, offset = 0) {
         buffer.write('Z'.repeat(15), offset, offset + 15)
       }
-    })
-
-    test('should return correct serialized length', () => {
-      expect(entity.serializedLength()).toBe(66 + 10 + 15)
     })
 
     test('should serialize correctly', () => {

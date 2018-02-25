@@ -6,7 +6,8 @@ const EventEmitter = require('events')
 const present = require('present')
 const Dict = require('collections/dict')
 
-const World = require('../../common/world')
+const World = require('../game/world')
+const Orb = require('../game/entities/orb')
 const { Vector, V } = require('../../common/vector')
 
 /**
@@ -28,14 +29,14 @@ class Simulator extends EventEmitter {
   constructor(options = Object.create(null)) {
     super()
 
-    this.world = options.world || new World(V(800, 600))
+    this.world = options.world || World.create(V(800, 600))
     this.t = options.t || 0
     this.dt = options.dt || 1000 / 120 // milliseconds
     this.accumulator = 0
 
     this.continue = true
 
-    this.controls = new Dict
+    this.controls = Object.create(null)
   }
 
   /**
@@ -84,9 +85,14 @@ class Simulator extends EventEmitter {
    * @param {string} id - The ID of the new orb.
    */
   newOrb(id) {
-    this.world.newOrb(id)
+    this.world.new(Orb.create(id, {
+      mapHp: 100,
+      hp: 80,
+      maxMp: 100,
+      mp: 80
+    }))
 
-    this.controls.set(id, {
+    this.controls[id] = {
       pX: 0,
       pY: 0,
       move: false,
@@ -95,8 +101,8 @@ class Simulator extends EventEmitter {
       skill3: false,
       skill4: false,
       skill5: false,
-      skill6: false,
-    })
+      skill6: false
+    }
   }
 
   /**
@@ -105,8 +111,8 @@ class Simulator extends EventEmitter {
    * @param {string} id - The ID of the orb.
    */
   removeOrb(id) {
-    this.world.removeOrb(id)
-    this.controls.delete(id)
+    this.world.remove(id)
+    delete this.controls[id]
   }
 
   /**
@@ -136,15 +142,14 @@ class Simulator extends EventEmitter {
 
       this.accumulator += frameTime
 
-      this.world.startIteration()
+      this.world.clearForces()
 
       let integrated = false
       while (this.accumulator >= this.dt) {
-        this.controls.forEach((controls, id) => {
-          this.world.applyControls(id, controls)
-        })
+        this.world.applyControls(this.controls)
 
         this.world.integrate(this.t / 1000, this.dt / 1000)
+        this.world.applyEffects(this.t / 1000, this.dt / 1000)
         integrated = true
 
         this.t += this.dt
@@ -153,15 +158,13 @@ class Simulator extends EventEmitter {
 
       if (integrated) {
         this.emit('frame', {
-          state: this.world.state.toBuffer(),
+          state: this.world.toBuffer(),
           timestamp: this.t
         })
 
         this.world.detectCollisions()
         this.world.applyCollisionResponse()
       }
-
-      this.world.finishIteration()
 
       if (Date.now() - currentTime < this.dt - 4) {
         setTimeout(loop)

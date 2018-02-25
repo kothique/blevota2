@@ -14,13 +14,13 @@ describe('World', () => {
                 info = document.createElement('div')
           World.init({ svg, info })
 
-          expect(Object.keys(Entity.entities).length).toBe(0)
+          expect(Object.keys(Entity.entities)).toHaveLength(0)
 
           World.new('a'.repeat(24), ORB)
-          expect(Object.keys(Entity.entities).length).toBe(1)
+          expect(Object.keys(Entity.entities)).toHaveLength(1)
 
           World.remove('a'.repeat(24))
-          expect(Object.keys(Entity.entities).length).toBe(0)
+          expect(Object.keys(Entity.entities)).toHaveLength(0)
 
           done()
         })
@@ -37,14 +37,14 @@ describe('World', () => {
                 info = document.createElement('div')
           World.init({ svg, info })
 
-          expect(Object.keys(Entity.entities).length).toBe(0)
+          expect(Object.keys(Entity.entities)).toHaveLength(0)
 
           World.new('a'.repeat(24), ORB)
           World.new('b'.repeat(24), ORB)
-          expect(Object.keys(Entity.entities).length).toBe(2)
+          expect(Object.keys(Entity.entities)).toHaveLength(2)
 
           World.clear()
-          expect(Object.keys(Entity.entities).length).toBe(0)
+          expect(Object.keys(Entity.entities)).toHaveLength(0)
 
           done()
         })

@@ -45,11 +45,11 @@ const World = {
   parse(buffer, offset = 0) {
     this.size = V(
       /** 0-7: this.size.x */
-      buffer.readDoubleBE(offset),
+      buffer.readInt16BE(offset),
       /** 8-15: this.size.y */
-      buffer.readDoubleBE(offset + 8)
+      buffer.readInt16BE(offset + 8)
     )
-    offset += 16
+    offset += 4
 
     /** 16-17: number of entities */
     const entitiesCount = buffer.readUInt16(offset)
@@ -57,7 +57,7 @@ const World = {
 
     /** 18-?: entities */
     for (let i = 0; i < entitiesCount; i++) {
-      const result = Entity.deserialize(buffer.offset)
+      const result = Entity.deserialize(buffer, offset)
 
       offset = result.offset
     }

@@ -31,7 +31,7 @@ class World {
   }
 
   /**
-   * Add a new orb into the world.
+   * Add a new orb to the world.
    *
    * @param {string} id - The ID of the new orb.
    * @chainable
