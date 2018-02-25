@@ -59,7 +59,7 @@ export default class PlayoutBuffer extends EventEmitter {
         if (currentFrame.timestamp < currentTimestamp) {
           this.frames.shift()
         } else {
-          return
+          return this.previous[0]
         }
 
         this.previous[1] = this.previous[0]

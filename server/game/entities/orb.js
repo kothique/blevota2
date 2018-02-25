@@ -10,23 +10,25 @@ const Orb = compose2(Entity, stamp({
    * @param {string}   id
    * @param {object}   options
    * @param {?number}  options.type
-   * @param {number}   options.maxHp - Maximum health points.
-   * @param {number}   options.hp    - Current health points.
-   * @param {number}   options.maxMp - Maximum mana points.
-   * @param {number}   options.mp    - Current mana points.
+   * @param {number}   options.radius
+   * @param {number}   options.maxHp  - Maximum health points.
+   * @param {number}   options.hp     - Current health points.
+   * @param {number}   options.maxMp  - Maximum mana points.
+   * @param {number}   options.mp     - Current mana points.
    */
   init(id, options) {
     this._parent.init.call(this, id, {
       ...options,
-      type:      options.type || ORB,
+      type:      options.type  || ORB,
       mass:      1,
       moveForce: 0.1,
     })
 
-    this.maxHp = options.maxHp
-    this.hp    = options.hp
-    this.maxMp = options.maxMp
-    this.mp    = options.mp
+    this.radius = options.radius || 30
+    this.maxHp  = options.maxHp
+    this.hp     = options.hp
+    this.maxMp  = options.maxMp
+    this.mp     = options.mp
 
     this.skill1 = {
       prev: false,
@@ -72,6 +74,9 @@ const Orb = compose2(Entity, stamp({
       this._parent.proto.serialize.call(this, buffer, offset)
       offset += this._parent.proto.serializedLength.call(this)
 
+      buffer.writeDoubleBE(this.radius, offset)
+      offset += 8
+
       buffer.writeDoubleBE(this.maxHp, offset)
       offset += 8
 
@@ -94,7 +99,7 @@ const Orb = compose2(Entity, stamp({
      * @override
      */
     serializedLength() {
-      return this._parent.proto.serializedLength.call(this) + 8 * 4
+      return this._parent.proto.serializedLength.call(this) + 8 * 5
     }
   }
 }))

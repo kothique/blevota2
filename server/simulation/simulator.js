@@ -51,31 +51,31 @@ class Simulator extends EventEmitter {
             skill4, skill5, skill6 } = controls
 
     if (typeof pX !== 'undefined')
-      this.controls.get(id).pX = pX
+      this.controls[id].pX = pX
 
     if (typeof pY !== 'undefined')
-      this.controls.get(id).pY = pY
+      this.controls[id].pY = pY
 
     if (typeof move !== 'undefined')
-      this.controls.get(id).move = move
+      this.controls[id].move = move
 
     if (typeof skill1 !== 'undefined')
-      this.controls.get(id).skill1 = skill1
+      this.controls[id].skill1 = skill1
 
     if (typeof skill2 !== 'undefined')
-      this.controls.get(id).skill2 = skill2
+      this.controls[id].skill2 = skill2
 
     if (typeof skill3 !== 'undefined')
-      this.controls.get(id).skill3 = skill3
+      this.controls[id].skill3 = skill3
 
     if (typeof skill4 !== 'undefined')
-      this.controls.get(id).skill4 = skill4
+      this.controls[id].skill4 = skill4
 
     if (typeof skill5 !== 'undefined')
-      this.controls.get(id).skill5 = skill5
+      this.controls[id].skill5 = skill5
 
     if (typeof skill6 !== 'undefined')
-      this.controls.get(id).skill6 = skill6
+      this.controls[id].skill6 = skill6
 
   }
 
@@ -86,10 +86,15 @@ class Simulator extends EventEmitter {
    */
   newOrb(id) {
     this.world.new(Orb.create(id, {
-      mapHp: 100,
+      radius: 20 + Math.random() * 30,
+      maxHp: 100,
       hp: 80,
       maxMp: 100,
-      mp: 80
+      mp: 80,
+      position: V(
+        50 + Math.random() * 700,
+        50 + Math.random() * 500
+      )
     }))
 
     this.controls[id] = {
@@ -146,10 +151,10 @@ class Simulator extends EventEmitter {
 
       let integrated = false
       while (this.accumulator >= this.dt) {
-        this.world.applyControls(this.controls)
-
-        this.world.integrate(this.t / 1000, this.dt / 1000)
-        this.world.applyEffects(this.t / 1000, this.dt / 1000)
+        this.world
+          .applyControls(this.controls)
+          .integrate(this.t / 1000, this.dt / 1000)
+          .applyEffects(this.t / 1000, this.dt / 1000)
         integrated = true
 
         this.t += this.dt
@@ -158,12 +163,13 @@ class Simulator extends EventEmitter {
 
       if (integrated) {
         this.emit('frame', {
-          state: this.world.toBuffer(),
+          buffer: this.world.toBuffer(),
           timestamp: this.t
         })
 
-        this.world.detectCollisions()
-        this.world.applyCollisionResponse()
+        this.world
+          .detectCollisions()
+          .applyCollisionResponse()
       }
 
       if (Date.now() - currentTime < this.dt - 4) {

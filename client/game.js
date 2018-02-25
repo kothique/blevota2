@@ -1,10 +1,12 @@
 import EventEmitter from 'events'
 import ioc from 'socket.io-client'
-import get from 'lodash/get'
 import { Buffer } from 'buffer-browserify'
 
 import Keyboard from './keyboard'
 import PlayoutBuffer from './playoutbuffer';
+import './game/entities/orb'
+import './game/effects/speedup'
+import './game/effects/instant-damage'
 import World from './game/world'
 
 import * as entities from '../common/entities'
@@ -25,7 +27,10 @@ export default class Game extends EventEmitter {
     this.svg = context
     this.info = info
 
-    World.init(this.svg, this.info)
+    World.init({
+      svg:  this.svg,
+      info: this.info
+    })
 
     this.svg.addEventListener('mousemove', ({ offsetX, offsetY }) => {
       this.sendControls({
@@ -90,13 +95,15 @@ export default class Game extends EventEmitter {
       Configure playout buffer
     */
     this.buffer = new PlayoutBuffer()
-    this.buffer.on('frame', (
+    this.buffer.on('frame', ({
       previousFrame,
       frame,
       currentTimestamp
-    ) => {
+    }) => {
       if (frame) {
-        World.parse(frame.buffer)
+        World
+          .parse(frame.buffer)
+          .render()
 
         if (previousFrame) {
           World.extrapolate(
@@ -106,8 +113,8 @@ export default class Game extends EventEmitter {
           )
         }
 
-        // for (const id in World.entities) {
-        //   const orb = orbs[id]
+        // for (const id in Entity.entities) {
+        //   const entity = Entity.entities[id]
 
         //   this.info.innerHTML = `
         //     t: ${timestamp.toFixed(4)}<br />
@@ -166,7 +173,7 @@ export default class Game extends EventEmitter {
     socket.on('frame', (frame) => {
       this.buffer.put({
         buffer: new Buffer(frame.buffer.data),
-        timestamp: frame.timetamp
+        timestamp: frame.timestamp
       })
     })
 

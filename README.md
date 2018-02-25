@@ -3,7 +3,6 @@
 ## ROADMAP
 
 - refactoring
-  - split common/ between client and server (!)
   - define CollisionDetector using stamps (!)
   - allow composition for effects and entities (!)
   - /** @module ... */
@@ -21,11 +20,10 @@
   - moving camera
   - loading animation
   - mobile menu
-- optimization
+- optimizations
   - data compression
   - UDP (WebRTC??)
   - profiling
 - tests
   - client/**
   - server/**
-  - test compatibility between serializing and deserializing (!)

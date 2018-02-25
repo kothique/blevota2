@@ -5,7 +5,6 @@ const { V, Vector } = require('../../../common/vector')
 describe('Entity', () => {
   test('applyControls() should set force', () => {
     const entity = Entity.create('a'.repeat(24), {
-      radius:    30,
       mass:      0.5,
       moveForce: 0.1
     })
@@ -21,7 +20,6 @@ describe('Entity', () => {
 
   describe('receiveEffect() & removeEffect()', () => {
     const entity = Entity.create('a'.repeat(24), {
-      radius: 30,
       mass: 0.5
     })
 
@@ -48,7 +46,6 @@ describe('Entity', () => {
 
   describe('applyEffects()', () => {
     const entity = Entity.create('a'.repeat(24), {
-      radius: 30,
       mass: 0.5
     })
 
@@ -79,7 +76,6 @@ describe('Entity', () => {
 
     beforeEach(() => {
       entity = Entity.create('a'.repeat(), {
-        radius: 30,
         mass: 1,
         moveForce: 0.1,
         position: V(10, 10)
@@ -127,7 +123,6 @@ describe('Entity', () => {
 
   describe('serialization', () => {
     const entity = Entity.create('a'.repeat(24), {
-      radius:    10,
       mass:      11,
       moveForce: 12,
       position:  V(13, 14)
@@ -164,9 +159,6 @@ describe('Entity', () => {
 
       expect(buffer.toString('utf8', offset, offset + 24)).toBe('a'.repeat(24))
       offset += 24
-
-      expect(buffer.readDoubleBE(offset)).toBe(10)
-      offset += 8
 
       expect(buffer.readDoubleBE(offset)).toBe(11)
       offset += 8

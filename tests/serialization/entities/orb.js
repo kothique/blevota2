@@ -6,6 +6,7 @@ const { ORB } = require('../../../common/entities')
 describe('Orb entity serialization', () => {
   test('deserialized orb should match the original one', () => {
     const serverOrb = ServerOrb.create('a'.repeat(24), {
+      radius: 50,
       maxHp: 100,
       hp: 80,
       maxMp: 105,
@@ -24,6 +25,7 @@ describe('Orb entity serialization', () => {
 
     expect(serverLength).toBe(clientLength)
     expect(clientOrb.type).toBe(ORB)
+    expect(clientOrb.radius).toBe(50)
     expect(clientOrb.maxHp).toBe(100)
     expect(clientOrb.hp).toBe(80)
     expect(clientOrb.maxMp).toBe(105)

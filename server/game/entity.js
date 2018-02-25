@@ -11,7 +11,6 @@ const Entity = stamp({
    * @param {string}   id
    * @param {object}   options
    * @param {?number}  options.type
-   * @param {number}   options.radius
    * @param {number}   options.mass
    * @param {?number}  options.moveForce
    * @param {?Vector}  options.position
@@ -21,7 +20,6 @@ const Entity = stamp({
   init(id, options) {
     this.id         = id
     this.type       = options.type         || ENTITY
-    this.radius     = options.radius
     this.mass       = options.mass
     this.moveForce  = options.moveForce    || 0
     this.position   = options.position     || V(0, 0)
@@ -128,9 +126,6 @@ const Entity = stamp({
       buffer.write(this.id, offset, offset + 24)
       offset += 24
 
-      buffer.writeDoubleBE(this.radius, offset)
-      offset += 8
-
       buffer.writeDoubleBE(this.mass, offset)
       offset += 8
 
@@ -166,7 +161,7 @@ const Entity = stamp({
         0
       )
 
-      return 1 + 24 + 8 * 5 + 1 + effectsLength
+      return 1 + 24 + 8 * 4 + 1 + effectsLength
     }
   }
 })

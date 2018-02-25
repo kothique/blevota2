@@ -2,6 +2,8 @@
  * @module client/game/world
  */
 
+import forIn from 'lodash/forIn'
+
 import Entity from './entity'
 import { V, Vector } from '../../common/vector'
 
@@ -66,15 +68,28 @@ const World = {
   },
 
   /**
+   * Render the world.
+   *
+   * @chainable
+   */
+  render() {
+    forIn(Entity.entities, (entity) => {
+      entity.render()
+    })
+
+    return this
+  },
+
+  /**
    * Extrapolate the world state by the given timestamps.
    *
    * @param {object} timestamp - { prev, curr, next }
    * @chainable
    */
   extrapolate(timestamp) {
-    for (const id in Entity.entites) {
-      Entity.entities[id].extrapolate(timestamp)
-    }
+    forIn(Entity.entities, (entity) => {
+      entity.extrapolate(timestamp)
+    })
 
     return this
   },
