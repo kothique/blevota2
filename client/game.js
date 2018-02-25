@@ -101,17 +101,17 @@ export default class Game extends EventEmitter {
       currentTimestamp
     }) => {
       if (frame) {
-        World
-          .parse(frame.buffer)
-          .render()
+        World.parse(frame.buffer)
 
-        if (previousFrame) {
-          World.extrapolate(
-            previousFrame.timestamp,
-            frame.timestmap,
-            currentTimestamp
-          )
-        }
+        // if (previousFrame) {
+        //   World.extrapolate({
+        //     prev: previousFrame.timestamp,
+        //     curr: frame.timestamp,
+        //     next: currentTimestamp
+        //   })
+        // }
+
+        World.render()
 
         // for (const id in Entity.entities) {
         //   const entity = Entity.entities[id]

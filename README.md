@@ -3,11 +3,13 @@
 ## ROADMAP
 
 - refactoring
-  - define CollisionDetector using stamps (!)
   - allow composition for effects and entities (!)
+  - let the world create IDs by itself
   - /** @module ... */
   - define Vector using stamps
 - physics
+  - spacial partitioning instead of brute force (!)
+  - verlet integration (!)
   - relative static contanct (!)
   - sliding (!)
 - game mechanics

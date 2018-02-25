@@ -19,6 +19,7 @@ class CollisionDetector {
   constructor(worldSize = null) {
     this.boxes = Object.create(null)
     this.worldSize = worldSize
+    this.collisions = []
   }
 
   /**
@@ -49,11 +50,9 @@ class CollisionDetector {
    * @todo Now it uses a simple naive loop, but in the future
    * if it does not suffice, move to an advanced algorithm like
    * AABB collision detection.
-   *
-   * @return {array} - Detected collisions.
    */
   detect() {
-    let collisions = []
+    this.collisions = []
 
     const ids = Object.keys(this.boxes)
 
@@ -68,7 +67,7 @@ class CollisionDetector {
 
         if (box1.p1.x < box2.p2.x && box1.p2.x > box2.p1.x &&
             box1.p1.y < box2.p2.y && box2.p2.y > box2.p1.y) {
-          collisions.push({
+          this.collisions.push({
             type: 'object',
             id1,
             id2
@@ -79,13 +78,13 @@ class CollisionDetector {
       /** Collisions with walls */
       if (this.worldSize) {
         if (box1.p1.x < 0) {
-          collisions.push({
+          this.collisions.push({
             type: 'wall',
             wall: 'left',
             id: id1
           })
         } else if (box1.p2.x >= this.worldSize.x) {
-          collisions.push({
+          this.collisions.push({
             type: 'wall',
             wall: 'right',
             id: id1
@@ -93,13 +92,13 @@ class CollisionDetector {
         }
 
         if (box1.p1.y < 0) {
-          collisions.push({
+          this.collisions.push({
             type: 'wall',
             wall: 'top',
             id: id1
           })
         } else if (box1.p2.y >= this.worldSize.y) {
-          collisions.push({
+          this.collisions.push({
             type: 'wall',
             wall: 'bottom',
             id: id1
@@ -107,8 +106,6 @@ class CollisionDetector {
         }
       }
     }
-
-    return collisions
   }
 }
 

@@ -130,9 +130,7 @@ const World = stamp({
      * @chainable
      */
     detectCollisions() {
-      this.collisions = this.detector.detect()
-
-      return this
+      this.detector.detect()
     },
 
     /**
@@ -143,7 +141,7 @@ const World = stamp({
     applyCollisionResponse() {
       const k = 0.8
 
-      this.collisions.forEach((collision) => {
+      this.detetor.collisions.forEach((collision) => {
         if (collision.type === 'wall') {
           const { wall, id } = collision
 

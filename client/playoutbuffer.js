@@ -1,5 +1,4 @@
 import EventEmitter from 'events'
-import List from 'collections/list'
 import merge from 'lodash/merge'
 import present from 'present'
 
@@ -8,22 +7,21 @@ import { V } from '../common/vector'
 /**
  * @class
  *
- * @emits frame - { frame, currentTimestamp }
+ * @emits frame - { previousFrame, frame, currentTimestamp }
  */
 export default class PlayoutBuffer extends EventEmitter {
   constructor() {
     super()
 
     this.stop = false
-    this.latency = 60
-    this.frames = new List
-    this.previous = [null, null]
+    this.latency = 30
+    this.frames = []
  
     this.isFirstFrame = true
   }
 
   clear = () => {
-    this.frames.clear()
+    this.frames = []
   }
 
   put = ({ buffer, timestamp }) => {
@@ -37,7 +35,7 @@ export default class PlayoutBuffer extends EventEmitter {
     })
 
     if (this.isFirstFrame) {
-      setTimeout(this.start, this.latency)
+      this.timeoutID = window.setTimeout(this.start, this.latency)
       this.isFirstFrame = false
     }
   }
@@ -52,19 +50,25 @@ export default class PlayoutBuffer extends EventEmitter {
      * @param {number} currentTimestamp
      * @return {object|null}
      */
-    const getFrame = (currentTimestamp) => {
-      let currentFrame
+    const getFrames = (nextTimestamp) => {
+      let next,
+          frames = {
+            prev: null,
+            curr: null
+          }
 
-      while (currentFrame = this.frames.peek()) {
-        if (currentFrame.timestamp < currentTimestamp) {
+      while (next = this.frames[0]) {
+        if (next.timestamp < nextTimestamp || this.frames[1] === undefined) {
           this.frames.shift()
         } else {
-          return this.previous[0]
+          return frames
         }
 
-        this.previous[1] = this.previous[0]
-        this.previous[0] = currentFrame
+        frames.prev = frames.curr
+        frames.curr = next
       }
+
+      return frames
     }
 
     const nextFrame = () => {
@@ -74,11 +78,15 @@ export default class PlayoutBuffer extends EventEmitter {
 
       const currentTimestamp = present() - this.begin
 
-      getFrame(currentTimestamp)
+      const {
+        prev: previousFrame,
+        curr: frame
+      } = getFrames(currentTimestamp)
 
+      console.log('Frames left: ', this.frames.length)
       this.emit('frame', {
-        previousFrame: this.previous[1],
-        frame: this.previous[0],
+        previousFrame,
+        frame,
         currentTimestamp
       })
 
