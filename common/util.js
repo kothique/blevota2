@@ -75,3 +75,13 @@ const SVG = {
   }
 }
 module.exports.SVG = SVG
+
+/**
+ * Method that always throws. Useful to create abstract methods.
+ *
+ * @throws {Error}
+ */
+const abstract = function abstract() {
+  throw Error('this method must be overrided')
+}
+module.exports.abstract = abstract

@@ -48,7 +48,7 @@ const Orb = compose2(Entity, stamp({
       const { skill1 } = controls
 
       if (skill1 && !this.skill1.prev) {
-        this.skill1.effect = SpeedUp.create(0.05)
+        this.skill1.effect = SpeedUp.create(0.2)
         this.receiveEffect(this.skill1.effect)
       } else if (!skill1 && this.skill1.prev) {
         this.removeEffect(this.skill1.effect)
@@ -60,6 +60,24 @@ const Orb = compose2(Entity, stamp({
       this._parent.proto.applyControls.call(this, controls)
 
       return this
+    },
+
+    /**
+     * Make sure hp and mp >= 0 after effects are applied.
+     *
+     * @chainable
+     * @override
+     */
+    applyEffects() {
+      this._parent.proto.applyEffects.call(this)
+
+      if (this.hp < 0) {
+        this.hp = 0
+      }
+
+      if (this.mp < 0) {
+        this.mp = 0
+      }
     },
 
     /**

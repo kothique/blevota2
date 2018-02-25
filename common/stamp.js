@@ -46,11 +46,11 @@ const stamp = function stamp(options = {}) {
       /** Instance properties. */
       _.extend(obj, instance)
 
-      /** Initialize. */
-      init.apply(obj, args)
-
       /** Create enclosed private data. */
       enclose.call(obj)
+
+      /** Initialize. */
+      init.apply(obj, args)
 
       return obj
     }

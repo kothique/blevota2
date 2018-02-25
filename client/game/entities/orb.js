@@ -35,32 +35,27 @@ Entity.register({
     this.nodes = {}
 
     this.nodes.circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-    this.nodes.circle.setAttributeNS(null, 'fill', 'rgb(50, 150, 80)')
-    this.nodes.circle.setAttributeNS(null, 'fill-opacity', '0.7')
-    this.nodes.circle.setAttributeNS(null, 'stroke', 'black')
-    this.nodes.circle.setAttributeNS(null, 'stroke-width', '3px')
+    this.nodes.circle.setAttributeNS(null, 'fill', 'rgb(0, 101, 255)')
     this.nodes.circle.setAttributeNS(null, 'cx', 0)
     this.nodes.circle.setAttributeNS(null, 'cy', 0)
     this.nodes.circle.setAttributeNS(null, 'r',  0)
 
-    this.nodes.hp = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-    this.nodes.hp.setAttributeNS(null, 'fill', 'red')
-    this.nodes.hp.setAttributeNS(null, 'fill-opacity', '0.7')
-    this.nodes.hp.setAttributeNS(null, 'stroke', 'black')
-    this.nodes.hp.setAttributeNS(null, 'stroke-width', '0')
-    this.nodes.hp.setAttributeNS(null, 'transform', 'rotate(30)')
+    this.nodes.mp = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+    this.nodes.mp.setAttributeNS(null, 'fill', 'rgb(0, 218, 255)')
+    this.nodes.mp.setAttributeNS(null, 'cx', 0)
+    this.nodes.mp.setAttributeNS(null, 'cy', 0)
+    this.nodes.mp.setAttributeNS(null, 'r',  0)
 
-    this.nodes.mp = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-    this.nodes.mp.setAttributeNS(null, 'fill', 'blue')
-    this.nodes.mp.setAttributeNS(null, 'fill-opacity', '0.7')
-    this.nodes.mp.setAttributeNS(null, 'stroke', 'black')
-    this.nodes.mp.setAttributeNS(null, 'stroke-width', '0')
-    this.nodes.mp.setAttributeNS(null, 'transform', 'rotate(210)')
+    this.nodes.hp = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+    this.nodes.hp.setAttributeNS(null, 'fill', 'rgb(243, 101, 255)')
+    this.nodes.hp.setAttributeNS(null, 'cx', 0)
+    this.nodes.hp.setAttributeNS(null, 'cy', 0)
+    this.nodes.hp.setAttributeNS(null, 'r',  0)
     
     this.node = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     this.node.appendChild(this.nodes.circle)
-    this.node.appendChild(this.nodes.hp)
     this.node.appendChild(this.nodes.mp)
+    this.node.appendChild(this.nodes.hp)
   },
 
   parse(buffer, offset = 0) {
@@ -130,8 +125,12 @@ Entity.register({
           mpValue = this.mp / this.maxMp
 
     this.nodes.circle.setAttributeNS(null, 'r', this.radius)
-    this.nodes.hp.setAttributeNS(null, 'd', SVG.circleBar(V(0, 0), this.radius * 0.8, this.radius, hpValue))
-    this.nodes.mp.setAttributeNS(null, 'd', SVG.circleBar(V(0, 0), this.radius * 0.6, this.radius * 0.8, mpValue))
-    this.node.setAttributeNS(null, 'transform', `translate(${this.position.x} ${this.position.y})`)
+    this.nodes.mp    .setAttributeNS(null, 'r', 0.8 * this.radius)
+    this.nodes.hp    .setAttributeNS(null, 'r', 0.5 * this.radius)
+
+    this.nodes.mp    .setAttributeNS(null, 'fill-opacity', mpValue)
+    this.nodes.hp    .setAttributeNS(null, 'fill-opacity', hpValue)
+
+    this.node        .setAttributeNS(null, 'transform', `translate(${this.position.x} ${this.position.y})`)
   }
 })
