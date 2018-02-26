@@ -3,7 +3,7 @@ const forIn = require('lodash/forIn')
 const { stamp } = require('../../common/stamp')
 const { V, Vector } = require('../../common/vector')
 const { ORB } = require('../../common/entities')
-const CollisionDetector = require('../../common/collision-detector')
+const CollisionDetector = require('./collision-detector')
 const InstantDamage = require('./effects/instant-damage')
 const Entity = require('./entity')
 
@@ -24,7 +24,6 @@ const World = stamp({
     this.size = size
     this.entities = Object.create(null)
     this.detector = new CollisionDetector(size)
-    this.collisions = []
   },
 
   proto: {
@@ -125,23 +124,15 @@ const World = stamp({
     },
 
     /**
-     * Detect collisions.
+     * Handle collisions.
      *
      * @chainable
      */
-    detectCollisions() {
-      this.detector.detect()
-    },
-
-    /**
-     * Apply forces according to collisions.
-     *
-     * @chainable
-     */
-    applyCollisionResponse() {
+    handleCollisions() {
       const k = 0.8
 
-      this.detetor.collisions.forEach((collision) => {
+      this.detector.detect()
+      this.detector.collisions.forEach((collision) => {
         if (collision.type === 'wall') {
           const { wall, id } = collision
 
@@ -181,9 +172,6 @@ const World = stamp({
             let orb1 = entity1,
                 orb2 = entity2
 
-            orb1.receiveEffect(InstantDamage.create(orb2.mass * 10))
-            orb2.receiveEffect(InstantDamage.create(orb1.mass * 10))
-
             const dr = orb1.radius + orb2.radius - Vector.distance(orb1.position, orb2.position)
 
             /** If only bounding boxes collide, not the orbs themselves. */
@@ -191,34 +179,22 @@ const World = stamp({
               return
             }
 
-            /** Move the orbs so that they only overlap in one point. */
-            const r = orb1.radius + orb2.radius,
-                  dr1 = orb2.radius / r * dr,
-                  dr2 = orb1.radius / r * dr,
-                  p = Vector.subtract(orb2.position, orb1.position).normalize(),
-                  p1 = Vector.multiply(p, -dr1),
-                  p2 = Vector.multiply(p, dr2)
+            orb1.receiveEffect(InstantDamage.create(orb2.mass * 10))
+            orb2.receiveEffect(InstantDamage.create(orb1.mass * 10))
 
-            orb1.position.add(p1)
-            orb2.position.add(p2)
-
-            /** Mutate velocity so that the orbs bounce off each other. */
-            const l = new Vector(-p.y, p.x),
-                  v1 = orb1.velocity,
-                  k1 = 2 * Vector.dot(v1, l) / Vector.dot(l, l),
-                  newV1 = Vector.multiply(l, k1).subtract(v1),
+            const v1 = orb1.velocity,
                   v2 = orb2.velocity,
-                  k2 = 2 * Vector.dot(v2, l) / Vector.dot(l ,l),
-                  newV2 = Vector.multiply(l, k2).subtract(v2)
+                  m1 = orb1.mass,
+                  m2 = orb2.mass
 
-            const v = newV1.length() + newV2.length(),
-                  m = orb1.mass + orb2.mass
+            const o1v = Vector.add(v1.clone().multiply(m1 - m2), v2.clone().multiply(2 * m2)).divide(m1 + m2)
+                  o2v = Vector.add(v2.clone().multiply(m2 - m1), v1.clone().multiply(2 * m1)).divide(m1 + m2)
 
-            newV1.setLength(v * orb2.mass / m * k)
-            newV2.setLength(v * orb1.mass / m * k)
+            orb1.velocity = o1v
+            orb2.velocity = o2v
 
-            orb1.velocity = newV1
-            orb2.velocity = newV2
+            orb1.position.add(orb1.velocity)
+            orb2.position.add(orb2.velocity)
           }
         }
       })

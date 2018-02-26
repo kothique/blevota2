@@ -4,7 +4,7 @@
 
 const merge = require('lodash/merge')
 
-const { Vector, V } = require('./vector')
+const { Vector, V } = require('../../common/vector')
 
 /**
  * @class
@@ -49,7 +49,7 @@ class CollisionDetector {
    * Detect collisions.
    * @todo Now it uses a simple naive loop, but in the future
    * if it does not suffice, move to an advanced algorithm like
-   * AABB collision detection.
+   * AABB or spacial partitioning collision detection.
    */
   detect() {
     this.collisions = []

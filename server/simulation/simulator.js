@@ -167,9 +167,7 @@ class Simulator extends EventEmitter {
           timestamp: this.t
         })
 
-        this.world
-          .detectCollisions()
-          .applyCollisionResponse()
+        this.world.handleCollisions()
       }
 
       if (Date.now() - currentTime < this.dt - 4) {
