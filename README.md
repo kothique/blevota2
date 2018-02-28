@@ -2,11 +2,8 @@
 
 ## ROADMAP
 
-- refactoring
-  - allow composition for effects and entities (!)
+- other
   - let the world create IDs by itself
-  - /** @module ... */
-  - define Vector using stamps
 - physics
   - spacial partitioning instead of brute force (!)
   - verlet integration (!)
@@ -27,5 +24,4 @@
   - UDP (WebRTC??)
   - profiling
 - tests
-  - client/**
-  - server/**
+  - react components (far away future)
