@@ -5,7 +5,7 @@ describe('InstantDamage', () => {
   let effect
 
   beforeEach(() => {
-    effect = new InstantDamage
+    effect = new InstantDamage({ value: 42 })
   })
 
   test('should parse info correctly', () => {

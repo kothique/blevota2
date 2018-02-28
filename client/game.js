@@ -1,6 +1,7 @@
 import EventEmitter from 'events'
 import ioc from 'socket.io-client'
 import { Buffer } from 'buffer-browserify'
+import _ from 'lodash'
 
 import Keyboard from './keyboard'
 import PlayoutBuffer from './playoutbuffer';
@@ -16,15 +17,13 @@ export default class Game extends EventEmitter {
   constructor(options) {
     super()
 
-    const { context, info, host, token, user, matchId } = options
+    const { context, info, log, host, token, user, matchId } = options
     this.user = user
     this.matchId = matchId
 
-    /*
-      Configure the scene
-    */
     this.svg = context
     this.info = info
+    this.log = log
 
     World.init({
       svg:  this.svg,
@@ -182,6 +181,13 @@ export default class Game extends EventEmitter {
 
     socket.on('remove-orb', (id) => {
       World.remove(id)
+    })
+
+    socket.on('event:death', (data) => {
+      const { id, username } = data.user
+
+      this.log.innerHTML += 'Player <strong>' + _.escape(username) + '</strong> died :('
+      this.log.innerHTML += '<br />'
     })
   }
 

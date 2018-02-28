@@ -3,12 +3,10 @@
 ## ROADMAP
 
 - other
-  - let the world create IDs by itself
+  - let the world create IDs on its own
 - physics
-  - spacial partitioning instead of brute force (!)
   - verlet integration (!)
-  - relative static contanct (!)
-  - sliding (!)
+  - spacial partitioning instead of brute-force
 - game mechanics
   - skills (!)
 - ui

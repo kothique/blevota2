@@ -3,21 +3,25 @@
  */
 
 const forIn = require('lodash/forIn')
+const EventEmitter = require('events')
 
 const { V, Vector } = require('../../common/vector')
 const { ORB } = require('../../common/entities')
 const CollisionDetector = require('./collision-detector')
 const InstantDamage = require('./effects/instant-damage')
 const Entity = require('./entity')
+const Orb = require('./entities/orb')
 
 /**
  * @class
+ *
+ * @event death - entity
  *
  * @description
  * Manage all entities in the world and their interaction
  * including collision detection, using skills, etc.
  */
-class World {
+class World extends EventEmitter {
   /**
    * Create a new world.
    *
@@ -25,6 +29,8 @@ class World {
    * @param {Vector} options.size - The size of the world.
    */
   constructor(options) {
+    super()
+
     this.size = options.size
     this.entities = Object.create(null)
     this.detector = new CollisionDetector(this.size)
@@ -121,6 +127,10 @@ class World {
   applyEffects(t, dt) {
     forIn(this.entities, (entity) => {
       entity.applyEffects(t, dt)
+
+      if (entity instanceof Orb && entity.alive === false) {
+        this.emit('death', entity)
+      }
     })
 
     return this
@@ -144,7 +154,7 @@ class World {
         if (entity.type === ORB) {
           const orb = entity
 
-          orb.receiveEffect(new InstantDamage(5))
+          orb.receiveEffect(new InstantDamage({ value: 5 }))
 
           switch (wall) {
             case 'left':
@@ -182,8 +192,8 @@ class World {
             return
           }
 
-          orb1.receiveEffect(new InstantDamage(orb2.mass * 10))
-          orb2.receiveEffect(new InstantDamage(orb1.mass * 10))
+          orb1.receiveEffect(new InstantDamage({ value: orb2.mass * 10 }))
+          orb2.receiveEffect(new InstantDamage({ value: orb1.mass * 10 }))
 
           const v1 = orb1.velocity,
                 v2 = orb2.velocity,

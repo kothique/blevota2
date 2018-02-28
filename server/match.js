@@ -41,7 +41,19 @@ class Match {
     this.simulation.on('message', (msg) => {
       switch (msg.type) {
         case 'FRAME':
-          this.sendFrameToAll(msg.frame)
+          this.toAllPlayers('frame', msg.frame)
+          break
+
+        case 'DEATH':
+          const socket = this.players.get(msg.id)
+          if (socket) {
+            this.toAllPlayers('event:death', {
+              user: socket.handshake.user
+            })
+
+            this.removePlayer(msg.id)
+          }
+
           break
       }
     })
@@ -55,17 +67,14 @@ class Match {
   newPlayer(newSocket) {
     const { user } = newSocket.handshake
 
-    /** Send the new player all already existing orbs */
+    /** Send the new player to all already existing orbs */
     this.players.forEach((socket, id) => {
       newSocket.emit('new-orb', id)
     })
-
     this.players.set(user.id, newSocket)
 
     /** Notify all players of the new orb */
-    this.players.forEach((socket) => {
-      socket.emit('new-orb', user.id)
-    })
+    this.toAllPlayers('new-orb', user.id)
 
     newSocket.on('error', () => {
       this.removePlayer(user.id)
@@ -88,11 +97,11 @@ class Match {
    * @param {string} id
    */
   removePlayer(id) {
-    this.players.delete(id)
-
     this.players.forEach((socket) => {
       socket.emit('remove-orb', id)
     })
+
+    this.players.delete(id)
 
     this.sendRemoveOrb(id)
   }
@@ -194,15 +203,16 @@ class Match {
   }
 
   /**
-   * Send the frame to all the players in the match.
+   * Send the message to all players in the match.
    *
    * @private
-   * @param {object} frame - The frame to send.
+   * @param {string|number} type
+   * @param {...any}        args
    */
-  sendFrameToAll(frame) {
+  toAllPlayers(type, ...args) {
     try {
       this.players.forEach((socket) => {
-        socket.emit('frame', frame)
+        socket.emit(type, ...args)
       })
     } catch (err) {
       console.log(`Match (${this.id}): ${err.message}`)

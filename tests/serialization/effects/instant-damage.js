@@ -17,7 +17,7 @@ beforeEach(() => {
 
 describe('SpeedUp effect serialization', () => {
   test('deserialized effect should match the serialized one', () => {
-    const serverEffect = new ServerInstantDamage(42),
+    const serverEffect = new ServerInstantDamage({ value: 42 }),
           serverLength = serverEffect.serializedLength(),
           buffer = Buffer.alloc(serverLength)
 

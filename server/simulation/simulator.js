@@ -13,24 +13,28 @@ const { Vector, V } = require('../../common/vector')
 /**
  * @class
  *
- * @event start
- * @event frame - { state, timestamp }
- * @event stop
- *
  * @description
  * Update the world state as the time goes by.
  */
-class Simulator extends EventEmitter {
+const Simulator = {
   /**
-   * Create a new simulator.
+   * Initialize the simulator.
    *
-   * @param {object} options - Options: { world: World, t: number, dt: number }.
+   * @param {?object} options
+   * @param {?object} options.world
+   * @param {?number} t
+   * @param {?number} dt
    */
-  constructor(options = Object.create(null)) {
-    super()
-
+  init(options = Object.create(null)) {
     this.world = options.world || new World({
       size: V(800, 600)
+    })
+
+    this.world.on('death', (orb) => {
+      process.send({
+        type: 'DEATH',
+        id: orb.id
+      })
     })
 
     this.t = options.t || 0
@@ -40,7 +44,7 @@ class Simulator extends EventEmitter {
     this.continue = true
 
     this.controls = Object.create(null)
-  }
+  },
 
   /**
    * Update controls for the given orb.
@@ -53,34 +57,35 @@ class Simulator extends EventEmitter {
             skill1, skill2, skill3,
             skill4, skill5, skill6 } = controls
 
-    if (typeof pX !== 'undefined')
-      this.controls[id].pX = pX
+    if (this.controls[id]) {
+      if (typeof pX !== 'undefined')
+        this.controls[id].pX = pX
 
-    if (typeof pY !== 'undefined')
-      this.controls[id].pY = pY
+      if (typeof pY !== 'undefined')
+        this.controls[id].pY = pY
 
-    if (typeof move !== 'undefined')
-      this.controls[id].move = move
+      if (typeof move !== 'undefined')
+        this.controls[id].move = move
 
-    if (typeof skill1 !== 'undefined')
-      this.controls[id].skill1 = skill1
+      if (typeof skill1 !== 'undefined')
+        this.controls[id].skill1 = skill1
 
-    if (typeof skill2 !== 'undefined')
-      this.controls[id].skill2 = skill2
+      if (typeof skill2 !== 'undefined')
+        this.controls[id].skill2 = skill2
 
-    if (typeof skill3 !== 'undefined')
-      this.controls[id].skill3 = skill3
+      if (typeof skill3 !== 'undefined')
+        this.controls[id].skill3 = skill3
 
-    if (typeof skill4 !== 'undefined')
-      this.controls[id].skill4 = skill4
+      if (typeof skill4 !== 'undefined')
+        this.controls[id].skill4 = skill4
 
-    if (typeof skill5 !== 'undefined')
-      this.controls[id].skill5 = skill5
+      if (typeof skill5 !== 'undefined')
+        this.controls[id].skill5 = skill5
 
-    if (typeof skill6 !== 'undefined')
-      this.controls[id].skill6 = skill6
-
-  }
+      if (typeof skill6 !== 'undefined')
+        this.controls[id].skill6 = skill6
+    }
+  },
 
   /**
    * Add a new orb to the simulation.
@@ -111,7 +116,7 @@ class Simulator extends EventEmitter {
       skill5: false,
       skill6: false
     }
-  }
+  },
 
   /**
    * Remove the specified orb from the simulation.
@@ -121,13 +126,13 @@ class Simulator extends EventEmitter {
   removeOrb(id) {
     this.world.remove(id)
     delete this.controls[id]
-  }
+  },
 
   /**
    * Start the simulation.
    */
   start() {
-    this.emit('start')
+    console.log(`Simulation started (PID: ${process.pid})`)
 
     this.continue = true
     this.begin = present()
@@ -165,15 +170,18 @@ class Simulator extends EventEmitter {
       }
 
       if (integrated) {
-        this.emit('frame', {
-          buffer: this.world.toBuffer(),
-          timestamp: this.t
+        process.send({
+          type: 'FRAME',
+          frame: {
+            buffer: this.world.toBuffer(),
+            timestamp: this.t
+          }
         })
 
         this.world.handleCollisions()
       }
 
-      if (Date.now() - currentTime < this.dt - 4) {
+      if (Date.now() - currentTime < this.dt) {
         setTimeout(loop)
       } else {
         setImmediate(loop)
@@ -181,7 +189,7 @@ class Simulator extends EventEmitter {
     }
 
     loop()
-  }
+  },
 
   /**
    * Stop the simulation.
@@ -189,8 +197,28 @@ class Simulator extends EventEmitter {
   stop() {
     this.continue = false
 
-    this.emit('stop')
+    console.log(`Simulation stopped (PID: ${process.pid})`)
   }
 }
+
+process.on('message', (msg) => {
+  switch (msg.type) {
+    case 'NEW_ORB':
+      Simulator.newOrb(msg.id)
+      break
+    case 'REMOVE_ORB':
+      Simulator.removeOrb(msg.id)
+      break
+    case 'START':
+      Simulator.start()
+      break
+    case 'STOP':
+      Simulator.stop()
+      break
+    case 'CONTROLS':
+      Simulator.setControls(msg.id, msg.controls)
+      break
+  }
+})
 
 module.exports = Simulator

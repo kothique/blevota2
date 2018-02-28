@@ -2,6 +2,7 @@
  * @module server/game/effects/instant-damage
  */
 const Effect = require('../effect')
+const Orb = require('../entities/orb')
 const { INSTANT_DAMAGE } = require('../../../common/effects')
 
 /**
@@ -11,12 +12,15 @@ class InstantDamage extends Effect {
   /**
    * Create a new instant damage effect.
    *
-   * @param {number} value
+   * @param {object}  options
+   * @param {number}  options.value
+   * @param {string?} options.from
    */
-  constructor(value) {
+  constructor(options) {
     super()
 
-    this.value = value
+    this.value = options.value
+    this.from = options.from || null
   }
 
   /**
@@ -25,7 +29,13 @@ class InstantDamage extends Effect {
    * @param {Entity} target
    */
   onReceive(target) {
-    target.hp -= this.value
+    if (target instanceof Orb) {
+      target.hp -= this.value
+
+      if (target.hp < 0) {
+        target.die()
+      }
+    }
 
     this.die()
   }

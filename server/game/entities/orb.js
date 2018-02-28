@@ -40,6 +40,8 @@ class Orb extends Entity {
       prev: false,
       effect: null
     }
+
+    this.alive = true
   }
 
   /**
@@ -123,6 +125,17 @@ class Orb extends Entity {
    */
   serializedLength() {
     return super.serializedLength() + 8 * 5
+  }
+
+  /**
+   * Mark the entity as dead.
+   *
+   * @chainable
+   */
+  die() {
+    this.alive = false
+
+    return this
   }
 }
 

@@ -25,12 +25,14 @@ class GamePage extends Component {
     const { params: { matchId } } = match,
           context = document.getElementById('gp-game'),
           info = document.getElementById('gp-info'),
+          log = document.getElementById('gp-log'),
           host = 'http://localhost:3000'
 
     const game = this.game = new Game({
       host,
       context,
       info,
+      log,
       token,
       user,
       matchId
@@ -100,6 +102,7 @@ class GamePage extends Component {
               </svg>
 
               <div id="gp-info"></div>
+              <div id="gp-log"></div>
           </Access>
         </div>
         <Footer />

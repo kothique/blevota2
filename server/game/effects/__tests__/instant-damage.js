@@ -1,10 +1,18 @@
+const Orb = require('../../entities/orb')
+
 const InstantDamage = require('../instant-damage')
 const { INSTANT_DAMAGE } = require('../../../../common/effects')
 
 describe('InstantDamage', () => {
   describe('onReceive()', () => {
-    const effect = new InstantDamage(42),
-          target  = { hp: 43 }
+    const effect = new InstantDamage({ value: 42 }),
+          target = new Orb('a'.repeat(24), {
+            radius: 30,
+            maxHp: 200,
+            hp: 43,
+            maxMp: 200,
+            mp: 100
+          })
 
     effect.onReceive(target)
 
@@ -18,7 +26,7 @@ describe('InstantDamage', () => {
   })
 
   test('serialization', () => {
-    const effect = new InstantDamage(42),
+    const effect = new InstantDamage({ value: 42 }),
           buffer = Buffer.alloc(effect.serializedLength() + 10)
 
     effect.serialize(buffer, 10)
