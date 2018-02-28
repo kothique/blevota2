@@ -1,10 +1,10 @@
 const Entity = require('../entity')
-const { ENTITY } = require('../../../common/entities')
+const { UNKNOWN } = require('../../../common/entities')
 const { V, Vector } = require('../../../common/vector')
 
 describe('Entity', () => {
   test('applyControls() should set force', () => {
-    const entity = Entity.create('a'.repeat(24), {
+    const entity = new Entity('a'.repeat(24), {
       mass:      0.5,
       moveForce: 0.1
     })
@@ -19,7 +19,7 @@ describe('Entity', () => {
   })
 
   describe('receiveEffect() & removeEffect()', () => {
-    const entity = Entity.create('a'.repeat(24), {
+    const entity = new Entity('a'.repeat(24), {
       mass: 0.5
     })
 
@@ -45,7 +45,7 @@ describe('Entity', () => {
   })
 
   describe('applyEffects()', () => {
-    const entity = Entity.create('a'.repeat(24), {
+    const entity = new Entity('a'.repeat(24), {
       mass: 0.5
     })
 
@@ -75,7 +75,7 @@ describe('Entity', () => {
     let entity
 
     beforeEach(() => {
-      entity = Entity.create('a'.repeat(), {
+      entity = new Entity('a'.repeat(), {
         mass: 1,
         moveForce: 0.1,
         position: V(10, 10)
@@ -122,7 +122,7 @@ describe('Entity', () => {
   })
 
   describe('serialization', () => {
-    const entity = Entity.create('a'.repeat(24), {
+    const entity = new Entity('a'.repeat(24), {
       mass:      11,
       moveForce: 12,
       position:  V(13, 14)
@@ -154,17 +154,11 @@ describe('Entity', () => {
 
       let offset = 10
 
-      expect(buffer.readUInt8(offset)).toBe(ENTITY)
+      expect(buffer.readUInt8(offset)).toBe(UNKNOWN)
       offset += 1
 
       expect(buffer.toString('utf8', offset, offset + 24)).toBe('a'.repeat(24))
       offset += 24
-
-      expect(buffer.readDoubleBE(offset)).toBe(11)
-      offset += 8
-
-      expect(buffer.readDoubleBE(offset)).toBe(12)
-      offset += 8
 
       expect(buffer.readDoubleBE(offset)).toBe(13)
       offset += 8

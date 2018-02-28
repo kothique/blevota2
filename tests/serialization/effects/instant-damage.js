@@ -1,11 +1,23 @@
 const ServerInstantDamage = require('../../../server/game/effects/instant-damage')
-const { default: ClientEffect } = require('../../../client/game/effect')
-require('../../../client/game/effects/instant-damage')
+
+let ClientEffectFactory
+const ClientInstantDamage = require('../../../client/game/effects/instant-damage').default
+
 const { INSTANT_DAMAGE } = require('../../../common/effects')
+
+beforeEach(() => {
+  jest.resetModules()
+
+  ClientEffectFactory = require('../../../client/game/effect-factory').default
+  ClientEffectFactory.register({
+    type: INSTANT_DAMAGE,
+    constructor: ClientInstantDamage
+  })
+})
 
 describe('SpeedUp effect serialization', () => {
   test('deserialized effect should match the serialized one', () => {
-    const serverEffect = ServerInstantDamage.create(42),
+    const serverEffect = new ServerInstantDamage(42),
           serverLength = serverEffect.serializedLength(),
           buffer = Buffer.alloc(serverLength)
 
@@ -14,10 +26,10 @@ describe('SpeedUp effect serialization', () => {
     const {
       effect: clientEffect,
       offset: clientLength
-    } = ClientEffect.deserialize(buffer)
+    } = ClientEffectFactory.deserialize(buffer)
 
     expect(serverLength).toBe(clientLength)
-    expect(clientEffect.type).toBe(INSTANT_DAMAGE)
+    expect(clientEffect).toBeInstanceOf(ClientInstantDamage)
     expect(clientEffect.value).toBe(42)
   } )
 })

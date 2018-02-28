@@ -1,4 +1,4 @@
 module.exports = {
-  ENTITY: 0x1,
-  ORB: 0x2
+  UNKNOWN: 0x0,
+  ORB: 0x1
 }

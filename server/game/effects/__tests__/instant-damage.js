@@ -3,7 +3,7 @@ const { INSTANT_DAMAGE } = require('../../../../common/effects')
 
 describe('InstantDamage', () => {
   describe('onReceive()', () => {
-    const effect = InstantDamage.create(42),
+    const effect = new InstantDamage(42),
           target  = { hp: 43 }
 
     effect.onReceive(target)
@@ -18,7 +18,7 @@ describe('InstantDamage', () => {
   })
 
   test('serialization', () => {
-    const effect = InstantDamage.create(42),
+    const effect = new InstantDamage(42),
           buffer = Buffer.alloc(effect.serializedLength() + 10)
 
     effect.serialize(buffer, 10)

@@ -3,7 +3,7 @@ const { SPEEDUP } = require('../../../../common/effects')
 
 describe('SpeedUp', () => {
   describe('onReceive() & onRemove()', () => {
-    const effect = SpeedUp.create(42),
+    const effect = new SpeedUp(42),
           target = { moveForce: 0 }
 
     test('should increase moveForce on applying', () => {
@@ -18,7 +18,7 @@ describe('SpeedUp', () => {
   })
 
   test('serialization', () => {
-    const effect = SpeedUp.create(0.5),
+    const effect = new SpeedUp(0.5),
           buffer = Buffer.alloc(effect.serializedLength() + 10)
 
     effect.serialize(buffer, 10)

@@ -1,11 +1,23 @@
 const ServerOrb = require('../../../server/game/entities/orb')
-const { default: ClientEntity } = require('../../../client/game/entity')
-require('../../../client/game/entities/orb')
+
+let ClientEntityFactory
+const ClientOrb = require('../../../client/game/entities/orb').default
+
 const { ORB } = require('../../../common/entities')
+
+beforeEach(() => {
+  jest.resetModules()
+
+  ClientEntityFactory = require('../../../client/game/entity-factory').default
+  ClientEntityFactory.register({
+    type: ORB,
+    constructor: ClientOrb
+  })
+})
 
 describe('Orb entity serialization', () => {
   test('deserialized orb should match the original one', () => {
-    const serverOrb = ServerOrb.create('a'.repeat(24), {
+    const serverOrb = new ServerOrb('a'.repeat(24), {
       radius: 50,
       maxHp: 100,
       hp: 80,
@@ -21,10 +33,10 @@ describe('Orb entity serialization', () => {
     const {
       entity: clientOrb,
       offset: clientLength
-    } = ClientEntity.deserialize(buffer)
+    } = ClientEntityFactory.deserialize(buffer)
 
     expect(serverLength).toBe(clientLength)
-    expect(clientOrb.type).toBe(ORB)
+    expect(clientOrb).toBeInstanceOf(ClientOrb)
     expect(clientOrb.radius).toBe(50)
     expect(clientOrb.maxHp).toBe(100)
     expect(clientOrb.hp).toBe(80)

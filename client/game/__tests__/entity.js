@@ -1,69 +1,82 @@
-beforeEach(() => {
-  jest.resetModules()
-})
+import Entity from '../entity'
 
 describe('Entity', () => {
-  test('should correctly deserialize an entity after registration', done => {
-    import('../entity').then(({ default: Entity }) => {
-      Entity.register({
-        type: 42,
-        init() {
-          let somePrivateData = null
+  let entity
 
-          this.setData = function setData(data) {
-            somePrivateData = data
-          }
+  beforeEach(() => {
+    const id = 'a'.repeat(24),
+          type = 0x32
 
-          this.getData = function getData() {
-            return somePrivateData
-          }
-        },
-        parse(buffer, offset) {
-          this.setData(buffer.readDoubleBE(offset))
-          offset += 8
-
-          return offset
-        },
-        extrapolate() {
-          // do nothing
-        },
-        render() {
-          // do nothing
-        }
-      })
-
-      const buffer = Buffer.alloc(10 + 1 + 24 + 8)
-      buffer.writeUInt8(42, 10 + 0)
-      buffer.write('a'.repeat(24), 10 + 1, 24)
-      buffer.writeDoubleBE(100500, 10 + 1 + 24)
-
-      const { entity, offset } = Entity.deserialize(buffer, 10)
-
-      expect(offset).toBe(10 + 1 + 24 + 8)
-      expect(entity.type).toBe(42)
-      expect(entity.getData()).toBe(100500)
-
-      done()
-    })
+    entity = new Entity(id)
   })
 
-  test('Entity.new & Entity.remove', () => {
-    import('../entity').then(({ default: Entity }) => {
-      Entity.register({
-        type: 42,
-        init() {},
-        parse(buffer, offset) { return offset },
-        extrapolate() {},
-        render() {}
+  test('should have id, position, and effects', () => {
+    expect(entity.id).toBeDefined()
+    expect(entity.position).toBeDefined()
+    expect(entity.effects).toBeDefined()
+  })
+
+  test('should parse info correctly (without effects)', () => {
+    const buffer = Buffer.alloc(10 + 16 + 1)
+    buffer.writeDoubleBE(41, 10 + 0)
+    buffer.writeDoubleBE(42, 10 + 8)
+    buffer.writeUInt8(0, 10 + 16)
+
+    entity.parse(buffer, 10)
+
+    expect(entity.position.x).toBe(41)
+    expect(entity.position.y).toBe(42)
+    expect(entity.effects.length).toBe(0)
+  })
+
+  test('should parse info correctly (with effects)', () => {
+    const { default: EffectFactory } = require('../effect-factory')
+
+    const effectDesc1 = {
+      type: 0x1,
+      constructor: jest.fn(function () {
+        this.parse = effectDesc1.parse
+      }),
+      parse: jest.fn(function (buffer, offset = 0) {
+        this.value = buffer.readInt16LE(offset)
+        offset += 2
+
+        return offset
       })
+    }
+    const effectDesc2 = {
+      type: 0x2,
+      constructor: jest.fn(function () {
+        this.parse = effectDesc2.parse
+      }),
+      parse: jest.fn(function (buffer, offset = 0) {
+        return offset
+      })
+    }
 
-      const id = 'a'.repeat(24)
-
-      expect(Entity.get(id)).toBeUndefined()
-      Entity.new(id, 42)
-      expect(Entity.get(id)).toBeDefined()
-      Entity.remove(id)
-      expect(Entity.get(id)).toBeUndefined()
+    EffectFactory.register({
+      type: effectDesc1.type,
+      constructor: effectDesc1.constructor
     })
+    EffectFactory.register({
+      type: effectDesc2.type,
+      constructor: effectDesc2.constructor
+    })
+
+    const buffer = Buffer.alloc(10 + 16 + 1 + 3 + 1)
+    buffer.writeDoubleBE(41, 10 + 0)
+    buffer.writeDoubleBE(42, 10 + 8)
+    buffer.writeUInt8(2, 10 + 16)
+    buffer.writeUInt8(effectDesc1.type, 10 + 17)
+    buffer.writeInt16LE(43, 10 + 18)
+    buffer.writeUInt8(effectDesc2.type, 10 + 20)
+
+    entity.parse(buffer, 10)
+
+    expect(entity.position.x).toBe(41)
+    expect(entity.position.y).toBe(42)
+    expect(entity.effects.length).toBe(2)
+    expect(effectDesc1.constructor).toBeCalled()
+    expect(effectDesc2.constructor).toBeCalled()
   })
 })

@@ -5,7 +5,7 @@ describe('Orb', () => {
   let orb
 
   beforeEach(() => {
-    orb = Orb.create('a'.repeat(24), {
+    orb = new Orb('a'.repeat(24), {
       maxHp: 100,
       hp:    80,
       maxMp: 120,

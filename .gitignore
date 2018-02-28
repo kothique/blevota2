@@ -4,3 +4,6 @@ docs
 coverage
 client/public/bundle.js
 yarn-error.log
+
+*.swp
+*~

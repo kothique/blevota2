@@ -83,7 +83,6 @@ export default class PlayoutBuffer extends EventEmitter {
         curr: frame
       } = getFrames(currentTimestamp)
 
-      console.log('Frames left: ', this.frames.length)
       this.emit('frame', {
         previousFrame,
         frame,

@@ -3,23 +3,23 @@
  */
 
 import Entity from '../entity'
-import Effect from '../effect'
 import Set from 'collections/set'
 import { Vector, V } from '../../../common/vector'
-import * as entities from '../../../common/entities'
+import { ORB } from '../../../common/entities'
 import { SVG } from '../../../common/util'
 
-Entity.register({
-  type: entities.ORB,
-
+/**
+ * @class
+ */
+class Orb extends Entity {
   /**
-   * Initialize the new orb.
+   * Create a new orb.
+   *
+   * @param {string} id
    */
-  init() {
-    this.mass = 0
-    this.moveForce = 0
-    this.position = V(0, 0)
-    this.effects = new Set
+  constructor(id) {
+    super(id, { type: ORB })
+
     this.radius = 0
     this.maxHp = 0
     this.hp = 0
@@ -27,10 +27,6 @@ Entity.register({
     this.mp = 0
 
     this.toRender = true
-
-    this.previous = {
-      position: V(0, 0)
-    }
 
     this.nodes = {}
 
@@ -56,36 +52,19 @@ Entity.register({
     this.node.appendChild(this.nodes.circle)
     this.node.appendChild(this.nodes.mp)
     this.node.appendChild(this.nodes.hp)
-  },
+  }
 
+  /**
+   * Read orb info except from id and type from a buffer.
+   *
+   * @param {Buffer} buffer
+   * @param {number} offset
+   * @return {number} - New offset.
+   */
   parse(buffer, offset = 0) {
+    offset = super.parse(buffer, offset)
+
     this.toRender = true
-
-    this.mass = buffer.readDoubleBE(offset)
-    offset += 8
-
-    this.moveForce = buffer.readDoubleBE(offset)
-    offset += 8
-
-    this.previous.position = this.position.clone()
-
-    this.position = V(
-      buffer.readDoubleBE(offset),
-      buffer.readDoubleBE(offset + 8),
-    )
-    offset += 16
-
-    this.effects.clear()
-
-    const effectsCount = buffer.readUInt8(offset)
-    offset += 1
-
-    for (let i = 0; i < effectsCount; i++) {
-      const result = Effect.deserialize(buffer, offset)
-
-      offset = result.offset
-      this.effects.add(result.effect)
-    }
 
     this.radius = buffer.readDoubleBE(offset)
     offset += 8
@@ -103,18 +82,11 @@ Entity.register({
     offset += 8
 
     return offset
-  },
+  }
 
-  extrapolate(timestamp) {
-    const { prev, curr, next } = timestamp
-
-    this.position.add(
-      Vector.subtract(this.position, this.previous.position)
-        .divide(curr - prev)
-        .multiply(next - curr)
-    )
-  },
-
+  /**
+   * Set attributes of the SVG nodes.
+   */
   render() {
     if (!this.toRender) {
       return
@@ -133,4 +105,6 @@ Entity.register({
 
     this.node        .setAttributeNS(null, 'transform', `translate(${this.position.x} ${this.position.y})`)
   }
-})
+}
+
+export default Orb

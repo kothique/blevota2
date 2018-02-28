@@ -2,7 +2,7 @@ const Effect = require('../effect')
 
 describe('Effect', () => {
   test('this.alive should be false after calling die()', () => {
-    const effect = Effect.create()
+    const effect = new Effect
 
     expect(effect.alive).toBeTruthy()
     effect.die()

@@ -1,11 +1,16 @@
-const { stamp, compose2 } = require('../../../common/stamp') 
+/**
+ * @module server/game/entities/orb
+ */
 const Entity = require('../entity')
 const { ORB } = require('../../../common/entities')
 const SpeedUp = require('../effects/speedup')
 
-const Orb = compose2(Entity, stamp({
+/**
+ * @class
+ */
+class Orb extends Entity {
   /**
-   * Initialize the new orb.
+   * Create a new orb.
    *
    * @param {string}   id
    * @param {object}   options
@@ -16,12 +21,13 @@ const Orb = compose2(Entity, stamp({
    * @param {number}   options.maxMp  - Maximum mana points.
    * @param {number}   options.mp     - Current mana points.
    */
-  init(id, options) {
-    this._parent.init.call(this, id, {
+  constructor(id, options) {
+    super(id, {
       ...options,
-      type:      options.type  || ORB,
-      mass:      1,
-      moveForce: 0.1,
+
+      type: options.type || ORB,
+      mass: 1,
+      moveForce: 0.1
     })
 
     this.radius = options.radius || 30
@@ -34,92 +40,90 @@ const Orb = compose2(Entity, stamp({
       prev: false,
       effect: null
     }
-  },
+  }
 
-  proto: {
-    /**
-     * Handle skills.
-     *
-     * @param {object} controls
-     * @chainable
-     * @override
-     */
-    applyControls(controls) {
-      const { skill1 } = controls
+  /**
+   * Handle skills.
+   *
+   * @param {object} controls
+   * @chainable
+   * @override
+   */
+  applyControls(controls) {
+    const { skill1 } = controls
 
-      if (skill1 && !this.skill1.prev) {
-        this.skill1.effect = SpeedUp.create(0.2)
-        this.receiveEffect(this.skill1.effect)
-      } else if (!skill1 && this.skill1.prev) {
-        this.removeEffect(this.skill1.effect)
-        this.skill1.effect = null
-      }
+    if (skill1 && !this.skill1.prev) {
+      this.skill1.effect = new SpeedUp(0.2)
+      this.receiveEffect(this.skill1.effect)
+    } else if (!skill1 && this.skill1.prev) {
+      this.removeEffect(this.skill1.effect)
+      this.skill1.effect = null
+    }
 
-      this.skill1.prev = skill1
+    this.skill1.prev = skill1
 
-      this._parent.proto.applyControls.call(this, controls)
+    super.applyControls(controls)
 
-      return this
-    },
+    return this
+  }
 
-    /**
-     * Make sure hp and mp >= 0 after effects are applied.
-     *
-     * @chainable
-     * @override
-     */
-    applyEffects() {
-      this._parent.proto.applyEffects.call(this)
+  /**
+   * Make sure hp and mp >= 0 after effects are applied.
+   *
+   * @chainable
+   * @override
+   */
+  applyEffects() {
+    super.applyEffects()
 
-      if (this.hp < 0) {
-        this.hp = 0
-      }
+    if (this.hp < 0) {
+      this.hp = 0
+    }
 
-      if (this.mp < 0) {
-        this.mp = 0
-      }
-    },
-
-    /**
-     * Serialize the orb.
-     *
-     * @param {Buffer} buffer
-     * @param {number} offset
-     * @chainable
-     * @override
-     */
-    serialize(buffer, offset = 0) {
-      this._parent.proto.serialize.call(this, buffer, offset)
-      offset += this._parent.proto.serializedLength.call(this)
-
-      buffer.writeDoubleBE(this.radius, offset)
-      offset += 8
-
-      buffer.writeDoubleBE(this.maxHp, offset)
-      offset += 8
-
-      buffer.writeDoubleBE(this.hp, offset)
-      offset += 8
-
-      buffer.writeDoubleBE(this.maxMp, offset)
-      offset += 8
-
-      buffer.writeDoubleBE(this.mp, offset)
-      offset += 8
-
-      return this
-    },
-
-    /**
-     * The size of the orb serialized.
-     *
-     * @return {number}
-     * @override
-     */
-    serializedLength() {
-      return this._parent.proto.serializedLength.call(this) + 8 * 5
+    if (this.mp < 0) {
+      this.mp = 0
     }
   }
-}))
+
+  /**
+   * Serialize the orb.
+   *
+   * @param {Buffer} buffer
+   * @param {number} offset
+   * @chainable
+   * @override
+   */
+  serialize(buffer, offset = 0) {
+    super.serialize(buffer, offset)
+    offset += super.serializedLength()
+
+    buffer.writeDoubleBE(this.radius, offset)
+    offset += 8
+
+    buffer.writeDoubleBE(this.maxHp, offset)
+    offset += 8
+
+    buffer.writeDoubleBE(this.hp, offset)
+    offset += 8
+
+    buffer.writeDoubleBE(this.maxMp, offset)
+    offset += 8
+
+    buffer.writeDoubleBE(this.mp, offset)
+    offset += 8
+
+    return this
+  }
+
+  /**
+   * The size of the orb serialized.
+   *
+   * @return {number}
+   * @override
+   */
+  serializedLength() {
+    return super.serializedLength() + 8 * 5
+  }
+}
 
 module.exports = Orb

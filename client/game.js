@@ -4,12 +4,11 @@ import { Buffer } from 'buffer-browserify'
 
 import Keyboard from './keyboard'
 import PlayoutBuffer from './playoutbuffer';
-import './game/entities/orb'
-import './game/effects/speedup'
-import './game/effects/instant-damage'
 import World from './game/world'
 
 import * as entities from '../common/entities'
+
+import './registerWorldObjects'
 
 export default class Game extends EventEmitter {
   static host = 'http://localhost:3000/'

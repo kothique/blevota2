@@ -29,7 +29,10 @@ class Simulator extends EventEmitter {
   constructor(options = Object.create(null)) {
     super()
 
-    this.world = options.world || World.create(V(800, 600))
+    this.world = options.world || new World({
+      size: V(800, 600)
+    })
+
     this.t = options.t || 0
     this.dt = options.dt || 1000 / 120 // milliseconds
     this.accumulator = 0
@@ -85,7 +88,7 @@ class Simulator extends EventEmitter {
    * @param {string} id - The ID of the new orb.
    */
   newOrb(id) {
-    this.world.new(Orb.create(id, {
+    this.world.new(new Orb(id, {
       radius: 20 + Math.random() * 30,
       maxHp: 100,
       hp: 80,

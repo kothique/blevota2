@@ -1,16 +1,20 @@
-import Effect from '../../effect'
-import '../instant-damage'
+import InstantDamage from '../../effects/instant-damage'
 import { INSTANT_DAMAGE } from '../../../../common/effects'
 
 describe('InstantDamage', () => {
-  test('should deserialize correctly', () => {
-    const buffer = Buffer.alloc(10 + 1 + 8)
-    buffer.writeUInt8(INSTANT_DAMAGE, 10 + 0)
-    buffer.writeDoubleBE(42, 10 + 1)
+  let effect
 
-    const { effect } = Effect.deserialize(buffer, 10)
+  beforeEach(() => {
+    effect = new InstantDamage
+  })
 
-    expect(effect.type).toBe(INSTANT_DAMAGE)
+  test('should parse info correctly', () => {
+    const buffer = Buffer.alloc(10 + 8)
+    buffer.writeDoubleBE(42, 10)
+
+    const offset = effect.parse(buffer, 10)
+
+    expect(offset).toBe(10 + 8)
     expect(effect.value).toBe(42)
   })
 })

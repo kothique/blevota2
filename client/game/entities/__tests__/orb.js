@@ -1,129 +1,72 @@
-import Entity from '../../entity'
-import '../orb'
+import Orb from '../orb'
 import { ORB } from '../../../../common/entities'
-import { SPEEDUP } from '../../../../common/effects'
-import '../../effects/speedup'
 import { Vector, V } from '../../../../common/vector'
 
 describe('Orb', () => {
-  test('has Orb.prototype.node property', () => {
-    const buffer = Buffer.alloc(10 + 98)
-    buffer.writeUInt8(ORB, 10)
-    buffer.write('a'.repeat(24), 10 + 1, 24)
-    buffer.writeDoubleBE(101, 10 + 1 + 24)
-    buffer.writeDoubleBE(102, 10 + 1 + 24 + 8)
-    buffer.writeDoubleBE(103, 10 + 1 + 24 + 8 + 8)
-    buffer.writeDoubleBE(104, 10 + 1 + 24 + 8 + 8 + 8)
-    buffer.writeUInt8   (0,   10 + 1 + 24 + 8 + 8 + 8 + 8)
-    buffer.writeDoubleBE(105, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 1)
-    buffer.writeDoubleBE(106, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 8)
-    buffer.writeDoubleBE(107, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 8 + 8)
-    buffer.writeDoubleBE(108, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 8 + 8 + 8)
-    buffer.writeDoubleBE(109, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 8 + 8 + 8 + 8)
+  let orb
+  const id = 'a'.repeat(24)
 
-    const { entity: orb, offset } = Entity.deserialize(buffer, 10)
+  beforeEach(() => {
+    jest.resetModules()
 
+    orb = new Orb(id)
+  })
+
+  test('has appropriate properties', () => {
+    expect(orb.radius).toBeDefined()
+    expect(orb.maxHp).toBeDefined()
+    expect(orb.hp).toBeDefined()
+    expect(orb.maxMp).toBeDefined()
+    expect(orb.mp).toBeDefined()
     expect(orb.node).toBeDefined()
   })
 
-  test('should deserialize correctly', () => {
-    const buffer = Buffer.alloc(10 + 98)
-    buffer.writeUInt8(ORB, 10)
-    buffer.write('a'.repeat(24), 10 + 1, 24)
-    buffer.writeDoubleBE(101, 10 + 1 + 24)
-    buffer.writeDoubleBE(102, 10 + 1 + 24 + 8)
-    buffer.writeDoubleBE(103, 10 + 1 + 24 + 8 + 8)
-    buffer.writeDoubleBE(104, 10 + 1 + 24 + 8 + 8 + 8)
-    buffer.writeUInt8   (0,   10 + 1 + 24 + 8 + 8 + 8 + 8)
-    buffer.writeDoubleBE(105, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 1)
-    buffer.writeDoubleBE(106, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 8)
-    buffer.writeDoubleBE(107, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 8 + 8)
-    buffer.writeDoubleBE(108, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 8 + 8 + 8)
-    buffer.writeDoubleBE(109, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 8 + 8 + 8 + 8)
+  test('should parse info correctly', () => {
+    const buffer = Buffer.alloc(10 + 17 + 5 * 8)
 
-    const { entity: orb, offset } = Entity.deserialize(buffer, 10)
-    expect(orb.type).toBe(ORB)
-    expect(orb.mass).toBe(101)
-    expect(orb.moveForce).toBe(102)
-    expect(orb.position).toBeInstanceOf(Vector)
-    expect(orb.position.x).toBe(103)
-    expect(orb.position.y).toBe(104)
-    expect(orb.effects).toHaveLength(0)
-    expect(orb.radius).toBe(105)
-    expect(orb.maxHp).toBe(106)
-    expect(orb.hp).toBe(107)
-    expect(orb.maxMp).toBe(108)
-    expect(orb.mp).toBe(109)
-  })
+    buffer.writeDoubleBE(101, 10 + 0)
+    buffer.writeDoubleBE(102, 10 + 8)
+    buffer.writeUInt8(0, 10 + 16)
 
-  test('should deserialize correctly with effects', () => {
-    const buffer = Buffer.alloc(10 + 116)
-    buffer.writeUInt8(ORB, 10)
-    buffer.write('a'.repeat(24), 10 + 1, 24)
-    buffer.writeDoubleBE(101,     10 + 1 + 24)
-    buffer.writeDoubleBE(102,     10 + 1 + 24 + 8)
-    buffer.writeDoubleBE(103,     10 + 1 + 24 + 8 + 8)
-    buffer.writeDoubleBE(104,     10 + 1 + 24 + 8 + 8 + 8)
+    buffer.writeDoubleBE(101, 10 + 17)
+    buffer.writeDoubleBE(102, 10 + 17 + 8)
+    buffer.writeDoubleBE(103, 10 + 17 + 16)
+    buffer.writeDoubleBE(104, 10 + 17 + 24)
+    buffer.writeDoubleBE(105, 10 + 17 + 32)
 
-    /** effects: 2 */
-    buffer.writeUInt8   (2,       10 + 1 + 24 + 8 + 8 + 8 + 8)
+    orb.parse(buffer, 10)
 
-    /** speedup effect, value: 0.5 */
-    buffer.writeUInt8   (SPEEDUP, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 1)
-    buffer.writeDoubleBE(0.5,     10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 1)
-
-    /** speedup effect, value: 0.3 */
-    buffer.writeUInt8   (SPEEDUP, 10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 1 + 8)
-    buffer.writeDoubleBE(0.3,     10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 1 + 8 + 1)
-
-    buffer.writeDoubleBE(105,     10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 1 + 8 + 1 + 8)
-    buffer.writeDoubleBE(106,     10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 1 + 8 + 1 + 8 + 8)
-    buffer.writeDoubleBE(107,     10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 1 + 8 + 1 + 8 + 8 + 8)
-    buffer.writeDoubleBE(108,     10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 1 + 8 + 1 + 8 + 8 + 8 + 8)
-    buffer.writeDoubleBE(109,     10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 1 + 8 + 1 + 8 + 8 + 8 + 8 + 8)
-
-    const { entity: orb, offset } = Entity.deserialize(buffer, 10)
-    expect(orb.type).toBe(ORB)
-    expect(orb.mass).toBe(101)
-    expect(orb.moveForce).toBe(102)
-    expect(orb.position).toBeInstanceOf(Vector)
-    expect(orb.position.x).toBe(103)
-    expect(orb.position.y).toBe(104)
-    expect(orb.effects).toHaveLength(2)
-    expect(orb.radius).toBe(105)
-    expect(orb.maxHp).toBe(106)
-    expect(orb.hp).toBe(107)
-    expect(orb.maxMp).toBe(108)
-    expect(orb.mp).toBe(109)
+    expect(orb.radius).toBe(101)
+    expect(orb.maxHp).toBe(102)
+    expect(orb.hp).toBe(103)
+    expect(orb.maxMp).toBe(104)
+    expect(orb.mp).toBe(105)
   })
 
   test('extrapolates position linearly', () => {
-    const buffer = Buffer.alloc(10 + 116)
+    const buffer = Buffer.alloc(10 + 17 + 7 * 8)
 
-    buffer.writeUInt8(ORB, 10)
-    buffer.write('a'.repeat(24), 10 + 1, 24)
-    buffer.writeDoubleBE(101,     10 + 1 + 24)
-    buffer.writeDoubleBE(102,     10 + 1 + 24 + 8)
+    buffer.writeDoubleBE(500, 10 + 0)
+    buffer.writeDoubleBE(500, 10 + 8)
+    buffer.writeUInt8(0, 10 + 16)
 
-    /** position */
-    buffer.writeDoubleBE(500,     10 + 1 + 24 + 8 + 8)
-    buffer.writeDoubleBE(500,     10 + 1 + 24 + 8 + 8 + 8)
+    buffer.writeDoubleBE(101, 10 + 17)
+    buffer.writeDoubleBE(102, 10 + 17 + 8)
+    buffer.writeDoubleBE(103, 10 + 17 + 16)
+    buffer.writeDoubleBE(104, 10 + 17 + 24)
+    buffer.writeDoubleBE(105, 10 + 17 + 32)
+    buffer.writeDoubleBE(106, 10 + 17 + 40)
+    buffer.writeDoubleBE(107, 10 + 17 + 48)
 
-    buffer.writeUInt8   (0,       10 + 1 + 24 + 8 + 8 + 8 + 8)
-    buffer.writeDoubleBE(105,     10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 8)
-    buffer.writeDoubleBE(106,     10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 8 + 8)
-    buffer.writeDoubleBE(107,     10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 8 + 8 + 8)
-    buffer.writeDoubleBE(108,     10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 8 + 8 + 8 + 8)
-    buffer.writeDoubleBE(109,     10 + 1 + 24 + 8 + 8 + 8 + 8 + 1 + 8 + 8 + 8 + 8 + 8)
+    orb.parse(buffer, 10)
 
-    const { entity: orb } = Entity.deserialize(buffer, 10)
     expect(orb.position.x).toBeCloseTo(500)
     expect(orb.position.y).toBeCloseTo(500)
 
     /** change position */
-    buffer.writeDoubleBE(1000,     10 + 1 + 24 + 8 + 8)
-    buffer.writeDoubleBE(1000,     10 + 1 + 24 + 8 + 8 + 8)
-    orb.parse(buffer, 10 + 1 + 24) // 10 + type(1) + id(24)
+    buffer.writeDoubleBE(1000, 10 + 0)
+    buffer.writeDoubleBE(1000, 10 + 8)
+    orb.parse(buffer, 10)
     expect(orb.position.x).toBeCloseTo(1000)
     expect(orb.position.y).toBeCloseTo(1000)
 

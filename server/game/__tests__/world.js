@@ -1,20 +1,22 @@
 const World = require('../world')
 const Entity = require('../entity')
-const { ENTITY } = require('../../../common/entities')
+const { UNKNOWN } = require('../../../common/entities')
 const { Vector, V } = require('../../../common/vector')
 
 describe('World', () => {
   let world
 
   beforeEach(() => {
-    world = World.create(V(800, 600))
+    world = new World({
+      size: V(800, 600)
+    })
   })
 
   describe('new() & remove()', () => {
     let entity
 
     beforeEach(() => {
-      entity = Entity.create('a'.repeat(24), {
+      entity = new Entity('a'.repeat(24), {
         mass: 0.1,
         moveForce: 15
       })
@@ -51,7 +53,7 @@ describe('World', () => {
     let entity1, entity2
 
     beforeEach(() => {
-      entity1 = Entity.create(id1, {
+      entity1 = new Entity(id1, {
         mass: 1,
         moveForce: 0.1,
       })
@@ -59,7 +61,7 @@ describe('World', () => {
       world.new(entity1)
 
 
-      entity2 = Entity.create(id2, {
+      entity2 = new Entity(id2, {
         mass: 2,
         moveForce: 0.25
       })
@@ -110,12 +112,12 @@ describe('World', () => {
     const id1 = 'a'.repeat(24),
           id2 = 'b'.repeat(24)
 
-    const entity1 = Entity.create(id1, {
+    const entity1 = new Entity(id1, {
       mass: 1,
       moveForce: 0.1,
     })
 
-    const entity2 = Entity.create(id2, {
+    const entity2 = new Entity(id2, {
       mass: 2,
       moveForce: 0.25
     })
@@ -139,7 +141,7 @@ describe('World', () => {
     offset += 2
     expect(entitiesCount).toBe(2)
 
-    expect(buffer.readUInt8(offset)).toBe(ENTITY)
+    expect(buffer.readUInt8(offset)).toBe(UNKNOWN)
     offset += 1
 
     expect(buffer.toString('utf8', offset, offset + 24)).toBe('a'.repeat(24))
@@ -147,7 +149,7 @@ describe('World', () => {
 
     offset += entity1.serializedLength() - 1 - 24
 
-    expect(buffer.readUInt8(offset)).toBe(ENTITY)
+    expect(buffer.readUInt8(offset)).toBe(UNKNOWN)
     offset += 1
 
     expect(buffer.toString('utf8', offset, offset + 24)).toBe('b'.repeat(24))

@@ -1,55 +1,67 @@
 import { ORB } from '../../../common/entities'
-
-beforeEach(() => {
-  jest.resetModules()
-})
+let World
+let EntityFactory
 
 describe('World', () => {
-  test('new() & remove()', done => {
-    import('../world').then(({ default: World }) => {
-      import('../entity').then(({ default: Entity }) => {
-        import('../entities/orb').then(() => {
+  const id = 'a'.repeat(24)
 
-          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'),
-                info = document.createElement('div')
-          World.init({ svg, info })
+  const entityDesc1 = {
+    type: 0x1,
+    constructor: jest.fn(function (id) {
+      this.id = id
+      this.parse = entityDesc1.parse
+    }),
+    parse: jest.fn(function (buffer, offset = 0) {
+      this.value = buffer.readInt16LE(offset)
+      offset += 2
 
-          expect(Object.keys(Entity.entities)).toHaveLength(0)
+      return offset
+    })
+  }
 
-          World.new('a'.repeat(24), ORB)
-          expect(Object.keys(Entity.entities)).toHaveLength(1)
+  beforeEach(() => {
+    jest.resetModules()
 
-          World.remove('a'.repeat(24))
-          expect(Object.keys(Entity.entities)).toHaveLength(0)
+    World = require('../world').default
+    EntityFactory = require('../entity-factory').default
 
-          done()
-        })
-      })
+    EntityFactory.register({
+      type: entityDesc1.type,
+      constructor: entityDesc1.constructor
     })
   })
 
+  test('new() & remove()', done => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'),
+          info = document.createElement('div')
+    World.init({ svg, info })
+
+    expect(Object.keys(EntityFactory.entities)).toHaveLength(0)
+
+    World.new('a'.repeat(24), ORB)
+    expect(Object.keys(EntityFactory.entities)).toHaveLength(1)
+
+    World.remove('a'.repeat(24))
+    expect(Object.keys(EntityFactory.entities)).toHaveLength(0)
+
+    done()
+  })
+
   test('clear()', done => {
-    import('../world').then(({ default: World }) => {
-      import('../entity').then(({ default: Entity }) => {
-        import('../entities/orb').then(() => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'),
+          info = document.createElement('div')
+    World.init({ svg, info })
 
-          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'),
-                info = document.createElement('div')
-          World.init({ svg, info })
+    expect(Object.keys(EntityFactory.entities)).toHaveLength(0)
 
-          expect(Object.keys(Entity.entities)).toHaveLength(0)
+    World.new('a'.repeat(24), ORB)
+    World.new('b'.repeat(24), ORB)
+    expect(Object.keys(EntityFactory.entities)).toHaveLength(2)
 
-          World.new('a'.repeat(24), ORB)
-          World.new('b'.repeat(24), ORB)
-          expect(Object.keys(Entity.entities)).toHaveLength(2)
+    World.clear()
+    expect(Object.keys(EntityFactory.entities)).toHaveLength(0)
 
-          World.clear()
-          expect(Object.keys(Entity.entities)).toHaveLength(0)
-
-          done()
-        })
-      })
-    })
+    done()
   })
 
   /** @todo */

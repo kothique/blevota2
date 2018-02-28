@@ -2,135 +2,85 @@
  * @module client/game/entity
  */
 
-import _ from 'lodash'
+import Set from 'collections/set'
 
-const factories = Object.create(null)
+import EffectFactory from './effect-factory'
+import { Vector, V } from '../../common/vector'
 
-const Entity = {
+/**
+ * @class
+ */
+class Entity {
   /**
-   * Register a new entity.
+   * Create a new entity.
    *
-   * @param {object} options
-   * @param {number} options.type - Entity type identificator.
-   * @param {function} options.parse - Function that reads the entity data from a buffer
-   *  with the specified offset and returns the new offset.
-   * @param {function} options.extrapolate - Linear extrapolation.
-   * @param {function} options.render - Set attributes to the underlying DOM node.
+   * @param {string} id
+   * @param {number} type
    */
-  register(options) {
-    const { type, init, parse, extrapolate, render } = options,
-          factory = (id) => {
-            /** Prototype. */
-            const entity = Object.create({
-              type,
-              parse,
-              extrapolate,
-              render
-            })
+  constructor(id) {
+    this.id = id
 
-            /** Instance properties. */
-            _.extend(entity, {
-              id
-            })
+    this.previous = {}
 
-            /** Initialization. */
-            init.call(entity)
+    this.position = V(0, 0)
+    this.previous.position = V(0, 0)
 
-            return entity
-          }
-
-    factories[type] = factory
-  },
+    this.effects = new Set
+  }
 
   /**
-   * Create a new entity from a buffer.
+   * Read entity info except for id from a buffer.
    *
-   * @param {Buffer} buffer
-   * @param {?number} offset
-   * @return {object} - { entity, offset }
+   * @param {Buffer} buffer 
+   * @param {number} offset 
+   * @return {number} - New offset.
    */
-  deserialize(buffer, offset = 0) {
-    const type = buffer.readUInt8(offset)
+  parse(buffer, offset = 0) {
+    this.previous.position = this.position.clone()
+
+    this.position = V(
+      buffer.readDoubleBE(offset),
+      buffer.readDoubleBE(offset + 8)
+    )
+    offset += 16
+
+    this.effects.clear()
+
+    const effectsCount = buffer.readUInt8(offset)
     offset += 1
 
-    const id = buffer.toString('utf8', offset, offset + 24)
-    offset += 24
+    for (let i = 0; i < effectsCount; i++) {
+      const result = EffectFactory.deserialize(buffer, offset)
 
-    const factory = factories[type]
-    if (!factory) {
-      console.warn(`Entity #${type} is not registered`)
-
-      return {
-        entity: { id, type },
-        offset
-      }
+      offset = result.offset
+      this.effects.add(result.effect)
     }
 
-    if (!Entity.entities[id]) {
-      Entity.entities[id] = factory(id)
-    }
-    const entity = Entity.entities[id]
-    offset = entity.parse(buffer, offset)
-
-    return { entity, offset }
-  },
+    return offset
+  }
 
   /**
-   * Create a new entity with the specified id and type.
+   * Extrapolation.
    *
-   * @param {string} id
-   * @return {object}
+   * @param {object} timestamp
+   * @param {number} timestamp.prev
+   * @param {number} timestamp.curr
+   * @param {number} timestamp.next
    */
-  new(id, type) {
-    const factory = factories[type]
+  extrapolate(timestamp) {
+    const { prev, curr, next } = timestamp
 
-    if (!factory) {
-      console.warn(`Entity #${type} is not registered`)
-
-      return {
-        id,
-        type
-      }
-    }
-
-    if (Entity.get(id)) {
-      Entity.remove(id)
-    }
-
-    const entity = Entity.entities[id] = factory(id)
-
-    return entity
-  },
+    this.position.add(
+      Vector.subtract(this.position, this.previous.position)
+        .divide(curr - prev)
+        .multiply(next - curr)
+    )
+  }
 
   /**
-   * Get the entity with the specified id.
-   *
-   * @param {string} id
+   * Rendering.
    */
-  get(id) {
-    return Entity.entities[id]
-  },
-
-  /**
-   * Remove the entity with the specified id.
-   *
-   * @param {string} id
-   */
-  remove(id) {
-    delete Entity.entities[id]
-  },
-
-  /**
-   * Remove all entities.
-   */
-  clear() {
-    Entity.entities = Object.create(null)
-  },
-
-  /**
-   * All entities in the world.
-   */
-  entities: Object.create(null)
+  render() {}
 }
 
 export default Entity

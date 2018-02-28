@@ -1,31 +1,16 @@
-beforeEach(() => {
-  jest.resetModules()
-})
+import Effect from '../effect'
 
 describe('Effect', () => {
-  test('should correctly deserialize an effect after registration', done => {
-    import('../effect').then(({ default: Effect }) => {
-      Effect.register({
-        type: 42,
-        parse(buffer, offset) {
-          this.someData = buffer.readInt32BE(offset)
-          offset += 4
+  let effect
 
-          return offset
-        }
-      })
+  beforeEach(() => {
+    effect = new Effect
+  })
 
-      const buffer = Buffer.alloc(10 + 1 + 4)
-      buffer.writeUInt8(42, 10 + 0)
-      buffer.writeInt32BE(24, 10 + 1)
+  test('parse() should do nothing', () => {
+    const buffer = Buffer.alloc(10),
+          offset = effect.parse(buffer, 10)
 
-      const { effect, offset } = Effect.deserialize(buffer, 10)
-
-      expect(offset).toBe(10 + 1 + 4)
-      expect(effect.type).toBe(42)
-      expect(effect.someData).toBe(24)
-
-      done()
-    })
+    expect(offset).toBe(10)
   })
 })
