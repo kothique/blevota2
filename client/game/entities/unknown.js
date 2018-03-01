@@ -2,7 +2,7 @@
  * @module client/game/entitites/unknown
  */
 
-import Entity from '../entity'
+import Entity from './entity'
 
 /**
  * @class

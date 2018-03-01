@@ -1,7 +1,7 @@
 /**
  * @module server/game/effects/speedup
  */
-const Effect = require('../effect')
+const Effect = require('./effect')
 const { SPEEDUP } = require('../../../common/effects')
 
 /**

@@ -1,4 +1,4 @@
-import Effect from '../effect'
+import Effect from './effect'
 import { SPEEDUP } from '../../../common/effects'
 
 class SpeedUp extends Effect{

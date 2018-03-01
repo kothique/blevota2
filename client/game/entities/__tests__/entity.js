@@ -30,7 +30,7 @@ describe('Entity', () => {
   })
 
   test('should parse info correctly (with effects)', () => {
-    const { default: EffectFactory } = require('../effect-factory')
+    const { default: EffectFactory } = require('../../effect-factory')
 
     const effectDesc1 = {
       type: 0x1,

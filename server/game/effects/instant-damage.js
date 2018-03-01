@@ -1,7 +1,7 @@
 /**
  * @module server/game/effects/instant-damage
  */
-const Effect = require('../effect')
+const Effect = require('./effect')
 const Orb = require('../entities/orb')
 const { INSTANT_DAMAGE } = require('../../../common/effects')
 

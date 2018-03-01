@@ -1,7 +1,7 @@
 /**
  * @module server/game/entities/orb
  */
-const Entity = require('../entity')
+const Entity = require('./entity')
 const { ORB } = require('../../../common/entities')
 const SpeedUp = require('../effects/speedup')
 

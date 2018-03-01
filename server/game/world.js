@@ -9,7 +9,7 @@ const { V, Vector } = require('../../common/vector')
 const { ORB } = require('../../common/entities')
 const CollisionDetector = require('./collision-detector')
 const InstantDamage = require('./effects/instant-damage')
-const Entity = require('./entity')
+const Entity = require('./entities/entity')
 const Orb = require('./entities/orb')
 
 /**

@@ -2,7 +2,7 @@
  * @module client/game/effects/unknown
  */
 
-import Effect from '../effect'
+import Effect from './effect'
 
 /**
  * @class

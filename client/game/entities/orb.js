@@ -2,7 +2,7 @@
  * @module client/game/entities/orb
  */
 
-import Entity from '../entity'
+import Entity from './entity'
 import Set from 'collections/set'
 import { Vector, V } from '../../../common/vector'
 import { ORB } from '../../../common/entities'

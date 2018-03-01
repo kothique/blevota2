@@ -4,8 +4,8 @@
 
 const Set = require('collections/set')
 
-const { UNKNOWN } = require('../../common/entities')
-const { V, Vector } = require('../../common/vector')
+const { UNKNOWN } = require('../../../common/entities')
+const { V, Vector } = require('../../../common/vector')
 
 class Entity {
   /**
