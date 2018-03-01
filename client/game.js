@@ -17,9 +17,9 @@ export default class Game extends EventEmitter {
   constructor(options) {
     super()
 
-    const { context, info, log, host, token, user, matchId } = options
+    const { context, info, log, host, token, user, regionName } = options
     this.user = user
-    this.matchId = matchId
+    this.regionName = regionName
 
     this.svg = context
     this.info = info
@@ -148,7 +148,7 @@ export default class Game extends EventEmitter {
     const socket = this.socket = ioc(Game.host, {
       query: {
         token,
-        matchId: this.matchId
+        regionName: this.regionName
       }
     })
 
@@ -180,6 +180,7 @@ export default class Game extends EventEmitter {
     })
 
     socket.on('remove-orb', (id) => {
+      console.log(id)
       World.remove(id)
     })
 

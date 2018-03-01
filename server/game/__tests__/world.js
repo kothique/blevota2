@@ -1,7 +1,7 @@
 const World = require('../world')
-const Entity = require('../entity')
-const { UNKNOWN } = require('../../../common/entities')
-const { Vector, V } = require('../../../common/vector')
+const Entity = require('@server/game/entities/entity')
+const { UNKNOWN } = require('@common/entities')
+const { Vector, V } = require('@common/vector')
 
 describe('World', () => {
   let world

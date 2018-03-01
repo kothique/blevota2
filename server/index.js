@@ -5,14 +5,6 @@
  * This is the entry point of the server.
  */
 
-/** Open inspector if not in production mode */
-if (process.env.NODE_ENV !== 'production') {
-  const inspector = require('inspector'),
-        config = require('../server.config')
-
-  inspector.open(config.inspector.port)
-}
-
 /**
  * The port to listen to. Can be provided from outside by
  * the PORT environment variable.

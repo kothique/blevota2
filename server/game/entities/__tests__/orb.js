@@ -1,5 +1,5 @@
 const Orb    = require('../orb')
-const Entity = require('../../entity')
+const Entity = require('../entity')
 
 describe('Orb', () => {
   let orb

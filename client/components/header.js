@@ -60,7 +60,7 @@ class Header extends Component {
                 Wiki
               </a>
               <a className="h-box h-box-text"
-                onClick={() => dispatch(push('/matches'))}>
+                onClick={() => dispatch(push('/regions'))}>
                 Play
               </a>
             </div>

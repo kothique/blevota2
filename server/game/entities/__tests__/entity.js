@@ -1,6 +1,6 @@
 const Entity = require('../entity')
-const { UNKNOWN } = require('../../../common/entities')
-const { V, Vector } = require('../../../common/vector')
+const { V, Vector } = require('@common/vector')
+const { UNKNOWN } = require('@common/entities')
 
 describe('Entity', () => {
   test('applyControls() should set force', () => {
@@ -15,7 +15,7 @@ describe('Entity', () => {
       move: true
     })
 
-    expect(entity.force.isZero(1e-2)).toBeFalsy()
+     expect(entity.force.isZero(1e-2)).toBeFalsy()
   })
 
   describe('receiveEffect() & removeEffect()', () => {

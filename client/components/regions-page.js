@@ -2,13 +2,13 @@ import React, { Component, Fragment } from 'react'
 
 import Header from './header'
 import MobileMenu from './mobile-menu'
-import SectionMatches from './section-matches'
+import SectionRegions from './section-regions'
 import Footer from './footer'
 import Access from './access'
 
-import '../styles/matches-page.styl'
+import '../styles/regions-page.styl'
 
-class MatchesPage extends Component {
+class RegionsPage extends Component {
   render() {
     const page = Number(this.props.match.params.page) || 1
 
@@ -18,7 +18,7 @@ class MatchesPage extends Component {
         <MobileMenu />
         <div id="content" className="page-container">
           <Access users>
-            <SectionMatches page={page} />
+            <SectionRegions page={page} />
           </Access>
         </div>
         <Footer />
@@ -27,4 +27,4 @@ class MatchesPage extends Component {
   }
 }
 
-export default MatchesPage
+export default RegionsPage

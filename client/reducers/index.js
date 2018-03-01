@@ -1,17 +1,13 @@
 import { loginReducer } from './login'
 import { registerReducer } from './register'
-import { matchesReducer } from './matches'
-import { filterMatchesReducer } from './filter-matches'
+import { regionsReducer } from './regions'
 import { modalsReducer } from './modals'
-import { newMatchReducer } from './new-match'
 import { mobileMenuReducer } from './mobile-menu'
 
 export default {
   login: loginReducer,
   register: registerReducer,
-  matches: matchesReducer,
-  filterMatches: filterMatchesReducer,
+  regions: regionsReducer,
   modals: modalsReducer,
-  newMatch: newMatchReducer,
   mobileMenu: mobileMenuReducer
 }

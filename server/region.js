@@ -1,9 +1,9 @@
 /**
- * @module server/match
+ * @module server/region
  */
 
+const forIn = require('lodash/forIn')
 const child_process = require('child_process')
-const Dict = require('collections/dict')
 const WebSocket = require('ws')
 
 /**
@@ -15,28 +15,21 @@ let childIndex = 1
  * @class
  *
  * @description
- * A game match, the intermediate between the participants and
- * the world simulation running in the background.
+ * The intermediate between players and the world simulation.
  */
-class Match {
+class Region {
   /**
-   * Create a new match.
+   * Create a new region.
    *
-   * @param {string} id
+   * @param {string} name
    */
-  constructor(id) {
-    this.players = new Dict
-    this.id = id
-    this.createdAt = Date.now()
+  constructor(name) {
+    this.players = Object.create(null)
+    this.name = name
 
-    const config = {
+    this.simulation = child_process.fork('./server/simulation', null, {
       env: process.env
-    }
-    if (process.env.NODE_ENV !== 'production') {
-      config.env.INSPECTOR_PORT = require('../server.config').inspector.port + childIndex++
-    }
-
-    this.simulation = child_process.fork('./server/simulation', null, config)
+    })
 
     this.simulation.on('message', (msg) => {
       switch (msg.type) {
@@ -45,7 +38,7 @@ class Match {
           break
 
         case 'DEATH':
-          const socket = this.players.get(msg.id)
+          const socket = this.players[msg.id]
           if (socket) {
             this.toAllPlayers('event:death', {
               user: socket.handshake.user
@@ -60,7 +53,7 @@ class Match {
   }
 
   /**
-   * Add a new player to the match.
+   * Add a new player to the region.
    *
    * @param {Socket} newSocket - The socket.io socket corresponding to the player.
    */
@@ -68,10 +61,10 @@ class Match {
     const { user } = newSocket.handshake
 
     /** Send the new player to all already existing orbs */
-    this.players.forEach((socket, id) => {
+    forIn(this.players, (socket, id) => {
       newSocket.emit('new-orb', id)
     })
-    this.players.set(user.id, newSocket)
+    this.players[user.id] = newSocket
 
     /** Notify all players of the new orb */
     this.toAllPlayers('new-orb', user.id)
@@ -92,16 +85,16 @@ class Match {
   }
 
   /**
-   * Remove the specified player from the match.
+   * Remove the specified player from the region.
    *
    * @param {string} id
    */
   removePlayer(id) {
-    this.players.forEach((socket) => {
+    forIn(this.players, (socket) => {
       socket.emit('remove-orb', id)
     })
 
-    this.players.delete(id)
+    delete this.players[id]
 
     this.sendRemoveOrb(id)
   }
@@ -109,7 +102,7 @@ class Match {
   /**
    * Start the simulation.
    */
-  start() {
+  run() {
     this.sendStart()
   }
 
@@ -131,7 +124,7 @@ class Match {
         type: 'START'
       })
     } catch (err) {
-      console.log(`Match (${this.id}): ${err.message}`)
+      console.log(`Region #${this.name}: ${err.message}`)
     }
   }
 
@@ -146,7 +139,7 @@ class Match {
         type: 'STOP'
       })
     } catch (err) {
-      console.log(`Match (${this.id}): ${err.message}`)
+      console.log(`Region #${this.name}: ${err.message}`)
     }
   }
 
@@ -163,7 +156,7 @@ class Match {
         id
       })
     } catch (err) {
-      console.log(`Match (${this.id}): ${err.message}`)
+      console.log(`Region ${this.name}: ${err.message}`)
     }
   }
 
@@ -179,7 +172,7 @@ class Match {
         id
       })
     } catch (err) {
-      console.log(`Match (${this.id}): ${err.message}`)
+      console.log(`Region ${this.name}: ${err.message}`)
     }
   }
 
@@ -198,12 +191,12 @@ class Match {
         controls
       })
     } catch (err) {
-      console.log(`Match (${this.id}): ${err.message}`)
+      console.log(`Region ${this.name}: ${err.message}`)
     }
   }
 
   /**
-   * Send the message to all players in the match.
+   * Send the message to all players in the region.
    *
    * @private
    * @param {string|number} type
@@ -211,13 +204,13 @@ class Match {
    */
   toAllPlayers(type, ...args) {
     try {
-      this.players.forEach((socket) => {
+      forIn(this.players, (socket) => {
         socket.emit(type, ...args)
       })
     } catch (err) {
-      console.log(`Match (${this.id}): ${err.message}`)
+      console.log(`Region ${this.name}: ${err.message}`)
     }
   }
 }
 
-module.exports = Match
+module.exports = Region

@@ -6,7 +6,7 @@ import { object } from 'prop-types'
 
 import WelcomePage from './welcome-page'
 import GamePage from './game-page'
-import MatchesPage from './matches-page'
+import RegionsPage from './regions-page'
 
 import '../styles/common.styl'
 
@@ -24,9 +24,9 @@ class Root extends Component {
         <ConnectedRouter history={history}>
           <Switch>
             <Route exact path="/" component={WelcomePage} />
-            <Route path="/match/:matchId" component={GamePage} />
-            <Route path="/matches/:page" component={MatchesPage} />
-            <Route path="/matches" component={MatchesPage} />
+            <Route path="/region/:regionName" component={GamePage} />
+            <Route path="/regions/:page" component={RegionsPage} />
+            <Route path="/regions" component={RegionsPage} />
           </Switch>
         </ConnectedRouter>
       </Provider>

@@ -3,11 +3,11 @@
  *
  * @description
  * This module accepts new socket.io connections and pass
- * them to {@link module:server/match~Match}.
+ * them to {@link module:server/region~Region}.
  */
 
 const auth = require('./auth')
-const { matches } = require('./matches')
+const RegionManager = require('./region-manager')
 
 /**
  * Configure the socket.io server.
@@ -26,7 +26,7 @@ module.exports = (io) => {
   }))
 
   io.on('connection', (socket) => {
-    const { address, user, query: { matchId } } = socket.handshake
+    const { address, user, query: { regionName } } = socket.handshake
 
     console.log(`A new socket.io connection established (${user.username}; ${address})`)
 
@@ -38,11 +38,11 @@ module.exports = (io) => {
       console.log(`Client disconnected: ${reason}`)
     })
 
-    const match = matches[matchId]
+    const region = RegionManager.get(regionName)
 
-    if (!match)
+    if (!region)
       return socket.disconnect()
 
-    match.newPlayer(socket)
+    region.newPlayer(socket)
   })
 }

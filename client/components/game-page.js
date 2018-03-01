@@ -22,7 +22,7 @@ class GamePage extends Component {
 
   initialize() {
     const { dispatch, match, token, user } = this.props
-    const { params: { matchId } } = match,
+    const { params: { regionName } } = match,
           context = document.getElementById('gp-game'),
           info = document.getElementById('gp-info'),
           log = document.getElementById('gp-log'),
@@ -35,7 +35,7 @@ class GamePage extends Component {
       log,
       token,
       user,
-      matchId
+      regionName
     })
 
     game.on('connect', () => {
@@ -73,7 +73,7 @@ class GamePage extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { dispatch, isFetching, user, token, match } = this.props
+    const { user } = this.props
 
     if (user && !prevProps.user) {
       this.initialize()

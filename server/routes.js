@@ -1,9 +1,10 @@
-const pick = require('lodash/pick')
+const forIn = require('lodash/forIn')
+const map = require('lodash/map')
 const { resolve } = require('path')
 
 const { createUser } = require('./auth')
 const { login, ifUser, ifGuest, AuthError } = require('./auth')
-const { createMatch, matches } = require('./matches')
+const RegionManager = require('./region-manager')
 
 module.exports = (app) => {
   app.post('/api/login', ifUser({ error: true }), (req, res) => {
@@ -56,29 +57,19 @@ module.exports = (app) => {
     })
   })
 
-  app.get('/api/matches', ifGuest({ error: true }), (req, res) => {
-    let result = []
-    for (const id in matches) {
-      result.push({
-        id,
-        state: 'open',
-        players: matches[id].players.map((player) => ({
+  app.get('/api/regions', ifGuest({ error: true }), (req, res) => {
+    let response = []
+    forIn(RegionManager.regions, (region, name) => {
+      response.push({
+        name,
+        players: map(region.players, (player) => ({
           id: player.id,
           username: player.username
-        })),
-        createdAt: matches[id].createdAt
+        }))
       })
-    }
-
-    res.send({ matches: result })
-  })
-
-  app.put('/api/match', ifGuest({ error: true }), (req, res) => {
-    const match = createMatch()
-
-    res.send({
-      id: match.id
     })
+
+    res.send({ regions: response })
   })
 
   app.get('/*', (req, res) => {

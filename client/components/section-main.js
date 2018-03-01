@@ -15,7 +15,7 @@ class SectionMain extends Component {
         <h1 id="sm-title">Blevota 2</h1>
         <Button
           id="sm-join-the-battle"
-          onClick={() => dispatch(push('/matches'))}>
+          onClick={() => dispatch(push('/regions'))}>
 
           <h2 id="sm-small">Join the battle</h2>
         </Button>

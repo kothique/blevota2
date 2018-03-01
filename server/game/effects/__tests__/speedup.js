@@ -1,5 +1,5 @@
 const SpeedUp = require('../speedup')
-const { SPEEDUP } = require('../../../../common/effects')
+const { SPEEDUP } = require('@common/effects')
 
 describe('SpeedUp', () => {
   describe('onReceive() & onRemove()', () => {

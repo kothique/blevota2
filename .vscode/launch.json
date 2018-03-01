@@ -7,21 +7,10 @@
 
     {
       "type": "node",
-      "request": "attach",
-      "name": "Attach to parent",
-      "port": 9300
-    },
-    {
-      "type": "node",
-      "request": "attach",
-      "name": "Attach to first child",
-      "port": 9301
-    },
-    {
-      "type": "node",
       "request": "launch",
-      "name": "Launch server",
-      "program": "${workspaceFolder}/server/index.js"
+      "name": "Launch Server",
+      "program": "${workspaceFolder}/server/index.js",
+      "autoAttachChildProcesses": true
     }
   ]
 }

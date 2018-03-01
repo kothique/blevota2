@@ -1,7 +1,6 @@
-const Orb = require('../../entities/orb')
-
+const Orb = require('@server/game/entities/orb')
 const InstantDamage = require('../instant-damage')
-const { INSTANT_DAMAGE } = require('../../../../common/effects')
+const { INSTANT_DAMAGE } = require('@common/effects')
 
 describe('InstantDamage', () => {
   describe('onReceive()', () => {
