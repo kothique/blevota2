@@ -57,7 +57,7 @@ class Orb extends Entity {
    * @override
    */
   applyControls(controls) {
-    const { skill1 } = controls
+    const { skillA1: skill1 } = controls
 
     if (skill1 && !this.skill1.prev) {
       this.skill1.effect = new SpeedUp(0.2)

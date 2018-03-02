@@ -4,7 +4,7 @@
 
 const EventEmitter = require('events')
 const present = require('present')
-const Dict = require('collections/dict')
+const merge = require('lodash/merge')
 
 const World = require('../game/world')
 const Orb = require('../game/entities/orb')
@@ -53,37 +53,8 @@ const Simulator = {
    * @param {object} controls - The controls.
    */
   setControls(id, controls) {
-    const { pX, pY, move,
-            skill1, skill2, skill3,
-            skill4, skill5, skill6 } = controls
-
     if (this.controls[id]) {
-      if (typeof pX !== 'undefined')
-        this.controls[id].pX = pX
-
-      if (typeof pY !== 'undefined')
-        this.controls[id].pY = pY
-
-      if (typeof move !== 'undefined')
-        this.controls[id].move = move
-
-      if (typeof skill1 !== 'undefined')
-        this.controls[id].skill1 = skill1
-
-      if (typeof skill2 !== 'undefined')
-        this.controls[id].skill2 = skill2
-
-      if (typeof skill3 !== 'undefined')
-        this.controls[id].skill3 = skill3
-
-      if (typeof skill4 !== 'undefined')
-        this.controls[id].skill4 = skill4
-
-      if (typeof skill5 !== 'undefined')
-        this.controls[id].skill5 = skill5
-
-      if (typeof skill6 !== 'undefined')
-        this.controls[id].skill6 = skill6
+      merge(this.controls[id], controls)
     }
   },
 
@@ -109,12 +80,24 @@ const Simulator = {
       pX: 0,
       pY: 0,
       move: false,
-      skill1: false,
-      skill2: false,
-      skill3: false,
-      skill4: false,
-      skill5: false,
-      skill6: false
+      skillA1: false,
+      skillA2: false,
+      skillA3: false,
+      skillA4: false,
+      skillA5: false,
+      skillA6: false,
+      skillB1: false,
+      skillB2: false,
+      skillB3: false,
+      skillB4: false,
+      skillB5: false,
+      skillB6: false,
+      skillC1: false,
+      skillC2: false,
+      skillC3: false,
+      skillC4: false,
+      skillC5: false,
+      skillC6: false
     }
 
     return id

@@ -64,11 +64,38 @@ export default class Game extends EventEmitter {
       this.sendControls(controls)
     })
 
+    const keymap = {
+      'q': 'skillA1',
+      'w': 'skillA2',
+      'e': 'skillA3',
+
+      'r': 'skillA4',
+      't': 'skillA5',
+      'y': 'skillA6',
+
+      'a': 'skillB1',
+      's': 'skillB2',
+      'd': 'skillB3',
+
+      'f': 'skillB4',
+      'g': 'skillB5',
+      'h': 'skillB6',
+
+      'z': 'skillC1',
+      'x': 'skillC2',
+      'c': 'skillC3',
+
+      'v': 'skillC4',
+      'b': 'skillC5',
+      'n': 'skillC6',
+    }
+
     document.addEventListener('keyup', (event) => {
       const controls = Object.create(null)
 
-      if (event.keyCode === 32) {
-        controls.skill1 = false
+      const skill = keymap[event.key]
+      if (skill) {
+        controls[skill] = false
         event.preventDefault()
       }
 
@@ -80,8 +107,9 @@ export default class Game extends EventEmitter {
     document.addEventListener('keydown', (event) => {
       const controls = Object.create(null)
 
-      if (event.keyCode === 32) {
-        controls.skill1 = true
+      const skill = keymap[event.key]
+      if (skill) {
+        controls[skill] = true
         event.preventDefault()
       }
 

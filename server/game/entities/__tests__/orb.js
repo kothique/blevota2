@@ -21,16 +21,6 @@ describe('Orb', () => {
     expect(orb.moveForce).toBeDefined()
   })
 
-  test('should toggle SpeedUp effect on skill1', () => {
-    const defaultMoveForce = orb.moveForce
-
-    orb.applyControls({ skill1: true })
-    expect(orb.moveForce).toBeGreaterThan(defaultMoveForce)
-
-    orb.applyControls({ skill1: false })
-    expect(orb.moveForce).toBeCloseTo(defaultMoveForce)
-  })
-
   test('should serialize correctly', () => {
     const length = orb.serializedLength(),
           buffer = Buffer.alloc(length)
