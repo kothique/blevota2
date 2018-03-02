@@ -25,7 +25,7 @@ class CollisionDetector {
   /**
    * Set the specified box.
    *
-   * @param {string} id - The ID of the box.
+   * @param {number} id - The ID of the box.
    * @param {object} box - The box.
    */
   set(id, box) {
@@ -39,7 +39,7 @@ class CollisionDetector {
   /**
    * Remove the specified box.
    *
-   * @param {string} id - The ID of the box.
+   * @param {number} id - The ID of the box.
    */
   remove(id) {
     delete this.boxes[id]

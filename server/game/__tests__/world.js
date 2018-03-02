@@ -16,7 +16,7 @@ describe('World', () => {
     let entity
 
     beforeEach(() => {
-      entity = new Entity('a'.repeat(24), {
+      entity = new Entity({
         mass: 0.1,
         moveForce: 15
       })
@@ -25,48 +25,44 @@ describe('World', () => {
     test('new() should add new entities', () => {
       expect(Object.keys(world.entities)).toHaveLength(0)
 
-      world.new(entity)
+      const id = world.new(entity)
       expect(Object.keys(world.entities)).toHaveLength(1)
     })
 
     test('remove() should remove entities', () => {
-      world.new(entity)
+      const id = world.new(entity)
       expect(Object.keys(world.entities)).toHaveLength(1)
 
-      world.remove(entity.id)
+      world.remove(id)
       expect(Object.keys(world.entities)).toHaveLength(0)
     })
   })
 
   describe('iteration', () => {
     const mockObject = (object) => {
-      Object.getOwnPropertyNames(object.__proto__).forEach((prop) => {
-        if (typeof object.__proto__[prop] === 'function') {
-          object[prop] = jest.fn(object.__proto__[prop])
-        }
-      })
+      object.applyControls = jest.fn(object.applyControls)
+      object.integrate = jest.fn(object.integrate)
+      object.applyEffects = jest.fn(object.applyEffects)
     }
 
-    const id1 = 'a'.repeat(24),
-          id2 = 'b'.repeat(24)
-
-    let entity1, entity2
+    let entity1, entity2,
+        id1, id2
 
     beforeEach(() => {
-      entity1 = new Entity(id1, {
+      entity1 = new Entity({
         mass: 1,
         moveForce: 0.1,
       })
       mockObject(entity1)
-      world.new(entity1)
+      id1 = world.new(entity1)
 
 
-      entity2 = new Entity(id2, {
+      entity2 = new Entity({
         mass: 2,
         moveForce: 0.25
       })
       mockObject(entity2)
-      world.new(entity2)
+      id2 = world.new(entity2)
     })
 
     test('clearForces() should clear forces', () => {
@@ -109,21 +105,18 @@ describe('World', () => {
   })
 
   test('should serialize correctly', () => {
-    const id1 = 'a'.repeat(24),
-          id2 = 'b'.repeat(24)
-
-    const entity1 = new Entity(id1, {
+    const entity1 = new Entity({
       mass: 1,
       moveForce: 0.1,
     })
 
-    const entity2 = new Entity(id2, {
+    const entity2 = new Entity({
       mass: 2,
       moveForce: 0.25
     })
 
-    world.new(entity1)
-    world.new(entity2)
+    const id1 = world.new(entity1),
+          id2 = world.new(entity2)
 
     const length = world.serializedLength(),
           buffer = Buffer.alloc(length)
@@ -141,21 +134,22 @@ describe('World', () => {
     offset += 2
     expect(entitiesCount).toBe(2)
 
-    expect(buffer.readUInt8(offset)).toBe(UNKNOWN)
-    offset += 1
-
-    expect(buffer.toString('utf8', offset, offset + 24)).toBe('a'.repeat(24))
-    offset += 24
-
-    offset += entity1.serializedLength() - 1 - 24
+    expect(buffer.readInt16BE(offset)).toBe(id1)
+    offset += 2
 
     expect(buffer.readUInt8(offset)).toBe(UNKNOWN)
     offset += 1
 
-    expect(buffer.toString('utf8', offset, offset + 24)).toBe('b'.repeat(24))
-    offset += 24
+    offset += entity1.serializedLength()
 
-    offset += entity2.serializedLength() - 1 - 24
+    expect(buffer.readInt16BE(offset)).toBe(id2)
+    offset += 2
+
+    expect(buffer.readUInt8(offset)).toBe(UNKNOWN)
+    offset += 1
+
+    offset += entity2.serializedLength()
+
     expect(offset).toBe(length)
   })
 

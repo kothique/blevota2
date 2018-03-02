@@ -24,7 +24,8 @@ class Region {
    * @param {string} name
    */
   constructor(name) {
-    this.players = Object.create(null)
+    this.playersByID = Object.create(null)
+    this.playersByOrbID = Object.create(null)
     this.name = name
 
     this.simulation = child_process.fork('./server/simulation', null, {
@@ -32,19 +33,35 @@ class Region {
     })
 
     this.simulation.on('message', (msg) => {
+      let player
+
       switch (msg.type) {
         case 'FRAME':
           this.toAllPlayers('frame', msg.frame)
           break
 
-        case 'DEATH':
-          const socket = this.players[msg.id]
-          if (socket) {
-            this.toAllPlayers('event:death', {
-              user: socket.handshake.user
+        case 'ORB_CREATED':
+          if (player = this.playersByID[msg.playerID]) {
+            player.orbID = msg.orbID
+
+            this.playersByOrbID[player.orbID] = player
+
+            player.socket.on('controls', (controls) => {
+              this.sendControls(player.orbID, controls)
             })
 
-            this.removePlayer(msg.id)
+            player.socket.emit('orb-id', player.orbID)
+            this.toAllPlayers('new-orb', player.orbID)
+          }
+          break
+
+        case 'DEATH':
+          if (player = this.playersByOrbID[msg.orbID]) {
+            const { user } = player.socket.handshake
+
+            this.toAllPlayers('event:death', { user })
+
+            this.removePlayer(user.id)
           }
 
           break
@@ -55,19 +72,15 @@ class Region {
   /**
    * Add a new player to the region.
    *
-   * @param {Socket} newSocket - The socket.io socket corresponding to the player.
+   * @param {Socket} socket - The socket.io socket corresponding to the player.
    */
   newPlayer(newSocket) {
     const { user } = newSocket.handshake
 
-    /** Send the new player to all already existing orbs */
-    forIn(this.players, (socket, id) => {
-      newSocket.emit('new-orb', id)
+    /** Send all existing orbs to the new player */
+    forIn(this.playersByID, (player) => {
+      newSocket.emit('new-orb', player.orbID)
     })
-    this.players[user.id] = newSocket
-
-    /** Notify all players of the new orb */
-    this.toAllPlayers('new-orb', user.id)
 
     newSocket.on('error', () => {
       this.removePlayer(user.id)
@@ -77,9 +90,10 @@ class Region {
       this.removePlayer(user.id)
     })
 
-    newSocket.on('controls', (controls) => {
-      this.sendControls(user.id, controls)
-    })
+    this.playersByID[user.id] = {
+      socket: newSocket,
+      orbID: null
+    }
 
     this.sendNewOrb(user.id)
   }
@@ -87,16 +101,21 @@ class Region {
   /**
    * Remove the specified player from the region.
    *
-   * @param {string} id
+   * @param {string} playerID
    */
-  removePlayer(id) {
-    forIn(this.players, (socket) => {
-      socket.emit('remove-orb', id)
-    })
+  removePlayer(playerID) {
+    const player = this.playersByID[playerID]
 
-    delete this.players[id]
+    if (player) {
+      forIn(this.playersByID, ({ socket }) => {
+        socket.emit('remove-orb', player.orbID)
+      })
 
-    this.sendRemoveOrb(id)
+      delete this.playersByOrbID[player.orbID]
+      delete this.playersByID[playerID]
+
+      this.sendRemoveOrb(player.orbID)
+    }
   }
 
   /**
@@ -124,7 +143,8 @@ class Region {
         type: 'START'
       })
     } catch (err) {
-      console.log(`Region #${this.name}: ${err.message}`)
+      console.log(`Region ${this.name}:`)
+      console.log(err.stack)
     }
   }
 
@@ -139,7 +159,8 @@ class Region {
         type: 'STOP'
       })
     } catch (err) {
-      console.log(`Region #${this.name}: ${err.message}`)
+      console.log(`Region ${this.name}:`)
+      console.log(err.stack)
     }
   }
 
@@ -149,30 +170,32 @@ class Region {
    * @private
    * @param {string} id - The player's ID.
    */
-  sendNewOrb(id) {
+  sendNewOrb(playerID) {
     try {
       this.simulation.send({
         type: 'NEW_ORB',
-        id
+        playerID
       })
     } catch (err) {
-      console.log(`Region ${this.name}: ${err.message}`)
+      console.log(`Region ${this.name}:`)
+      console.log(err.stack)
     }
   }
 
   /**
    * Order the simulation to remove the specified orb.
    *
-   * @param {string} id - The player's ID.
+   * @param {number} id - The player's ID.
    */
-  sendRemoveOrb(id) {
+  sendRemoveOrb(orbID) {
     try {
       this.simulation.send({
         type: 'REMOVE_ORB',
-        id
+        orbID
       })
     } catch (err) {
-      console.log(`Region ${this.name}: ${err.message}`)
+      console.log(`Region ${this.name}:`)
+      console.log(err.stack)
     }
   }
 
@@ -191,7 +214,8 @@ class Region {
         controls
       })
     } catch (err) {
-      console.log(`Region ${this.name}: ${err.message}`)
+      console.log(`Region ${this.name}:`)
+      console.log(err.stack)
     }
   }
 
@@ -204,11 +228,12 @@ class Region {
    */
   toAllPlayers(type, ...args) {
     try {
-      forIn(this.players, (socket) => {
+      forIn(this.playersByID, ({ socket }) => {
         socket.emit(type, ...args)
       })
     } catch (err) {
-      console.log(`Region ${this.name}: ${err.message}`)
+      console.log(`Region ${this.name}:`)
+      console.log(err.stack)
     }
   }
 }

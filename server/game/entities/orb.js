@@ -12,20 +12,16 @@ class Orb extends Entity {
   /**
    * Create a new orb.
    *
-   * @param {string}   id
    * @param {object}   options
-   * @param {?number}  options.type
    * @param {number}   options.radius
    * @param {number}   options.maxHp  - Maximum health points.
    * @param {number}   options.hp     - Current health points.
    * @param {number}   options.maxMp  - Maximum mana points.
    * @param {number}   options.mp     - Current mana points.
    */
-  constructor(id, options) {
-    super(id, {
+  constructor(options) {
+    super({
       ...options,
-
-      type: options.type || ORB,
       mass: 1,
       moveForce: 0.1
     })
@@ -42,6 +38,15 @@ class Orb extends Entity {
     }
 
     this.alive = true
+  }
+
+  /**
+   * Return the type of the entity.
+   *
+   * @return {number}
+   */
+  static getType() {
+    return ORB
   }
 
   /**

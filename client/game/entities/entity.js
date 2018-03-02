@@ -14,8 +14,7 @@ class Entity {
   /**
    * Create a new entity.
    *
-   * @param {string} id
-   * @param {number} type
+   * @param {number}  id
    */
   constructor(id) {
     this.id = id

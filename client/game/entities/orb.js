@@ -15,10 +15,14 @@ class Orb extends Entity {
   /**
    * Create a new orb.
    *
-   * @param {string} id
+   * @param {number} id
+   * @param {?object} options
+   * @param {?bool}   options.isPlayer
    */
-  constructor(id) {
+  constructor(id, options = Object.create(null)) {
     super(id, { type: ORB })
+
+    const isPlayer = options.isPlayer || false    
 
     this.radius = 0
     this.maxHp = 0
@@ -31,7 +35,7 @@ class Orb extends Entity {
     this.nodes = {}
 
     this.nodes.circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-    this.nodes.circle.setAttributeNS(null, 'fill', 'rgb(0, 101, 255)')
+    this.nodes.circle.setAttributeNS(null, 'fill', isPlayer ? 'rgb(0, 255, 212)' : 'rgb(0, 101, 255)')
     this.nodes.circle.setAttributeNS(null, 'cx', 0)
     this.nodes.circle.setAttributeNS(null, 'cy', 0)
     this.nodes.circle.setAttributeNS(null, 'r',  0)

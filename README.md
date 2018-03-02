@@ -2,8 +2,6 @@
 
 ## ROADMAP
 
-- other
-  - let the world create IDs on its own
 - physics
   - verlet integration (!)
   - spacial partitioning instead of brute-force
@@ -23,3 +21,4 @@
   - profiling
 - tests
   - react components (far away future)
+  - tests/serialization/entities/entity

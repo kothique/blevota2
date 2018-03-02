@@ -34,25 +34,27 @@ class World extends EventEmitter {
     this.size = options.size
     this.entities = Object.create(null)
     this.detector = new CollisionDetector(this.size)
+
+    this.nextID = 0
   }
 
   /**
    * Add a new entity to the world.
    *
-   * @param {string} id
    * @param {Entity} entity
-   * @chainable
+   * @return {number} - ID of the new entity.
    */
   new(entity) {
-    this.entities[entity.id] = entity
+    const id = this.nextID++
+    this.entities[id] = entity
 
-    return this
+    return id
   }
 
   /**
    * Remove the entity with the specified ID from the world.
    *
-   * @param {string} id
+   * @param {number} id
    * @chainable
    */
   remove(id) {
@@ -101,13 +103,14 @@ class World extends EventEmitter {
    * @chainable
    */
   integrate(t, dt) {
-    forIn(this.entities, (entity) => {
+    forIn(this.entities, (entity, id) => {
       entity.integrate(t, dt) 
-      if (entity.type === ORB) {
+
+      if (entity instanceof Orb) {
         const position = entity.position,
               radius   = entity.radius
 
-        this.detector.set(entity.id, {
+        this.detector.set(id, {
           p1: Vector.subtract(position, V(radius, radius)),
           p2: Vector.add(position, V(radius, radius))
         })
@@ -125,11 +128,11 @@ class World extends EventEmitter {
    * @chainable
    */
   applyEffects(t, dt) {
-    forIn(this.entities, (entity) => {
+    forIn(this.entities, (entity, id) => {
       entity.applyEffects(t, dt)
 
       if (entity instanceof Orb && entity.alive === false) {
-        this.emit('death', entity)
+        this.emit('death', id)
       }
     })
 
@@ -151,7 +154,7 @@ class World extends EventEmitter {
 
         const entity = this.entities[id]
 
-        if (entity.type === ORB) {
+        if (entity instanceof Orb) {
           const orb = entity
 
           orb.receiveEffect(new InstantDamage({ value: 5 }))
@@ -181,7 +184,7 @@ class World extends EventEmitter {
         const entity1 = this.entities[id1],
               entity2 = this.entities[id2]
 
-        if (entity1.type === ORB && entity2.type === ORB) {
+        if (entity1 instanceof Orb && entity2 instanceof Orb) {
           let orb1 = entity1,
               orb2 = entity2
 
@@ -231,7 +234,13 @@ class World extends EventEmitter {
     buffer.writeUInt16BE(Object.keys(this.entities).length, offset)
     offset += 2
 
-    forIn(this.entities, (entity) => {
+    forIn(this.entities, (entity, id) => {
+      buffer.writeUInt16BE(id, offset)
+      offset += 2
+
+      buffer.writeUInt8(entity.constructor.getType(), offset)
+      offset += 1
+
       entity.serialize(buffer, offset)
       offset += entity.serializedLength()
     })
@@ -245,7 +254,7 @@ class World extends EventEmitter {
   serializedLength() {
     let entitiesLength = 0
     forIn(this.entities, (entity) => {
-      entitiesLength += entity.serializedLength()
+      entitiesLength += 2 + 1 + entity.serializedLength()
     })
 
     return 2 + 2 + 2 + entitiesLength

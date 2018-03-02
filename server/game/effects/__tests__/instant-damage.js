@@ -5,7 +5,7 @@ const { INSTANT_DAMAGE } = require('@common/effects')
 describe('InstantDamage', () => {
   describe('onReceive()', () => {
     const effect = new InstantDamage({ value: 42 }),
-          target = new Orb('a'.repeat(24), {
+          target = new Orb({
             radius: 30,
             maxHp: 200,
             hp: 43,

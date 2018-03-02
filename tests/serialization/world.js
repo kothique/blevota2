@@ -39,15 +39,13 @@ describe('World serialization', () => {
     const serverWorld   =  new ServerWorld({
             size: V(801, 602)
           }),
-          id1           = 'a'.repeat(24),
-          id2           = 'b'.repeat(24),
-          serverOrb1    = new ServerOrb(id1, {
+          serverOrb1    = new ServerOrb({
             maxHp: 100,
             hp:    62,
             maxMp: 150,
             mp:    30
           }),
-          serverOrb2    = new ServerOrb(id2, {
+          serverOrb2    = new ServerOrb({
             maxHp: 120,
             hp:    30,
             maxMp: 1000,
@@ -64,11 +62,11 @@ describe('World serialization', () => {
           })
 
     serverOrb1.receiveEffect(serverEffect1)
-    // serverOrb1.receiveEffect(serverEffect2)
-    // serverOrb2.receiveEffect(serverEffect3)
+    serverOrb1.receiveEffect(serverEffect2)
+    serverOrb2.receiveEffect(serverEffect3)
 
-    serverWorld.new(serverOrb1)
-    serverWorld.new(serverOrb2)
+    const id1 = serverWorld.new(serverOrb1),
+          id2 = serverWorld.new(serverOrb2)
 
     const buffer = serverWorld.toBuffer()
 

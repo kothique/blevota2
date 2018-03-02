@@ -62,7 +62,7 @@ module.exports = (app) => {
     forIn(RegionManager.regions, (region, name) => {
       response.push({
         name,
-        players: map(region.players, (player) => ({
+        players: map(region.playersByID, (player) => ({
           id: player.id,
           username: player.username
         }))

@@ -43,12 +43,13 @@ const World = {
   /**
    * Spawn a new entity.
    *
-   * @param {string} id
-   * @param {number} type
+   * @param {number}  id
+   * @param {number}  type
+   * @param {?object} options
    * @chainable
    */
-  new(id, type) {
-    const entity = EntityFactory.new(id, type)
+  new(id, type, options = undefined) {
+    const entity = EntityFactory.new(id, type, options)
     if (entity.node) {
       this.svg.appendChild(entity.node)
     }
@@ -59,7 +60,7 @@ const World = {
   /**
    * Remove the specified entity.
    *
-   * @param {string} id
+   * @param {number} id
    * @chainable
    */
   remove(id) {

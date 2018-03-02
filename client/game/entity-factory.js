@@ -31,11 +31,11 @@ const EntityFactory = {
    * @return {object} - { entity, offset }
    */
   deserialize(buffer, offset = 0) {
+    const id = buffer.readUInt16BE(offset)
+    offset += 2
+
     const type = buffer.readUInt8(offset)
     offset += 1
-
-    const id = buffer.toString('utf8', offset, offset + 24)
-    offset += 24
 
     const constructor = constructors[type]
     if (!constructor) {
@@ -59,7 +59,7 @@ const EntityFactory = {
   /**
    * Get the entity with the specified id.
    *
-   * @param {string} id
+   * @param {number} id
    */
   get(id) {
     return this.entities[id]
@@ -68,10 +68,11 @@ const EntityFactory = {
   /**
    * Add a new entity if it doesn't exist.
    *
-   * @param {string} id
-   * @param {number} type
+   * @param {number}  id
+   * @param {number}  type
+   * @param {?object} options
    */
-  new(id, type) {
+  new(id, type, options = undefined) {
     const constructor = constructors[type]
 
     if (!constructor) {
@@ -82,7 +83,7 @@ const EntityFactory = {
 
     let entity = this.entities[id]
     if (!entity) {
-      entity = this.entities[id] = new constructor(id)
+      entity = this.entities[id] = new constructor(id, options)
     }
 
     return entity
@@ -91,7 +92,7 @@ const EntityFactory = {
   /**
    * Remove an entity.
    *
-   * @param {string} id
+   * @param {number} id
    */
   remove(id) {
     delete this.entities[id]

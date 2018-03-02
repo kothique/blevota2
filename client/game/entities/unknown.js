@@ -11,7 +11,7 @@ class Unknown extends Entity {
   /**
    * Create a new unknonwn entity.
    *
-   * @param {string} id
+   * @param {number} id
    * @param {number} type
    */
   constructor(id, type) {

@@ -11,18 +11,14 @@ class Entity {
   /**
    * Create a new entity.
    *
-   * @param {string}   id
    * @param {object}   options
-   * @param {?number}  options.type
    * @param {number}   options.mass
    * @param {?number}  options.moveForce
    * @param {?Vector}  options.position
    * @param {?Vector}  options.velocity
    * @param {?Vector}  options.force
    */
-  constructor(id, options) {
-    this.id         = id
-    this.type       = options.type         || UNKNOWN
+  constructor(options) {
     this.mass       = options.mass
     this.moveForce  = options.moveForce    || 0
     this.position   = options.position     || V(0, 0)
@@ -31,6 +27,15 @@ class Entity {
 
     /** @todo use array */
     this.effects    = new Set
+  }
+
+  /**
+   * Return the type of the entity.
+   *
+   * @return {number}
+   */
+  static getType() {
+    return UNKNOWN
   }
 
   /**
@@ -124,12 +129,6 @@ class Entity {
    * @chainable
    */
   serialize(buffer, offset = 0) {
-    buffer.writeUInt8(this.type, offset)
-    offset += 1
-
-    buffer.write(this.id, offset, offset + 24)
-    offset += 24
-
     buffer.writeDoubleBE(this.position.x, offset)
     offset += 8
 
@@ -159,7 +158,7 @@ class Entity {
       0
     )
 
-    return 1 + 24 + 16 + 1 + effectsLength
+    return 16 + 1 + effectsLength
   }
 }
 

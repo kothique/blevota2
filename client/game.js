@@ -19,6 +19,7 @@ export default class Game extends EventEmitter {
 
     const { context, info, log, host, token, user, regionName } = options
     this.user = user
+    this.orbID = null
     this.regionName = regionName
 
     this.svg = context
@@ -175,13 +176,20 @@ export default class Game extends EventEmitter {
       })
     })
 
-    socket.on('new-orb', (id) => {
-      World.new(id, entities.ORB)
+    socket.on('orb-id', (orbID) => {
+      this.orbID = orbID
     })
 
-    socket.on('remove-orb', (id) => {
-      console.log(id)
-      World.remove(id)
+    socket.on('new-orb', (orbID) => {
+      const options = {
+        isPlayer: orbID === this.orbID
+      }
+
+      World.new(orbID, entities.ORB, options)
+    })
+
+    socket.on('remove-orb', (orbID) => {
+      World.remove(orbID)
     })
 
     socket.on('event:death', (data) => {

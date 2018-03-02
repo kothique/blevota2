@@ -1,23 +1,13 @@
-class Parent {
-  bar() {
-    this.foo()
+class A {
+  static meow() {
+    console.log('meow')
   }
 
-  foo() {
-    console.log('parent')
-  }
-}
-
-class Child extends Parent {
-  constructor() {
-    super()
-  }
-
-  foo() {
-    super.foo()
-    console.log('child')
+  bark() {
+    console.log('bark')
   }
 }
 
-new Parent().bar()
-new Child().bar()
+var a = new A
+
+console.log(a.constructor.meow())

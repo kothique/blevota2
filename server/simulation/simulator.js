@@ -30,10 +30,10 @@ const Simulator = {
       size: V(800, 600)
     })
 
-    this.world.on('death', (orb) => {
+    this.world.on('death', (orbID) => {
       process.send({
         type: 'DEATH',
-        id: orb.id
+        orbID
       })
     })
 
@@ -49,7 +49,7 @@ const Simulator = {
   /**
    * Update controls for the given orb.
    *
-   * @param {string} id - The id of the orb.
+   * @param {number} id - The id of the orb.
    * @param {object} controls - The controls.
    */
   setControls(id, controls) {
@@ -90,10 +90,10 @@ const Simulator = {
   /**
    * Add a new orb to the simulation.
    *
-   * @param {string} id - The ID of the new orb.
+   * @return {number} - The ID of the new orb.
    */
-  newOrb(id) {
-    this.world.new(new Orb(id, {
+  newOrb() {
+    const id = this.world.new(new Orb({
       radius: 20 + Math.random() * 30,
       maxHp: 100,
       hp: 80,
@@ -116,12 +116,14 @@ const Simulator = {
       skill5: false,
       skill6: false
     }
+
+    return id
   },
 
   /**
    * Remove the specified orb from the simulation.
    *
-   * @param {string} id - The ID of the orb.
+   * @param {number} id - The ID of the orb.
    */
   removeOrb(id) {
     this.world.remove(id)
@@ -204,10 +206,17 @@ const Simulator = {
 process.on('message', (msg) => {
   switch (msg.type) {
     case 'NEW_ORB':
-      Simulator.newOrb(msg.id)
+      const orbID = Simulator.newOrb(),
+            playerID = msg.playerID
+
+      process.send({
+        type: 'ORB_CREATED',
+        playerID,
+        orbID
+      })
       break
     case 'REMOVE_ORB':
-      Simulator.removeOrb(msg.id)
+      Simulator.removeOrb(msg.orbID)
       break
     case 'START':
       Simulator.start()

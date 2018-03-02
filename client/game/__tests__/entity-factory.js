@@ -1,7 +1,7 @@
 let EntityFactory
 
 describe('Entity', () => {
-  const id = 'a'.repeat(24)
+  const id = 123
 
   const entityDesc1 = {
     type: 0x1,
@@ -49,17 +49,17 @@ describe('Entity', () => {
   })
 
   test('should correctly deserialize an entity after registration', done => {
-    const buffer = Buffer.alloc(10 + 1 + 24 + 2)
-    buffer.writeUInt8(entityDesc1.type, 10 + 0)
-    buffer.write(id, 10 + 1, 24)
-    buffer.writeInt16LE(-850, 10 + 1 + 24)
+    const buffer = Buffer.alloc(10 + 2 + 1 + 2)
+    buffer.writeUInt16BE(id, 10 + 0)
+    buffer.writeUInt8(entityDesc1.type, 10 + 2)
+    buffer.writeInt16LE(-850, 10 + 2 + 1)
 
     const { entity, offset } = EntityFactory.deserialize(buffer, 10)
 
-    expect(offset).toBe(10 + 1 + 24 + 2)
+    expect(offset).toBe(10 + 2 + 1 + 2)
     expect(entityDesc1.constructor).toBeCalled()
     expect(entity.parse).toBeCalled()
-    expect(entity.parse).toBeCalledWith(buffer, 10 + 1 + 24)
+    expect(entity.parse).toBeCalledWith(buffer, 10 + 2 + 1)
     expect(entity.id).toBe(id)
     expect(entity.value).toBe(-850)
 
