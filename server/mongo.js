@@ -1,22 +1,19 @@
 const mongoose = require('mongoose')
+mongoose.Promise = global.Promise
 
-const port = process.env.MONGO_PORT || 27017
+const config = require('../server.config')
 
-module.exports = (onOpen) => {
-  mongoose.connect(`mongodb://localhost:${port}/blevota2`, {
+module.exports = () => {
+  const { host,  port,
+          username, password } = config.db
+
+  let uri = 'mongodb://'
+  if (username) {
+    uri += `${username}:${password}@`
+  }
+  uri += `${host}:${port}/blevota2`
+
+  return mongoose.connect(uri, {
     useMongoClient: true
-  })
-  mongoose.Promise = global.Promise
-
-  let db = mongoose.connection
-
-  db.on('error', (err) => {
-    console.log(err.message)
-  })
-
-  db.once('open', () => {
-    console.log(`Successfully connected to MongoDB server`)
-
-    onOpen()
   })
 }

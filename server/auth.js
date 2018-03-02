@@ -5,8 +5,10 @@
 const bcrypt = require('bcryptjs')
 
 const User = require('./db/user')
-const { authSecret } = require('../server.config')
 const jwt = require('jsonwebtoken')
+
+const config = require('../server.config')
+const { secret } = config.auth
 
 /**
  * @class
@@ -114,7 +116,7 @@ module.exports.expressMiddleware = (options = Object.create(null)) => {
         if (!/^Bearer$/i.test(scheme))
           return reject(new AuthError('Bad Authorization header format'))
         
-        jwt.verify(token, authSecret, (err, payload) => {
+        jwt.verify(token, secret, (err, payload) => {
           if (err)
             return reject(new AuthError('Invalid signature'))
 
@@ -134,7 +136,7 @@ module.exports.expressMiddleware = (options = Object.create(null)) => {
         username: user.username
       }
 
-      const token = jwt.sign(payload, authSecret)
+      const token = jwt.sign(payload, secret)
 
       this.json({ token })
     }
@@ -165,7 +167,7 @@ module.exports.socketIoMiddleware = (options = Object.create(null)) => {
       return next(new Error(msg))
     }
 
-    jwt.verify(token, authSecret, (err, payload) => {
+    jwt.verify(token, secret, (err, payload) => {
       if (err) {
         const msg = 'Invalid signature'
 

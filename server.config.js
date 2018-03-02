@@ -1,6 +1,25 @@
 module.exports = {
   /**
-   * The secret used for JWT authentication.
+   * Authentication configuration.
    */
-  authSecret: 'the-most-secret-secret',
+  auth: {
+    secret: 'the-most-secret-secret',
+  },
+
+  /**
+   * Server configuration.
+   */
+  server: {
+    port: 3000
+  },
+
+  /**
+   * Database configuration.
+   */
+  db: {
+    host: 'localhost',
+    port: 27017,
+    username: undefined,
+    password: undefined
+  }
 }
