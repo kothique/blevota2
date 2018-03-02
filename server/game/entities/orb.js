@@ -125,6 +125,35 @@ class Orb extends Entity {
   }
 
   /**
+   * Write the states of the orb's skills to a buffer.
+   *
+   * @param {Buffer} buffer
+   * @param {number} offset
+   * @chainable
+   */
+  serializeSkills(buffer, offset = 0) {
+    const skills = this.skillManager.skills
+
+    skills.skillA1.serialize(buffer, offset)
+    offset += skills.skillA1.serializedLength()
+
+    skills.skillA2.serialize(buffer, offset)
+    offset += skills.skillA2.serializedLength()
+
+    return this
+  }
+
+  /**
+   * The size of the orb's skills serialized.
+   */
+  serializedSkillsLength() {
+    const skills = this.skillManager.skills
+
+    return skills.skillA1.serializedLength() +
+           skills.skillA2.serializedLength()
+  }
+
+  /**
    * Mark the entity as dead.
    *
    * @chainable

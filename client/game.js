@@ -128,7 +128,8 @@ export default class Game extends EventEmitter {
       currentTimestamp
     }) => {
       if (frame) {
-        World.parse(frame.buffer)
+        /** @todo parse frame.skills and render them */
+        World.parse(frame.world)
 
         // if (previousFrame) {
         //   World.extrapolate({
@@ -199,7 +200,8 @@ export default class Game extends EventEmitter {
 
     socket.on('frame', (frame) => {
       this.buffer.put({
-        buffer: new Buffer(frame.buffer.data),
+        world: new Buffer(frame.world.data),
+        skills: frame.skills && new Buffer(frame.skills.data),
         timestamp: frame.timestamp
       })
     })

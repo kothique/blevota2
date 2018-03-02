@@ -24,13 +24,14 @@ export default class PlayoutBuffer extends EventEmitter {
     this.frames = []
   }
 
-  put = ({ buffer, timestamp }) => {
+  put = ({ world, skills, timestamp }) => {
     if (this.isFirstFrame) {
       this.beginFrames = timestamp
     }
 
     this.frames.push({
-      buffer,
+      world,
+      skills,
       timestamp: timestamp - this.beginFrames
     })
 

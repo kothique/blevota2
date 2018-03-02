@@ -37,7 +37,15 @@ class Region {
 
       switch (msg.type) {
         case 'FRAME':
-          this.toAllPlayers('frame', msg.frame)
+          const { world, skills, timestamp } = msg.frame
+
+          forIn(this.playersByID, ({ socket, orbID }, playerID) => {
+            socket.emit('frame', {
+              world,
+              skills: skills[orbID],
+              timestamp
+            })
+          })
           break
 
         case 'ORB_CREATED':

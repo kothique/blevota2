@@ -5,6 +5,7 @@
 const EventEmitter = require('events')
 const present = require('present')
 const merge = require('lodash/merge')
+const forIn = require('lodash/forIn')
 
 const World = require('../game/world')
 const Orb = require('../game/entities/orb')
@@ -155,12 +156,24 @@ const Simulator = {
       }
 
       if (integrated) {
+        const skills = Object.create(null)
+
+        forIn(this.world.entities, (entity, id) => {
+          if (entity instanceof Orb) {
+            const buffer = Buffer.allocUnsafe(entity.serializedSkillsLength())
+            entity.serializeSkills(buffer)
+
+            skills[id] = buffer
+          }
+        })
+
         process.send({
           type: 'FRAME',
           frame: {
-            buffer: this.world.toBuffer(),
+            world: this.world.toBuffer(),
+            skills,
             timestamp: this.t
-          }
+          },
         })
 
         this.world.handleCollisions()

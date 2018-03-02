@@ -4,8 +4,6 @@
 
 - refactoring
   - move server/simulation/* -> server/game
-  - Entity should be responsible for serializing effects with their types.
-    Effects should only have static getType() method.
 - physics
   - verlet integration (!)
   - spacial partitioning instead of brute-force
