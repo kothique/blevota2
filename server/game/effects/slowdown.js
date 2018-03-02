@@ -1,15 +1,15 @@
 /**
- * @module server/game/effects/speedup
+ * @module server/game/effects/slowdown
  */
 const Effect = require('./effect')
-const { SPEEDUP } = require('../../../common/effects')
+const { SLOWDOWN } = require('../../../common/effects')
 
 /**
  * @class
  */
-class SpeedUp extends Effect {
+class SlowDown extends Effect {
   /**
-   * Create a new speedup effect.
+   * Create a new slow down effect.
    *
    * @param {number} value - Added to the target's move force.
    */
@@ -20,21 +20,21 @@ class SpeedUp extends Effect {
   }
 
   /**
-   * Increase the target's movement force.
+   * Decrease the target's movement force.
    *
    * @param {Entity} target
    */
   onReceive(target) {
-    target.moveForce += this.value
+    target.moveForce -= this.value
   }
 
   /**
-   * Decrease the target's movement force back.
+   * Increase the target's movement force back.
    *
    * @param {Entity} target
    */
   onRemove(target) {
-    target.moveForce -= this.value
+    target.moveForce += this.value
   }
 
   /**
@@ -48,7 +48,7 @@ class SpeedUp extends Effect {
     super.serialize(buffer, offset)
     offset += super.serializedLength()
 
-    buffer.writeUInt8(SPEEDUP, offset)
+    buffer.writeUInt8(SLOWDOWN, offset)
     offset += 1
 
     buffer.writeDoubleBE(this.value, offset)
@@ -67,4 +67,4 @@ class SpeedUp extends Effect {
   }
 }
 
-module.exports = SpeedUp
+module.exports = SlowDown

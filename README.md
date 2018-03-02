@@ -2,6 +2,10 @@
 
 ## ROADMAP
 
+- refactoring
+  - move server/simulation/* -> server/game
+  - Entity should be responsible for serializing effects with their types.
+    Effects should only have static getType() method.
 - physics
   - verlet integration (!)
   - spacial partitioning instead of brute-force
@@ -12,13 +16,13 @@
   - 404 not found page
   - user profile
   - persistent redux state
-  - moving camera
   - loading animation
   - mobile menu
 - optimizations
-  - data compression
   - UDP (WebRTC??)
   - profiling
 - tests
   - react components (far away future)
   - tests/serialization/entities/entity
+  - server/game/collision-detector.js
+  - change entity ids from 24b-strings to numbers

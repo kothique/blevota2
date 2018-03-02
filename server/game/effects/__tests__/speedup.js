@@ -6,12 +6,12 @@ describe('SpeedUp', () => {
     const effect = new SpeedUp(42),
           target = { moveForce: 0 }
 
-    test('should increase moveForce on applying', () => {
+    test('should increase movement force on applying', () => {
       effect.onReceive(target)
       expect(target.moveForce).toBe(42)
     })
 
-    test('should decrease back moveForce on removing', () => {
+    test('should decrease movement force back on removing', () => {
       effect.onRemove(target)
       expect(target.moveForce).toBe(0)
     })
@@ -24,6 +24,6 @@ describe('SpeedUp', () => {
     effect.serialize(buffer, 10)
 
     expect(buffer.readUInt8(10 + 0)).toBe(SPEEDUP)
-    expect(buffer.readDoubleBE(10 + 1)).toBe(0.5)
+    expect(buffer.readDoubleBE(10 + 1)).toBeCloseTo(0.5)
   })
 })

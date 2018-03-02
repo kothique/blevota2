@@ -1,5 +1,4 @@
 import Effect from './effect'
-import { INSTANT_DAMAGE } from '../../../common/effects'
 
 class InstantDamage extends Effect {
   /**

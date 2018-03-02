@@ -6,6 +6,7 @@ import * as effects from '../common/effects'
 import Orb from './game/entities/orb'
 
 import SpeedUp from './game/effects/speedup'
+import SlowDown from './game/effects/slowdown'
 import InstantDamage from './game/effects/instant-damage'
 
 EntityFactory.register({
@@ -16,6 +17,11 @@ EntityFactory.register({
 EffectFactory.register({
   type: effects.SPEEDUP,
   constructor: SpeedUp
+})
+
+EffectFactory.register({
+  type: effects.SLOWDOWN,
+  constructor: SlowDown
 })
 
 EffectFactory.register({
