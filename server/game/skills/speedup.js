@@ -4,6 +4,7 @@
 
 const Skill = require('./skill')
 const EffectSpeedUp = require('../effects/speedup')
+const SkillState = require('../../../common/skill-state')
 
 class SpeedUp extends Skill {
   /**
@@ -13,6 +14,10 @@ class SpeedUp extends Skill {
    * @override
    */
   onDown(owner) {
+    this.state = {
+      type: SkillState.ACTIVE
+    }
+
     this.effect = new EffectSpeedUp(0.25)
     owner.receiveEffect(this.effect)
   }
@@ -24,6 +29,10 @@ class SpeedUp extends Skill {
    * @override
    */
   onUp(owner) {
+    this.state = {
+      type: SkillState.READY
+    }
+
     owner.removeEffect(this.effect)
     delete this.effect
   }

@@ -8,7 +8,10 @@ import Game from '../game'
 import Header from './header'
 import MobileMenu from './mobile-menu'
 import Footer from './footer'
+import SkillIcon from './skill-icon'
 import Access from './access'
+
+import SkillState from '../../common/skill-state'
 
 import '../styles/game-page.styl'
 
@@ -18,6 +21,19 @@ import '../styles/game-page.styl'
 class GamePage extends Component {
   static propTypes = {
     dispatch: func.isRequired
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      skillA1: {
+        type: SkillState.READY
+      },
+      skillA2: {
+        type: SkillState.READY
+      }
+    }
   }
 
   initialize() {
@@ -36,6 +52,13 @@ class GamePage extends Component {
       token,
       user,
       regionName
+    })
+
+    game.on('skills', (skills) => {
+      this.setState({
+        skillA1: skills.skillA1,
+        skillA2: skills.skillA2
+      })
     })
 
     game.on('connect', () => {
@@ -87,22 +110,26 @@ class GamePage extends Component {
   }
 
   render() {
+    const { skillA1, skillA2 } = this.state
+
     return (
       <Fragment>
         <Header />
         <MobileMenu />
         <div id="content">
           <Access users>
-              <svg
-                id="gp-game"
-                version="1.1"
-                baseProfile="full"
-                xmlns="http://www.w3.org/2000/svg"
-                >
-              </svg>
+            <SkillIcon id="gp-skill-a1" state={skillA1} />
+            <SkillIcon id="gp-skill-a2" state={skillA2} />
+            <svg
+              id="gp-game"
+              version="1.1"
+              baseProfile="full"
+              xmlns="http://www.w3.org/2000/svg"
+              >
+            </svg>
 
-              <div id="gp-info"></div>
-              <div id="gp-log"></div>
+            <div id="gp-info"></div>
+            <div id="gp-log"></div>
           </Access>
         </div>
         <Footer />

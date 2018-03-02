@@ -2,13 +2,15 @@
  * @module server/game/skills/skill
  */
 
+const state = require('../../../common/skill-state')
+
 class Skill {
   /**
    * Create a new skill.
    */
   constructor() {
     this.state = {
-      type: Skill.READY
+      type: state.READY
     }
   }
 
@@ -37,7 +39,7 @@ class Skill {
     buffer.writeUInt8(this.state.type, offset)
     offset += 1
 
-    if (this.state.type === Skill.COOLDOWN) {
+    if (this.state.type === state.COOLDOWN) {
       buffer.writeUInt16BE(this.state.value, offset)
       offset += 2
     }
@@ -51,13 +53,8 @@ class Skill {
    * @return {number}
    */
   serializedLength() {
-    return 1 + 2 * (this.state.type === Skill.COOLDOWN)
+    return 1 + 2 * (this.state.type === state.COOLDOWN)
   }
 }
-
-Skill.READY    = 0x1
-Skill.ACTIVE   = 0x2
-Skill.NO_MANA  = 0x3
-Skill.COOLDOWN = 0x4
 
 module.exports = Skill

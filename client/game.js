@@ -4,10 +4,11 @@ import { Buffer } from 'buffer-browserify'
 import _ from 'lodash'
 
 import Keyboard from './keyboard'
-import PlayoutBuffer from './playoutbuffer';
+import PlayoutBuffer from './playoutbuffer'
 import World from './game/world'
 
 import * as entities from '../common/entities'
+import SkillState from '../common/skill-state'
 
 import './registerWorldObjects'
 
@@ -25,6 +26,7 @@ export default class Game extends EventEmitter {
     this.svg = context
     this.info = info
     this.log = log
+    this.skills = Object.create(null)
 
     World.init({
       svg:  this.svg,
@@ -128,7 +130,10 @@ export default class Game extends EventEmitter {
       currentTimestamp
     }) => {
       if (frame) {
-        /** @todo parse frame.skills and render them */
+        if (frame.skills) {
+          this.parseSkills(frame.skills)
+        }
+
         World.parse(frame.world)
 
         // if (previousFrame) {
@@ -140,28 +145,6 @@ export default class Game extends EventEmitter {
         // }
 
         World.render()
-
-        // for (const id in Entity.entities) {
-        //   const entity = Entity.entities[id]
-
-        //   this.info.innerHTML = `
-        //     t: ${timestamp.toFixed(4)}<br />
-        //     f: ${orb.force.toString(n => n.toFixed(4))}<br />
-        //     p: ${orb.position.toString(n => n.toFixed(4))}<br />
-        //     v: ${orb.velocity.toString(n => n.toFixed(4))}<br />
-        //     a: ${orb.acceleration.toString(n => n.toFixed(4))}<br />
-        //     hp: ${orb.hp} / ${orb.maxHp}<br />
-        //     mp: ${orb.mp} / ${orb.maxMp}<br />`
-
-        //   this.scene.updateOrb(id, {
-        //     radius:   orb.radius,
-        //     position: orb.position,
-        //     maxHp:    orb.maxHp,
-        //     hp:       orb.hp,
-        //     maxMp:    orb.maxMp,
-        //     mp:       orb.mp
-        //   })
-        // }
       }
     })
 
@@ -237,5 +220,47 @@ export default class Game extends EventEmitter {
   stop = () => {
     World.clear()
     this.socket.disconnect()
+  }
+
+  /**
+   * Read skills from a bfufer to render them.
+   *
+   * @param {Buffer} buffer
+   * @param {number} offset
+   */
+  parseSkills(buffer, offset = 0) {
+    const parseSkill = (buffer, offset = 0) => {
+      const skill = {
+        type: buffer.readUInt8(offset)
+      }
+      offset += 1
+
+      if (skill.type === SkillState.COOLDOWN) {
+        skill.value = buffer.readUInt16BE(offset)
+        offset += 2
+      }
+
+      return { skill, offset }
+    }
+
+    let changed = false
+
+    let result = parseSkill(buffer, offset)
+    if (result.skill != this.skills.skillA1) {
+      changed = true
+    }
+    this.skills.skillA1 = result.skill
+    offset = result.offset
+
+    result = parseSkill(buffer, offset)
+    if (result.skill != this.skills.skillA2) {
+      changed = true
+    }
+    this.skills.skillA2 = result.skill
+    offset = result.offset
+
+    if (changed) {
+      this.emit('skills', this.skills)
+    }
   }
 }

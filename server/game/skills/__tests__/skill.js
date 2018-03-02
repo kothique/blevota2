@@ -1,4 +1,5 @@
 const Skill = require('../skill')
+const SkillState = require('../../../../common/skill-state')
 
 describe('Skill', () => {
   let skill
@@ -12,9 +13,9 @@ describe('Skill', () => {
   })
 
   describe('serialization', () => {
-    test('Skill.COOLDOWN state', () => {
+    test('COOLDOWN state', () => {
       skill.state = {
-        type: Skill.COOLDOWN,
+        type: SkillState.COOLDOWN,
         value: 1320
       }
 
@@ -23,14 +24,14 @@ describe('Skill', () => {
 
       skill.serialize(buffer, 10)
 
-      expect(buffer.readUInt8(10 + 0)).toBe(Skill.COOLDOWN)
+      expect(buffer.readUInt8(10 + 0)).toBe(SkillState.COOLDOWN)
       expect(buffer.readUInt16BE(10 + 1)).toBe(1320)
     })
 
     const other = [
-      Skill.READY,
-      Skill.ACTIVE,
-      Skill.NO_MANA
+      SkillState.READY,
+      SkillState.ACTIVE,
+      SkillState.NO_MANA
     ]
 
     for (const state of other) {
