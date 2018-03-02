@@ -14,19 +14,21 @@ class Entity {
    * @param {object}   options
    * @param {number}   options.mass
    * @param {?number}  options.moveForce
+   * @param {?number}  options.dragForceFactor
    * @param {?Vector}  options.position
    * @param {?Vector}  options.velocity
    * @param {?Vector}  options.force
    */
   constructor(options) {
-    this.mass       = options.mass
-    this.moveForce  = options.moveForce    || 0
-    this.position   = options.position     || V(0, 0)
-    this.velocity   = options.velocity     || V(0, 0)
-    this.force      = options.force        || V(0, 0)
+    this.mass            = options.mass
+    this.moveForce       = options.moveForce         || 0
+    this.dragForceFactor = options.dragForceFactor   || 1
+    this.position        = options.position          || V(0, 0)
+    this.velocity        = options.velocity          || V(0, 0)
+    this.force           = options.force             || V(0, 0)
 
     /** @todo use array */
-    this.effects    = new Set
+    this.effects         = new Set
   }
 
   /**
@@ -112,6 +114,7 @@ class Entity {
   integrate(t, dt) {
     const dragForce = this.velocity.clone()
       .setLength(-0.001 * this.velocity.length() ** 2)
+      .multiply(this.dragForceFactor)
 
     this.force.add(dragForce)
     this.acceleration = Vector.divide(this.force, this.mass)

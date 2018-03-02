@@ -20,21 +20,21 @@ class SlowDown extends Effect {
   }
 
   /**
-   * Decrease the target's movement force.
+   * Increase the target's drag force factor.
    *
    * @param {Entity} target
    */
   onReceive(target) {
-    target.moveForce -= this.value
+    target.dragForceFactor += this.value
   }
 
   /**
-   * Increase the target's movement force back.
+   * Decrease the target's drag force factor back.
    *
    * @param {Entity} target
    */
   onRemove(target) {
-    target.moveForce += this.value
+    target.dragForceFactor -= this.value
   }
 
   /**

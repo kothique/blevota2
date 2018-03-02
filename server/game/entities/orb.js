@@ -1,9 +1,12 @@
 /**
  * @module server/game/entities/orb
  */
+
+const SkillManager = require('../skill-manager')
 const Entity = require('./entity')
 const { ORB } = require('../../../common/entities')
-const SpeedUp = require('../effects/speedup')
+const SpeedUp = require('../skills/speedup')
+const SlowDown = require('../skills/slowdown')
 
 /**
  * @class
@@ -32,10 +35,10 @@ class Orb extends Entity {
     this.maxMp  = options.maxMp
     this.mp     = options.mp
 
-    this.skill1 = {
-      prev: false,
-      effect: null
-    }
+    this.skillManager = new SkillManager(this, {
+      skillA1: new SpeedUp,
+      skillA2: new SlowDown
+    })
 
     this.alive = true
   }
@@ -57,18 +60,7 @@ class Orb extends Entity {
    * @override
    */
   applyControls(controls) {
-    const { skillA1: skill1 } = controls
-
-    if (skill1 && !this.skill1.prev) {
-      this.skill1.effect = new SpeedUp(0.2)
-      this.receiveEffect(this.skill1.effect)
-    } else if (!skill1 && this.skill1.prev) {
-      this.removeEffect(this.skill1.effect)
-      this.skill1.effect = null
-    }
-
-    this.skill1.prev = skill1
-
+    this.skillManager.handleControls(controls)
     super.applyControls(controls)
 
     return this

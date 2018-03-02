@@ -3,17 +3,17 @@ const { SLOWDOWN } = require('@common/effects')
 
 describe('SlowDown', () => {
   describe('onReceive() & onRemove()', () => {
-    const effect = new SlowDown(42),
-          target = { moveForce: 59 }
+    const effect = new SlowDown(0.2),
+          target = { dragForceFactor: 1 }
 
-    test('should decrese movement force on applying', () => {
+    test('should increse drag force factor on applying', () => {
       effect.onReceive(target)
-      expect(target.moveForce).toBe(17)
+      expect(target.dragForceFactor).toBeCloseTo(1.2)
     })
 
-    test('should increase movement force back on removing', () => {
+    test('should decrease drag force factor back on removing', () => {
       effect.onRemove(target)
-      expect(target.moveForce).toBe(59)
+      expect(target.dragForceFactor).toBeCloseTo(1)
     })
   })
 
