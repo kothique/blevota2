@@ -1,16 +1,13 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { func, string } from 'prop-types'
 import { push } from 'react-router-redux'
 import { decode } from 'jsonwebtoken'
 
 import Game from '../game'
-import Header from './header'
-import MobileMenu from './mobile-menu'
-import Footer from './footer'
-import SkillIcon from './skill-icon'
 import Access from './access'
-
+import SkillIcon from './skill-icon'
+import AnimationLoading from './animation-loading';
 import SkillState from '../../common/skill-state'
 
 import '../styles/game-page.styl'
@@ -40,24 +37,29 @@ class GamePage extends Component {
     const { dispatch, match, token, user } = this.props
     const { params: { regionName } } = match,
           context = document.getElementById('gp-game'),
-          info = document.getElementById('gp-info'),
-          log = document.getElementById('gp-log'),
+          chat = document.getElementById('gp-chat'),
           host = 'http://localhost:3000'
 
     const game = this.game = new Game({
       host,
       context,
-      info,
-      log,
+      chat,
       token,
       user,
       regionName
     })
 
     game.on('skills', (skills) => {
+      this.setState(skills)
+    })
+
+    game.on('orb', (orb) => {
       this.setState({
-        skillA1: skills.skillA1,
-        skillA2: skills.skillA2
+        playerRadius: orb.radius,
+        playerMaxHP: orb.maxHp,
+        playerHP: orb.hp,
+        playerMapMP: orb.maxMp,
+        playerMP: orb.mp
       })
     })
 
@@ -110,37 +112,89 @@ class GamePage extends Component {
   }
 
   render() {
-    const { skillA1, skillA2 } = this.state
+    const { dispatch, isFetching, user, error } = this.props
+    const { skillA1, skillA2, skillA3, skillA4, skillA5, skillA6,
+            skillB1, skillB2, skillB3, skillB4, skillB5, skillB6,
+            skillC1, skillC2, skillC3, skillC4, skillC5, skillC6 } = this.state
+    const { playerRadius, playerMaxHP, playerHP, playerMaxMP, playerMP } = this.state
 
-    return (
-      <Fragment>
-        <Header />
-        <MobileMenu />
-        <div id="content">
-          <Access users>
+    if (isFetching) {
+      return (
+        <AnimationLoading />
+      )
+    } else if (!user) {
+      return (
+        <div id="gp-access-error">
+          You can't access this page as a guest. Go to <a onClick={() => dispatch(push('/'))}>main page</a> to login first.
+        </div>
+      )
+    } else if (user) {
+      return (
+        <main id="game-page">
+          <svg
+            id="gp-game"
+            version="1.1"
+            baseProfile="full"
+            xmlns="http://www.w3.org/2000/svg">
+          </svg>
+
+          <div id="gp-skill-bar-left">
             <SkillIcon id="gp-skill-a1" state={skillA1} />
             <SkillIcon id="gp-skill-a2" state={skillA2} />
-            <svg
-              id="gp-game"
-              version="1.1"
-              baseProfile="full"
-              xmlns="http://www.w3.org/2000/svg"
-              >
-            </svg>
+            <SkillIcon id="gp-skill-a3" state={skillA3} />
+            <SkillIcon id="gp-skill-b1" state={skillB1} />
+            <SkillIcon id="gp-skill-b2" state={skillB2} />
+            <SkillIcon id="gp-skill-b3" state={skillB3} />
+            <SkillIcon id="gp-skill-c1" state={skillC1} />
+            <SkillIcon id="gp-skill-c2" state={skillC2} />
+            <SkillIcon id="gp-skill-c3" state={skillC3} />
+          </div>
+          <svg id="gp-orb"
+            version="1.1"
+            baseProfile="full"
+            xmlns="http://www.w3.org/2000/svg">
 
-            <div id="gp-info"></div>
-            <div id="gp-log"></div>
-          </Access>
+            <circle
+              r="60px" cx="62px" cy="62px"
+              fill="rgb(0, 101, 255)" />
+            <circle
+              r={`${0.8 * 60}px`} cx="62px" cy="62px"
+              fill="rgb(0, 218, 255)"
+              fill-opacity={playerMP / playerMaxMP} />
+            <circle
+              r={`${0.5 * 60}px`} cx="62px" cy="62px"
+              fill="rgb(243, 101, 255)"
+              fill-opacity={playerHP / playerMaxHP} />
+          </svg>
+          <div id="gp-skill-bar-right">
+            <SkillIcon id="gp-skill-a4" state={skillA4} />
+            <SkillIcon id="gp-skill-a5" state={skillA5} />
+            <SkillIcon id="gp-skill-a6" state={skillA6} />
+            <SkillIcon id="gp-skill-b4" state={skillB4} />
+            <SkillIcon id="gp-skill-b5" state={skillB5} />
+            <SkillIcon id="gp-skill-b6" state={skillB6} />
+            <SkillIcon id="gp-skill-c4" state={skillC4} />
+            <SkillIcon id="gp-skill-c5" state={skillC5} />
+            <SkillIcon id="gp-skill-c6" state={skillC6} />
+          </div>
+          <div id="gp-chat"></div>
+        </main>
+      )
+    } else if (error) {
+      return (
+        <div id="gp-access-error">
+          Authorization error: {login.error}
         </div>
-        <Footer />
-    </Fragment>
-    )
+      )
+    }
   }
 }
 
 export default connect(
   ({ login }) => ({
+    isFetching: login.isFetching,
     user: login.user,
+    error: login.error,
     token: login.token
   })
 )(GamePage)

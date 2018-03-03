@@ -1,36 +1,53 @@
+@import './_variables'
+
+#gp-access-error
+  text-align center
+  position fixed
+  top "calc(50% - 10px)" % ()
+  left 0
+  right 0
+
+  a
+    color red
+
 #gp-game
-  display inline-block
-  width 800px
-  height 600px
+  position fixed
+  left 0
+  top 0
+  width 100%
+  height 100%
   overflow hidden
-  border 1px solid alpha(gray, 0.3)
-  margin-top 16px
-  margin-left 16px
 
-#gp-info
-  display inline-block
-  margin-top 16px
-  margin-left 16px
-  border 1px solid alpha(gray, 0.3)
-
-#gp-log
-  display block
-  width: 800px
-  height 100px
+#gp-chat
+  position fixed
+  height hud-height
+  right 0
+  bottom 0
+  left "calc(50% + %s / 2 + 2px + %s)" % (hud-height hud-height)
   overflow hidden
   overflow-y scroll
-  margin-left 16px
-  margin-right 16px
-  padding 8px
+  padding 4px
   font-family monospace
-  border 1px solid alpha(gray, 0.3)
 
-#gp-skill-a1
-  position absolute
-  left 16px
-  top 72px + 16px
+#gp-orb
+  height hud-height
+  width @height
+  position fixed
+  left "calc(50% - %s / 2)" % @width
+  bottom 4px
 
-#gp-skill-a2
-  position absolute
-  left 16px + 48px + 16px
-  top 72px + 16px
+#gp-skill-bar-left
+  height hud-height
+  width @height
+  position fixed
+  right "calc(50% + %s / 2 + 2px)" % hud-height
+  bottom 4px
+  padding 2px
+  
+#gp-skill-bar-right
+  height hud-height
+  width @height
+  position fixed
+  left "calc(50% + %s / 2 + 2px)" % hud-height
+  bottom 4px
+  padding 2px

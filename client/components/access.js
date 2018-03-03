@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { func, bool, object, string } from 'prop-types'
+import { func, bool, object, string, node } from 'prop-types'
 
 import { openLoginForm } from '../reducers/modals'
 import AnimationLoading from './animation-loading'
@@ -21,7 +21,7 @@ class Access extends Component {
   }
 
   render() {
-    const { dispatch, isFetching, user, error, token,
+    const { dispatch, isFetching, user, error,
             users, children } = this.props
 
     let content
@@ -52,6 +52,5 @@ export default connect(
     isFetching: login.isFetching,
     user: login.user,
     error: login.error,
-    token: login.token
   })
 )(Access)

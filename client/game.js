@@ -6,6 +6,7 @@ import _ from 'lodash'
 import Keyboard from './keyboard'
 import PlayoutBuffer from './playoutbuffer'
 import World from './game/world'
+import EntityFactory from './game/entity-factory'
 
 import * as entities from '../common/entities'
 import SkillState from '../common/skill-state'
@@ -18,19 +19,17 @@ export default class Game extends EventEmitter {
   constructor(options) {
     super()
 
-    const { context, info, log, host, token, user, regionName } = options
+    const { context, chat, host, token, user, regionName } = options
     this.user = user
     this.orbID = null
     this.regionName = regionName
 
     this.svg = context
-    this.info = info
-    this.log = log
+    this.chat = chat
     this.skills = Object.create(null)
 
     World.init({
-      svg:  this.svg,
-      info: this.info
+      svg:  this.svg
     })
 
     this.svg.addEventListener('mousemove', ({ offsetX, offsetY }) => {
@@ -133,7 +132,6 @@ export default class Game extends EventEmitter {
         if (frame.skills) {
           this.parseSkills(frame.skills)
         }
-
         World.parse(frame.world)
 
         // if (previousFrame) {
@@ -145,6 +143,9 @@ export default class Game extends EventEmitter {
         // }
 
         World.render()
+        if (EntityFactory.entities[this.orbID]) {
+          this.emit('orb', EntityFactory.entities[this.orbID])
+        }
       }
     })
 
@@ -208,8 +209,8 @@ export default class Game extends EventEmitter {
     socket.on('event:death', (data) => {
       const { id, username } = data.user
 
-      this.log.innerHTML += 'Player <strong>' + _.escape(username) + '</strong> died :('
-      this.log.innerHTML += '<br />'
+      this.chat.innerHTML += 'Player <strong>' + _.escape(username) + '</strong> died :('
+      this.chat.innerHTML += '<br />'
     })
   }
 
