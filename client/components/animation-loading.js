@@ -1,9 +1,13 @@
 import React, { Component } from 'react'
 
+import '@client/styles/animation-loading.styl'
+
 class AnimationLoading extends Component {
   render() {
     return (
-      'Loading...'
+      <div className="animation-loading">
+        <img src="/images/icons/loading.svg" />
+      </div>
     )
   }
 }
