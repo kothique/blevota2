@@ -3,6 +3,7 @@
  */
 
 import React, { Component } from 'react'
+import { push } from 'react-router-redux'
 import { connect } from 'react-redux'
 import { object, number, string } from 'prop-types'
 

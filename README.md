@@ -3,7 +3,6 @@
 ## ROADMAP
 
 - refactoring
-  - move server/simulation/* -> server/game
 - physics
   - verlet integration (!)
   - spacial partitioning instead of brute-force

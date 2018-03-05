@@ -1,5 +1,5 @@
 /**
- * @module server/simulation/simulator
+ * @module server/game/simulator
  */
 
 const EventEmitter = require('events')
@@ -7,8 +7,8 @@ const present = require('present')
 const merge = require('lodash/merge')
 const forIn = require('lodash/forIn')
 
-const World = require('../game/world')
-const Orb = require('../game/entities/orb')
+const World = require('./world')
+const Orb = require('./entities/orb')
 const { Vector, V } = require('../../common/vector')
 
 /**

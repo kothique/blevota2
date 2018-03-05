@@ -28,11 +28,11 @@ class Region {
     this.playersByOrbID = Object.create(null)
     this.name = name
 
-    this.simulation = child_process.fork('./server/simulation', null, {
+    this.game = child_process.fork('./server/game', null, {
       env: process.env
     })
 
-    this.simulation.on('message', (msg) => {
+    this.game.on('message', (msg) => {
       let player
 
       switch (msg.type) {
@@ -127,27 +127,27 @@ class Region {
   }
 
   /**
-   * Start the simulation.
+   * Start the game.
    */
   run() {
     this.sendStart()
   }
 
   /**
-   * Stop the simulation.
+   * Stop the game.
    */
   stop() {
     this.sendStop()
   }
 
   /**
-   * Order the simulation to start.
+   * Order the game to start.
    *
    * @private
    */
   sendStart() {
     try {
-      this.simulation.send({
+      this.game.send({
         type: 'START'
       })
     } catch (err) {
@@ -157,13 +157,13 @@ class Region {
   }
 
   /**
-   * Order the simulation to stop.
+   * Order the game to stop.
    *
    * @private
    */
   sendStop() {
     try {
-      this.simulation.send({
+      this.game.send({
         type: 'STOP'
       })
     } catch (err) {
@@ -173,14 +173,14 @@ class Region {
   }
 
   /**
-   * Order the simulation to add a new orb.
+   * Order the game to add a new orb.
    *
    * @private
    * @param {string} id - The player's ID.
    */
   sendNewOrb(playerID) {
     try {
-      this.simulation.send({
+      this.game.send({
         type: 'NEW_ORB',
         playerID
       })
@@ -191,13 +191,13 @@ class Region {
   }
 
   /**
-   * Order the simulation to remove the specified orb.
+   * Order the game to remove the specified orb.
    *
    * @param {number} id - The player's ID.
    */
   sendRemoveOrb(orbID) {
     try {
-      this.simulation.send({
+      this.game.send({
         type: 'REMOVE_ORB',
         orbID
       })
@@ -208,7 +208,7 @@ class Region {
   }
 
   /**
-   * Send controls to the simulation.
+   * Send controls to the game.
    *
    * @private
    * @param {WebSocket} ws - The player's id.
@@ -216,7 +216,7 @@ class Region {
    */
   sendControls(id, controls) {
     try {
-      this.simulation.send({
+      this.game.send({
         type: 'CONTROLS',
         id,
         controls

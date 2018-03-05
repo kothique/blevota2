@@ -1,5 +1,5 @@
 /**
- * @module server/simulation/index
+ * @module server/game/index
  *
  * @description
  * This is the entry point of the simulation program.
