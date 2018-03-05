@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
 import { login } from '@client/reducers/login'
-import { hideModals, LOGIN_FORM } from '@client/reducers/modals'
+import { hideModals, LOGIN_FORM, MODAL_FLOATING  } from '@client/reducers/modals'
 import AnimationLoading from './animation-loading'
 import Button from './button'
 import TextField from './text-field'
@@ -27,7 +27,7 @@ class LoginForm extends Component {
   }
 
   render() {
-    const { dispatch, error, isFetching, open } = this.props
+    const { dispatch, error, isFetching, open, mode } = this.props
     const { username, password } = this.state
 
     const errorMessage = error ? <div id="lf-error">{error}</div> : ''
@@ -59,7 +59,11 @@ class LoginForm extends Component {
     }
 
     return(
-      <div id="login-form" className={'modal-shadow' + (open ? ' open' : '')}>
+      <div id="login-form"
+        className={'modal-shadow' +
+                  (open ? ' open' : '') +
+                  (mode === MODAL_FLOATING ? ' floating' : ' sticky')}>
+
         <form id="lf-form"
           onKeyUp={(event) => {
             if (event.keyCode === 27) {
@@ -101,6 +105,7 @@ export default connect(
   ({ login, modals }) => ({
     error: !login.isFetching && login.error,
     isFetching: login.isFetching,
-    open: modals.openModal === LOGIN_FORM
+    open: modals.openModal === LOGIN_FORM,
+    mode: modals.mode
   })
 )(LoginForm)

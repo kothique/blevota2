@@ -2,15 +2,24 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
+import { setModalMode, toggleRegisterForm, toggleLoginForm } from '@client/reducers/modals'
+import * as Modals from '@client/reducers/modals'
 import { toggleMobileMenu } from '@client/reducers/mobile-menu'
-import { toggleRegisterForm, toggleLoginForm } from '@client/reducers/modals'
-import { logout } from '@client/reducers/login'
-import LoginForm from './login-form'
-import RegisterForm from './register-form'
+import { logout }           from '@client/reducers/login'
+import LoginForm            from './login-form'
+import RegisterForm         from './register-form'
 
 import '@client/styles/header.styl'
 
 class Header extends Component {
+  componentDidMount() {
+    this.props.dispatch(setModalMode(Modals.MODAL_STICKY))
+  }
+
+  componentWillUnmount() {
+    this.props.dispatch(setModalMode(Modals.MODAL_FLOATING))
+  }
+
   render() {
     const { dispatch, user } = this.props
 

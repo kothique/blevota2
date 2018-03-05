@@ -1,16 +1,17 @@
 /**
  * @module
  */
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { func, object, string } from 'prop-types'
 import { push } from 'react-router-redux'
 
-import Game          from '@client/game'
-import HUD           from '@client/components/hud'
-import ForbiddenGame from '@client/components/error/forbidden-game'
-import withAccess    from '@client/components/wrappers/with-access'
-import SkillState    from '@common/skill-state'
+import Game       from '@client/game'
+import HUD        from '@client/components/hud'
+import LoginForm  from '@client/components/login-form'
+import Forbidden  from '@client/components/error/forbidden'
+import withAccess from '@client/components/wrappers/with-access'
+import SkillState from '@common/skill-state'
 
 import '@client/styles/game-page.styl'
 
@@ -130,5 +131,8 @@ class GamePage extends Component {
 
 export default withAccess(
   null,
-  <ForbiddenGame />
+  <Fragment>
+    <LoginForm />
+    <Forbidden />
+  </Fragment>
 )(connect()(GamePage))

@@ -14,8 +14,6 @@
 ### **UI**
 * modals
   * dark background around login and register forms
-  * modals that don't stick to the header, then
-    * remove forbidden-game.js
 * game page
   * skill icons
   * adequate behaviour
