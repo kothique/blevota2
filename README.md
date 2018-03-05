@@ -14,8 +14,7 @@
 ### **UI**
 * game page
   * skill icons
-  * adequate behaviour
-    * on the player dying
+  * _adequate behaviour_
     * on connection error
 * 404 not found page
 * user profile
@@ -28,6 +27,6 @@
 
 ### Tests
 * tests/serialization/entities/entity
-* server/game/collision*detector.js
-* change entity ids from 24b*strings to numbers
+* server/game/collision-detector.js
+* change entity ids from 24b-strings to numbers
 * react components (far away future)

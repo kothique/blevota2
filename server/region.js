@@ -54,6 +54,7 @@ class Region {
 
             this.playersByOrbID[player.orbID] = player
 
+            player.socket.removeAllListeners('controls')
             player.socket.on('controls', (controls) => {
               this.sendControls(player.orbID, controls)
             })
@@ -68,8 +69,7 @@ class Region {
             const { user } = player.socket.handshake
 
             this.toAllPlayers('event:death', { user })
-
-            this.removePlayer(user.id)
+            this.resurrectPlayer(user.id, 3000)
           }
 
           break
@@ -104,6 +104,30 @@ class Region {
     }
 
     this.sendNewOrb(user.id)
+  }
+
+  /**
+   * Remove the old dead orb and create a new one for the specified player.
+   *
+   * @param {string} playerID 
+   * @param {number} delay
+   */
+  resurrectPlayer(playerID, delay) {
+    const player = this.playersByID[playerID]
+
+    if (player) {
+      forIn(this.playersByID, ({ socket }) => {
+        socket.emit('remove-orb', player.orbID)
+      })
+      delete this.playersByOrbID[player.orbID]
+
+      this.sendRemoveOrb(player.orbID)
+      player.orbID = null
+
+      setTimeout(() => {
+        this.sendNewOrb(playerID)
+      }, delay)
+    }
   }
 
   /**
