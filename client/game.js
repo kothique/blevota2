@@ -17,7 +17,7 @@ export default class Game extends EventEmitter {
   constructor(options) {
     super()
 
-    const { context, chat, host, token, user, regionName } = options
+    const { context, host, token, user, regionName } = options
     this.user = user
     this.orbID = null
     this.regionName = regionName
@@ -25,7 +25,6 @@ export default class Game extends EventEmitter {
     this.host = host
 
     this.svg = context
-    this.chat = chat
     this.skills = Object.create(null)
 
     World.init({
@@ -209,8 +208,7 @@ export default class Game extends EventEmitter {
     socket.on('event:death', (data) => {
       const { id, username } = data.user
 
-      this.chat.innerHTML += 'Player <strong>' + _.escape(username) + '</strong> died :('
-      this.chat.innerHTML += '<br />'
+      this.emit('event', 'Player <strong>' + _.escape(username) + '</strong> died :( <br />')
     })
   }
 
@@ -247,14 +245,16 @@ export default class Game extends EventEmitter {
     let changed = false
 
     let result = parseSkill(buffer, offset)
-    if (result.skill != this.skills.skillA1) {
+    if (this.skills.skillA1 &&
+        result.skill.type !== this.skills.skillA1.type) {
       changed = true
     }
     this.skills.skillA1 = result.skill
     offset = result.offset
 
     result = parseSkill(buffer, offset)
-    if (result.skill != this.skills.skillA2) {
+    if (this.skills.skillA2 &&
+        result.skill.type !== this.skills.skillA2.type) {
       changed = true
     }
     this.skills.skillA2 = result.skill
