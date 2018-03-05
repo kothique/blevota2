@@ -1,13 +1,13 @@
-import EntityFactory from './game/entity-factory'
-import EffectFactory from './game/effect-factory'
-import * as entities from '../common/entities'
-import * as effects from '../common/effects'
+import EntityFactory from '@client/game/entity-factory'
+import EffectFactory from '@client/game/effect-factory'
+import * as entities from '@common/entities'
+import * as effects from '@common/effects'
 
-import Orb from './game/entities/orb'
+import Orb from '@client/game/entities/orb'
 
-import SpeedUp from './game/effects/speedup'
-import SlowDown from './game/effects/slowdown'
-import InstantDamage from './game/effects/instant-damage'
+import SpeedUp from '@client/game/effects/speedup'
+import SlowDown from '@client/game/effects/slowdown'
+import InstantDamage from '@client/game/effects/instant-damage'
 
 EntityFactory.register({
   type: entities.ORB,

@@ -1,8 +1,6 @@
-import ClientOrb from '../../../client/game/entities/orb'
-
-const ServerOrb = require('../../../server/game/entities/orb')
-
-const { ORB } = require('../../../common/entities')
+import ClientOrb from '@client/game/entities/orb'
+const ServerOrb = require('@server/game/entities/orb')
+const { ORB } = require('@common/entities')
 
 describe('Orb entity serialization', () => {
   test('deserialized orb should match the original one', () => {

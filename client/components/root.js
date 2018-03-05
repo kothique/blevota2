@@ -8,7 +8,7 @@ import WelcomePage from './welcome-page'
 import GamePage from './game-page'
 import RegionsPage from './regions-page'
 
-import '../styles/common.styl'
+import '@client/styles/common.styl'
 
 class Root extends Component {
   static propTypes = {

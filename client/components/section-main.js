@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
 import Button from './button'
-import '../styles/section-main.styl'
+import '@client/styles/section-main.styl'
 
 class SectionMain extends Component {
   render() {

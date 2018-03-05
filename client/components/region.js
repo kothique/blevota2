@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
 import Button from './button'
-import '../styles/region.styl'
+import '@client/styles/region.styl'
 
 class Region extends Component {
   static propTypes = {

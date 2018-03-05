@@ -1,6 +1,6 @@
 import Orb from '../orb'
-import { ORB } from '../../../../common/entities'
-import { Vector, V } from '../../../../common/vector'
+import { ORB } from '@common/entities'
+import { Vector, V } from '@common/vector'
 
 describe('Orb', () => {
   let orb

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import '../styles/footer.styl'
+import '@client/styles/footer.styl'
 
 class Footer extends Component {
   render() {

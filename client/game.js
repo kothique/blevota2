@@ -8,8 +8,8 @@ import PlayoutBuffer from './playoutbuffer'
 import World from './game/world'
 import EntityFactory from './game/entity-factory'
 
-import * as entities from '../common/entities'
-import SkillState from '../common/skill-state'
+import * as entities from '@common/entities'
+import SkillState from '@common/skill-state'
 
 import './registerWorldObjects'
 

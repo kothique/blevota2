@@ -1,4 +1,4 @@
-import { ORB } from '../../../common/entities'
+import { ORB } from '@common/entities'
 let World
 let EntityFactory
 

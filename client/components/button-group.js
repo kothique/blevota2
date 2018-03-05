@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { string, object } from 'prop-types'
 
-import '../styles/button-group.styl'
+import '@client/styles/button-group.styl'
 
 class ButtonGroup extends Component {
   static propTypes = {

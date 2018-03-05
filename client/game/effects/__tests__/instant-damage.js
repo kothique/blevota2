@@ -1,5 +1,5 @@
-import InstantDamage from '../../effects/instant-damage'
-import { INSTANT_DAMAGE } from '../../../../common/effects'
+import InstantDamage from '../instant-damage'
+import { INSTANT_DAMAGE } from '@common/effects'
 
 describe('InstantDamage', () => {
   let effect

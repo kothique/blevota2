@@ -2,7 +2,7 @@ import EventEmitter from 'events'
 import merge from 'lodash/merge'
 import present from 'present'
 
-import { V } from '../common/vector'
+import { V } from '@common/vector'
 
 /**
  * @class

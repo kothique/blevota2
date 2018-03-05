@@ -2,10 +2,10 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { func, bool, object, string, node } from 'prop-types'
 
-import { openLoginForm } from '../reducers/modals'
+import { openLoginForm } from '@client/reducers/modals'
 import AnimationLoading from './animation-loading'
 
-import '../styles/access.styl'
+import '@client/styles/access.styl'
 
 class Access extends Component {
   static propTypes = {

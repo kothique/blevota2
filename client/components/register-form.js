@@ -2,13 +2,13 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
-import { register } from '../reducers/register'
-import { hideModals, REGISTER_FORM } from '../reducers/modals'
+import { register } from '@client/reducers/register'
+import { hideModals, REGISTER_FORM } from '@client/reducers/modals'
 import AnimationLoading from './animation-loading'
 import Button from './button'
 import TextField from './text-field'
 
-import '../styles/register-form.styl'
+import '@client/styles/register-form.styl'
 
 class RegisterForm extends Component {
   state = {

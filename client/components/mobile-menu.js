@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
-import '../styles/mobile-menu.styl'
+import '@client/styles/mobile-menu.styl'
 
 class MobileMenu extends Component {
   render() {

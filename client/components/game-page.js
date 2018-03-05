@@ -1,16 +1,19 @@
+/**
+ * @module
+ */
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { func, string } from 'prop-types'
 import { push } from 'react-router-redux'
 import { decode } from 'jsonwebtoken'
 
-import Game from '../game'
+import Game from '@client/game'
 import Access from './access'
 import SkillIcon from './skill-icon'
-import AnimationLoading from './animation-loading';
-import SkillState from '../../common/skill-state'
+import AnimationLoading from './animation-loading'
+import SkillState from '@common/skill-state'
 
-import '../styles/game-page.styl'
+import '@client/styles/game-page.styl'
 
 /**
  * @class
@@ -50,7 +53,9 @@ class GamePage extends Component {
     })
 
     game.on('skills', (skills) => {
-      this.setState(skills)
+      this.setState({
+        ...skills
+      })
     })
 
     game.on('orb', (orb) => {
@@ -69,17 +74,14 @@ class GamePage extends Component {
 
     game.on('connect_error', (err) => {
       console.log(err.stack)
-      dispatch(push('/'))
     })
 
     game.on('error', (err) => {
       console.log(err.stack)
-      dispatch(push('/'))
     })
 
     game.on('disconnect', () => {
       console.log(`Disconnected from ${host}`)
-      dispatch(push('/'))
     })
   }
 
@@ -138,6 +140,9 @@ class GamePage extends Component {
             xmlns="http://www.w3.org/2000/svg">
           </svg>
 
+          <img id="gp-quit" src="/images/icons/quit.svg"
+            onClick={() => dispatch(push('/regions'))} />
+
           <div id="gp-skill-bar-left">
             <SkillIcon id="gp-skill-a1" state={skillA1} />
             <SkillIcon id="gp-skill-a2" state={skillA2} />
@@ -155,14 +160,14 @@ class GamePage extends Component {
             xmlns="http://www.w3.org/2000/svg">
 
             <circle
-              r="60px" cx="62px" cy="62px"
+              r="48px" cx="62px" cy="62px"
               fill="rgb(0, 101, 255)" />
             <circle
-              r={`${0.8 * 60}px`} cx="62px" cy="62px"
+              r={`${0.8 * 48}px`} cx="62px" cy="62px"
               fill="rgb(0, 218, 255)"
               fill-opacity={playerMP / playerMaxMP} />
             <circle
-              r={`${0.5 * 60}px`} cx="62px" cy="62px"
+              r={`${0.5 * 48}px`} cx="62px" cy="62px"
               fill="rgb(243, 101, 255)"
               fill-opacity={playerHP / playerMaxHP} />
           </svg>

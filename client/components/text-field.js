@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { string, func, object } from 'prop-types'
 
-import '../styles/text-field.styl'
+import '@client/styles/text-field.styl'
 
 class TextField extends Component {
   static propTypes = {

@@ -6,7 +6,7 @@ import SectionRegions from './section-regions'
 import Footer from './footer'
 import Access from './access'
 
-import '../styles/regions-page.styl'
+import '@client/styles/regions-page.styl'
 
 class RegionsPage extends Component {
   render() {

@@ -4,9 +4,9 @@
 
 import Entity from './entity'
 import Set from 'collections/set'
-import { Vector, V } from '../../../common/vector'
-import { ORB } from '../../../common/entities'
-import { SVG } from '../../../common/util'
+import { Vector, V } from '@common/vector'
+import { ORB } from '@common/entities'
+import { SVG } from '@common/util'
 
 /**
  * @class

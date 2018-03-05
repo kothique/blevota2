@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { string, object } from 'prop-types'
 
-import '../styles/label.styl'
+import '@client/styles/label.styl'
 import { differenceInDays } from 'date-fns';
 
 class Label extends Component {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { string, bool, func, object } from 'prop-types'
 
-import '../styles/check-button.styl'
+import '@client/styles/check-button.styl'
 
 class CheckButton extends Component {
   static propTypes = {
@@ -35,7 +35,9 @@ class CheckButton extends Component {
   toggle() {
     const { onChange } = this.props
 
-    this.setState({ checked: !this.state.checked })
+    this.setState((prevState) => ({
+      checked: !prevState.checked
+    }))
     onChange && window.setImmediate(() => onChange(this.state.checked) )
   }
 

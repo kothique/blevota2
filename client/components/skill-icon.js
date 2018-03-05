@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { shape, number, any, string } from 'prop-types'
 
-import SkillState from '../../common/skill-state'
-import '../styles/skill-icon.styl'
+import SkillState from '@common/skill-state'
+import '@client/styles/skill-icon.styl'
 
 class SkillIcon extends Component {
   static propTypes = {

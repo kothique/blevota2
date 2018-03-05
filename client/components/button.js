@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { string, func, object } from 'prop-types'
 
-import '../styles/button.styl'
+import '@client/styles/button.styl'
 
 class Button extends Component {
   static propTypes = {

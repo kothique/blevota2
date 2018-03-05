@@ -2,13 +2,13 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
-import { login } from '../reducers/login'
-import { hideModals, LOGIN_FORM } from '../reducers/modals'
+import { login } from '@client/reducers/login'
+import { hideModals, LOGIN_FORM } from '@client/reducers/modals'
 import AnimationLoading from './animation-loading'
 import Button from './button'
 import TextField from './text-field'
 
-import '../styles/login-form.styl'
+import '@client/styles/login-form.styl'
 
 class LoginForm extends Component {
   state = {

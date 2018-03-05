@@ -5,7 +5,7 @@
 import forIn from 'lodash/forIn'
 
 import EntityFactory from './entity-factory'
-import { V, Vector } from '../../common/vector'
+import { V, Vector } from '@common/vector'
 
 /**
  * @class

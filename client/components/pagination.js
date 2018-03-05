@@ -4,7 +4,7 @@ import { string, number, func, object } from 'prop-types'
 import Button from './button'
 import ButtonGroup from './button-group'
 
-import '../styles/pagination.styl'
+import '@client/styles/pagination.styl'
 
 class Pagination extends Component {
   static propTypes = {

@@ -5,7 +5,7 @@
 import Set from 'collections/set'
 
 import EffectFactory from '../effect-factory'
-import { Vector, V } from '../../../common/vector'
+import { Vector, V } from '@common/vector'
 
 /**
  * @class

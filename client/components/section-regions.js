@@ -3,14 +3,14 @@ import { number, string, arrayOf, object, bool } from 'prop-types'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
-import { regions } from '../reducers/regions'
+import { regions } from '@client/reducers/regions'
 import AnimationLoading from './animation-loading'
 import ListRegions from './list-regions'
 import Pagination from './pagination'
 import Button from './button'
 import Label from './label'
 
-import '../styles/section-regions.styl'
+import '@client/styles/section-regions.styl'
 
 const pageSize = 10
 
@@ -37,7 +37,7 @@ class SectionRegions extends Component {
 
     if (this.intervalID)
       window.clearInterval(this.intervalID)
-    this.intervalID = window.setInterval(fetchRegions, 10000)
+    this.intervalID = window.setInterval(fetchRegions, 1000)
     fetchRegions()
   }
 

@@ -5,7 +5,7 @@ import MobileMenu from './mobile-menu'
 import SectionMain from './section-main'
 import Footer from './footer'
 
-import '../styles/welcome-page.styl'
+import '@client/styles/welcome-page.styl'
 
 class WelcomePage extends Component {
   render() {

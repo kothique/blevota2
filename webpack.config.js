@@ -13,6 +13,13 @@ module.exports = {
       { from: './client/images/', to: './images/' }
     ])
   ],
+  resolve: {
+    alias: {
+      ['@common']: resolve(__dirname, 'common'),
+      ['@server']: resolve(__dirname, 'server'),
+      ['@client']: resolve(__dirname, 'client')
+    }
+  },
   module: {
     loaders: [
       {

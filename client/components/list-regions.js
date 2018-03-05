@@ -3,7 +3,7 @@ import { string, arrayOf, object } from 'prop-types'
 
 import Region from './region'
 
-import '../styles/list-regions.styl'
+import '@client/styles/list-regions.styl'
 
 class ListRegions extends Component {
   static propTypes = {

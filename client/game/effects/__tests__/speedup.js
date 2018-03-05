@@ -1,5 +1,5 @@
-import SpeedUp from '../../effects/speedup'
-import { SPEEDUP } from '../../../../common/effects'
+import SpeedUp from '../speedup'
+import { SPEEDUP } from '@common/effects'
 
 describe('SpeedUp', () => {
   let effect
