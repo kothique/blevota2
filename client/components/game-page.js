@@ -149,11 +149,11 @@ class GamePage extends Component {
           <circle
             r={`${0.8 * 48}px`} cx="62px" cy="62px"
             fill="rgb(0, 218, 255)"
-            fill-opacity={playerMP / playerMaxMP} />
+            fillOpacity={playerMP / playerMaxMP || 1} />
           <circle
             r={`${0.5 * 48}px`} cx="62px" cy="62px"
             fill="rgb(243, 101, 255)"
-            fill-opacity={playerHP / playerMaxHP} />
+            fillOpacity={playerHP / playerMaxHP || 1} />
         </svg>
         <div id="gp-skill-bar-right">
           <SkillIcon id="gp-skill-a4" state={skillA4} />
