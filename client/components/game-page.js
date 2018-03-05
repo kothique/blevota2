@@ -66,11 +66,14 @@ class GamePage extends Component {
   }
 
   onGameConnectError = (err) => {
+    console.log(`Failed to connect to ${HOST}:`)
     console.log(err.stack)
+    this.props.dispatch(push('/regions'))
   }
 
   onGameError = (err) => {
     console.log(err.stack)
+    this.props.dispatch(push('/regions'))
   }
 
   onGameDisconnect = () => {

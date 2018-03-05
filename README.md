@@ -14,8 +14,6 @@
 ### **UI**
 * game page
   * skill icons
-  * _adequate behaviour_
-    * on connection error
 * 404 not found page
 * user profile
 * persistent redux state
