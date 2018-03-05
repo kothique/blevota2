@@ -1,30 +1,26 @@
 import React, { Component, Fragment } from 'react'
+import { string } from 'prop-types'
 
-import Header from './header'
-import MobileMenu from './mobile-menu'
-import SectionRegions from './section-regions'
-import Footer from './footer'
-import Access from './access'
+import SectionRegions       from './section-regions'
+import withNavigationAccess from '@client/components/wrappers/with-navigation-access'
 
 import '@client/styles/regions-page.styl'
 
 class RegionsPage extends Component {
+  static propTypes = {
+    token: string.isRequired
+  }
+
   render() {
-    const page = Number(this.props.match.params.page) || 1
+    const { token, match } = this.props,
+          page = Number(match.params.page) || 1
 
     return (
       <Fragment>
-        <Header />
-        <MobileMenu />
-        <div id="content" className="page-container">
-          <Access users>
-            <SectionRegions page={page} />
-          </Access>
-        </div>
-        <Footer />
+        <SectionRegions page={page} token={token} />
       </Fragment>
     )
   }
 }
 
-export default RegionsPage
+export default withNavigationAccess()(RegionsPage)

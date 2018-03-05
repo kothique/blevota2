@@ -18,7 +18,7 @@ class SectionRegions extends Component {
   static propTypes = {
     page: number,
     error: string,
-    token: string,
+    token: string.isRequired,
     allRegions: arrayOf(object),
     isFetching: bool.isRequired
   }
@@ -35,23 +35,21 @@ class SectionRegions extends Component {
         .catch(() => {})
     }
 
-    if (this.intervalID)
+    if (this.intervalID) {
       window.clearInterval(this.intervalID)
+    }
     this.intervalID = window.setInterval(fetchRegions, 1000)
     fetchRegions()
   }
 
   stopFetchingRegions() {
-    if (this.intervalID)
+    if (this.intervalID) {
       window.clearInterval(this.intervalID)
+    }
   }
 
   componentDidMount() {
-    const { token } = this.props
-
-    if (token) {
-      this.startFetchingRegions(token)
-    }
+    this.startFetchingRegions(this.props.token)
   }
 
   componentDidUpdate(prevProps) {
@@ -103,10 +101,9 @@ class SectionRegions extends Component {
 }
 
 export default connect(
-  ({ regions, login }) => ({
-    error: regions.error,
-    allRegions: regions.regions,
-    isFetching: regions.isFetching,
-    token: login.token
+  (state) => ({
+    error:      state.regions.error,
+    allRegions: state.regions.regions,
+    isFetching: state.regions.isFetching,
   })
 )(SectionRegions)

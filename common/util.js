@@ -85,3 +85,15 @@ const abstract = function abstract() {
   throw Error('this method must be overrided')
 }
 module.exports.abstract = abstract
+
+/**
+ * Return display name of the specified component. It is useful for
+ * HOCs to create display names like WithSubscription(WrappedComponent).
+ *
+ * @param {Component} Component - Component class.
+ * @return {string}
+ */
+const getReactComponentDisplayName = (Component) => {
+  return Component.displayName || Component.name || 'Component'
+}
+module.exports.getReactComponentDisplayName = getReactComponentDisplayName

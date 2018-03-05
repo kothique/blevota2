@@ -14,8 +14,6 @@ import SkillState from '@common/skill-state'
 import './registerWorldObjects'
 
 export default class Game extends EventEmitter {
-  static host = 'http://localhost:3000/'
-
   constructor(options) {
     super()
 
@@ -23,6 +21,8 @@ export default class Game extends EventEmitter {
     this.user = user
     this.orbID = null
     this.regionName = regionName
+
+    this.host = host
 
     this.svg = context
     this.chat = chat
@@ -159,7 +159,7 @@ export default class Game extends EventEmitter {
     /*
       Connect to the game host with socket.io
     */
-    const socket = this.socket = ioc(Game.host, {
+    const socket = this.socket = ioc(this.host, {
       query: {
         token,
         regionName: this.regionName

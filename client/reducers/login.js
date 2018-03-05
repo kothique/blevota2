@@ -4,6 +4,7 @@ import { decode } from 'jsonwebtoken'
 const defaultState = {
   isFetching: false,
   error: undefined,
+  user: undefined,
   token: undefined
 }
 
@@ -53,13 +54,7 @@ export const loginReducer = (state = defaultState, action) => {
         user: undefined
       }
     case INVALIDATE_LOGIN:
-      return {
-        ...state,
-        isFetching: false,
-        error: undefined,
-        token: undefined,
-        user: undefined
-      }
+      return defaultState
     default:
       return state
   }

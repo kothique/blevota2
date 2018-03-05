@@ -7,8 +7,6 @@
 - physics
   - verlet integration (!)
   - spacial partitioning instead of brute-force
-- game mechanics
-  - skills (!)
 - ui
   - dark background around login- and register forms
   - 404 not found page
@@ -20,7 +18,7 @@
   - UDP (WebRTC??)
   - profiling
 - tests
-  - react components (far away future)
   - tests/serialization/entities/entity
   - server/game/collision-detector.js
   - change entity ids from 24b-strings to numbers
+  - react components (far away future)
