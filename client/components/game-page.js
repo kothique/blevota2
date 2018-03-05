@@ -6,12 +6,13 @@ import { connect } from 'react-redux'
 import { func, object, string } from 'prop-types'
 import { push } from 'react-router-redux'
 
-import Game       from '@client/game'
-import HUD        from '@client/components/hud'
-import LoginForm  from '@client/components/login-form'
-import Forbidden  from '@client/components/error/forbidden'
-import withAccess from '@client/components/wrappers/with-access'
-import SkillState from '@common/skill-state'
+import Game            from '@client/game'
+import HUD             from '@client/components/hud'
+import LoginForm       from '@client/components/login-form'
+import ModalBackground from '@client/components/modal-background'
+import Forbidden       from '@client/components/error/forbidden'
+import withAccess      from '@client/components/wrappers/with-access'
+import SkillState      from '@common/skill-state'
 
 import '@client/styles/game-page.styl'
 
@@ -133,6 +134,7 @@ export default withAccess(
   null,
   <Fragment>
     <LoginForm />
+    <ModalBackground />
     <Forbidden />
   </Fragment>
 )(connect()(GamePage))

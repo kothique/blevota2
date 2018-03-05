@@ -1,0 +1,16 @@
+@import './_variables'
+
+#modal-background
+  display none
+
+  position fixed
+  left 0
+  top 0
+  width 100%
+  height 100%
+
+  background-color alpha(modal-background-color, modal-background-opacity)
+  z-index modal-background-z
+
+  &.open
+    display initial

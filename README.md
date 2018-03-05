@@ -12,8 +12,6 @@
 * all 18 skills
 
 ### **UI**
-* modals
-  * dark background around login and register forms
 * game page
   * skill icons
   * adequate behaviour

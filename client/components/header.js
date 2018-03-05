@@ -6,8 +6,6 @@ import { setModalMode, toggleRegisterForm, toggleLoginForm } from '@client/reduc
 import * as Modals from '@client/reducers/modals'
 import { toggleMobileMenu } from '@client/reducers/mobile-menu'
 import { logout }           from '@client/reducers/login'
-import LoginForm            from './login-form'
-import RegisterForm         from './register-form'
 
 import '@client/styles/header.styl'
 
@@ -86,8 +84,6 @@ class Header extends Component {
             </div>
           </div>
         </header>
-        <LoginForm />
-        <RegisterForm />
       </Fragment>
     )
   }

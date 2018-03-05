@@ -5,9 +5,12 @@
 import React, { Component, Fragment } from 'react'
 import hoistNonReactStatic from 'hoist-non-react-statics'
 
-import Header     from '@client/components/header'
-import MobileMenu from '@client/components/mobile-menu'
-import Footer     from '@client/components/footer'
+import Header          from '@client/components/header'
+import MobileMenu      from '@client/components/mobile-menu'
+import Footer          from '@client/components/footer'
+import LoginForm       from '@client/components/login-form'
+import RegisterForm    from '@client/components/register-form'
+import ModalBackground from '@client/components/modal-background'
 import { getReactComponentDisplayName } from '@common/util'
 
 /**
@@ -29,6 +32,10 @@ const withNavigation = () => {
               <WrappedComponent {...this.props} />
             </div>
             <Footer />
+
+            <LoginForm />
+            <RegisterForm />
+            <ModalBackground />
           </Fragment>
         )
       }
