@@ -7,11 +7,6 @@ const child_process = require('child_process')
 const WebSocket = require('ws')
 
 /**
- * Used to to feed different ports to different children.
- */
-let childIndex = 1
-
-/**
  * @class
  *
  * @description
@@ -36,15 +31,19 @@ class Region {
       let player
 
       switch (msg.type) {
-        case 'FRAME':
-          const { world, skills, timestamp } = msg.frame
+        case 'FRAMES':
+          const { frames, timestamp } = msg
 
-          forIn(this.playersByID, ({ socket, orbID }, playerID) => {
-            socket.emit('frame', {
-              world,
-              skills: skills[orbID],
-              timestamp
-            })
+          forIn(frames, ({ world, skills }, orbID) => {
+            const player = this.playersByOrbID[orbID]
+
+            if (player) {
+              player.socket.emit('frame', {
+                world,
+                skills,
+                timestamp
+              })
+            }
           })
           break
 

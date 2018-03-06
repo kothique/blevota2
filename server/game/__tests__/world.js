@@ -159,4 +159,10 @@ describe('World', () => {
 
     expect(world.toBuffer().equals(buffer)).toBeTruthy()
   })
+
+  /** @todo */
+  test('should serialize a rectangle correctly')
+
+  /** @todo */
+  test('rectangleToBuffer() should give the same result as serializeToBuffer(*new buffer*, 0)')
 })

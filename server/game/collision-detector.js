@@ -3,6 +3,7 @@
  */
 
 const merge = require('lodash/merge')
+const forIn = require('lodash/forIn')
 
 const { Vector, V } = require('../../common/vector')
 
@@ -106,6 +107,28 @@ class CollisionDetector {
         }
       }
     }
+  }
+
+  /**
+   * Return all entitites in the specified rectangle.
+   *
+   * @param {object} rectangle
+   * @param {Vector} rectangle.p1
+   * @param {Vector} rectangle.p2
+   * @return {array}
+   */
+  queryRectangle({ p1, p2 }) {
+    const result = []
+
+    forIn(this.boxes, (box, id) => {
+      if (box.p1.x < p2.x && box.p2.x > p1.x &&
+          box.p1.y < p2.y && box.p2.y > p1.y) {
+
+          result.push(id)
+      }
+    })
+
+    return result
   }
 }
 

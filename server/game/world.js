@@ -271,6 +271,52 @@ class World extends EventEmitter {
 
     return buffer
   }
+
+  /**
+   * Serialize only a limited rectangle area in the world.
+   *
+   * @param {object} rectangle
+   * @param {Vector} rectangle.p1
+   * @param {Vector} rectangle.p2
+   * @return {Buffer}
+   */
+  rectangleToBuffer(rectangle) {
+    const ids      = this.detector.queryRectangle(rectangle),
+          entities = ids.map((id) => {
+            const entity = this.entities[id]
+
+            return {
+              id,
+              entity,
+              length: entity.serializedLength()
+            }
+          }),
+          entitiesLength = entities.reduce((acc, { length }) => acc + 2 + 1 + length, 0),
+          buffer         = Buffer.allocUnsafe(2 + 2 + 2 + entitiesLength)
+
+    let offset = 0
+    buffer.writeUInt16BE(this.size.x, offset)
+    offset += 2
+
+    buffer.writeUInt16BE(this.size.y, offset)
+    offset += 2
+
+    buffer.writeUInt16BE(entities.length, offset)
+    offset += 2
+
+    entities.forEach(({ id, entity, length }) => {
+      buffer.writeUInt16BE(id, offset)
+      offset += 2
+
+      buffer.writeUInt8(entity.constructor.getType(), offset)
+      offset += 1
+
+      entity.serialize(buffer, offset)
+      offset += length
+    })
+
+    return buffer
+  }
 }
 
 module.exports = World

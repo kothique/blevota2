@@ -40,4 +40,10 @@ describe('Orb', () => {
     expect(buffer.readDoubleBE(offset)).toBe(10)
     offset += 8
   })
+
+  /** @todo */
+  test('should serialize skills correctly')
+
+  /** @todo */
+  test('skillsToBuffer() is the same as serializeSkills(*new buffer*, 0)')
 })

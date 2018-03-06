@@ -145,12 +145,26 @@ class Orb extends Entity {
 
   /**
    * The size of the orb's skills serialized.
+   *
+   * @return {number}
    */
   serializedSkillsLength() {
     const skills = this.skillManager.skills
 
     return skills.skillA1.serializedLength() +
            skills.skillA2.serializedLength()
+  }
+
+  /**
+   * Create a new buffer with skills written to it.
+   *
+   * @return {Buffer}
+   */
+  skillsToBuffer() {
+    const buffer = Buffer.allocUnsafe(this.serializedSkillsLength())
+    this.serializeSkills(buffer)
+
+    return buffer
   }
 
   /**

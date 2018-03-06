@@ -6,7 +6,7 @@
 
 ### Physics
 * verlet integration
-* spacial partitioning instead of brute*force
+* _spacial partitioning instead of brute-force_
 
 ### **Game Mechanics**
 * all 18 skills
@@ -14,10 +14,10 @@
 ### **UI**
 * game page
   * skill icons
-* 404 not found page
+* _404 not found page_
 * user profile
-* persistent redux state
-* mobile menu
+* _persistent redux state_
+* _mobile menu_
 
 ### Optimization
 * UDP (WebRTC??)

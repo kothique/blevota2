@@ -12,6 +12,11 @@ const Orb = require('./entities/orb')
 const { Vector, V } = require('../../common/vector')
 
 /**
+ * Define the rectangle around the orb that can be seen by the player.
+ */
+const VISION = V(1366, 768).divide(2)
+
+/**
  * @class
  *
  * @description
@@ -28,7 +33,7 @@ const Simulator = {
    */
   init(options = Object.create(null)) {
     this.world = options.world || new World({
-      size: V(800, 600)
+      size: V(10000, 10000)
     })
 
     this.world.on('death', (orbID) => {
@@ -156,26 +161,7 @@ const Simulator = {
       }
 
       if (integrated) {
-        const skills = Object.create(null)
-
-        forIn(this.world.entities, (entity, id) => {
-          if (entity instanceof Orb) {
-            const buffer = Buffer.allocUnsafe(entity.serializedSkillsLength())
-            entity.serializeSkills(buffer)
-
-            skills[id] = buffer
-          }
-        })
-
-        process.send({
-          type: 'FRAME',
-          frame: {
-            world: this.world.toBuffer(),
-            skills,
-            timestamp: this.t
-          },
-        })
-
+        this.sendFrames()
         this.world.handleCollisions()
       }
 
@@ -196,6 +182,35 @@ const Simulator = {
     this.continue = false
 
     console.log(`Simulation stopped (PID: ${process.pid})`)
+  },
+
+  /**
+   * Send frames to the parent process.
+   */
+  sendFrames() {
+    const frames = Object.create(null)
+
+    forIn(this.world.entities, (entity, id) => {
+      if (entity instanceof Orb) {
+        const orb    = entity,
+              skills = orb.skillsToBuffer(),
+              world  = this.world.rectangleToBuffer({
+                p1: Vector.subtract(orb.position, VISION),
+                p2: Vector.     add(orb.position, VISION)
+              })
+
+        frames[id] = {
+          world,
+          skills
+        }
+      }
+    })
+
+    process.send({
+      type: 'FRAMES',
+      frames,
+      timestamp: this.t
+    })
   }
 }
 
