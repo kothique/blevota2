@@ -1,5 +1,5 @@
 /**
- * @module
+ * @module client/components/with-navigation
  */
 
 import React, { Component, Fragment } from 'react'

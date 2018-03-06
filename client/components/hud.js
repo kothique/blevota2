@@ -1,5 +1,5 @@
 /**
- * @module
+ * @module client/components/hud
  */
 
 import React, { Component } from 'react'

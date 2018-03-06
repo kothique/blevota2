@@ -1,5 +1,5 @@
 /**
- * @module
+ * @module client/components/error/forbidden
  */
 
 import React, { Component } from 'react'

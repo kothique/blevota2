@@ -1,5 +1,5 @@
 /**
- * @module
+ * @module client/components/modal-background
  */
 
 import React, { Component } from 'react'

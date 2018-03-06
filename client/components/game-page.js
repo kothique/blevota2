@@ -1,5 +1,5 @@
 /**
- * @module
+ * @module client/components/game-page
  */
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'

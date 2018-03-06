@@ -1,5 +1,5 @@
 /**
- * @module
+ * @module client/components/wrappers/with-navigation-access
  */
 
 import React from 'react'

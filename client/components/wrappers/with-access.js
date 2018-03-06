@@ -1,5 +1,5 @@
 /**
- * @module
+ * @module client/components/wrappers/with-access
  */
 
 import React, { Component } from 'react'
