@@ -25,6 +25,8 @@ class Entity {
     this.previous.position = V(0, 0)
 
     this.effects = new Set
+
+    this.invisible = false
   }
 
   /**
@@ -80,6 +82,20 @@ class Entity {
    * Rendering.
    */
   render() {}
+
+  /**
+   * Make the entity invisible.
+   */
+  hide() {
+    this.invisible = true
+  }
+
+  /**
+   * Show the entity on the screen.
+   */
+  show() {
+    this.invisible = false
+  }
 }
 
 export default Entity

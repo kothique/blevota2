@@ -79,4 +79,12 @@ describe('Entity', () => {
     expect(effectDesc1.constructor).toBeCalled()
     expect(effectDesc2.constructor).toBeCalled()
   })
+
+  test('hide() & show()', () => {
+    expect(entity.invisible).toBeFalsy()
+    entity.hide()
+    expect(entity.invisible).toBeTruthy()
+    entity.show()
+    expect(entity.invisible).toBeFalsy()
+  })
 })

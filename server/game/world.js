@@ -225,22 +225,35 @@ class World extends EventEmitter {
    * @param {number} offset
    */
   serialize(buffer, offset = 0) {
+    /** Write world size. */
     buffer.writeUInt16BE(this.size.x, offset)
     offset += 2
 
     buffer.writeUInt16BE(this.size.y, offset)
     offset += 2
 
+    /** Write viewport. */
+    buffer.writeUInt16BE(0, offset)
+    offset += 2
+
+    buffer.writeUInt16BE(0, offset)
+    offset += 2
+
+    /** Write number of entities. */
     buffer.writeUInt16BE(Object.keys(this.entities).length, offset)
     offset += 2
 
+    /** Write entities. */
     forIn(this.entities, (entity, id) => {
+      /** Write entity id. */
       buffer.writeUInt16BE(id, offset)
       offset += 2
 
+      /** Write entity type. */
       buffer.writeUInt8(entity.constructor.getType(), offset)
       offset += 1
 
+      /** Write entity state. */
       entity.serialize(buffer, offset)
       offset += entity.serializedLength()
     })
@@ -257,7 +270,7 @@ class World extends EventEmitter {
       entitiesLength += 2 + 1 + entity.serializedLength()
     })
 
-    return 2 + 2 + 2 + entitiesLength
+    return 2 + 2 + 2 + 2 + 2 + entitiesLength
   }
 
   /**
@@ -292,25 +305,38 @@ class World extends EventEmitter {
             }
           }),
           entitiesLength = entities.reduce((acc, { length }) => acc + 2 + 1 + length, 0),
-          buffer         = Buffer.allocUnsafe(2 + 2 + 2 + entitiesLength)
+          buffer         = Buffer.allocUnsafe(5 * 2 + entitiesLength)
 
     let offset = 0
+    /* Write world size. */
     buffer.writeUInt16BE(this.size.x, offset)
     offset += 2
 
     buffer.writeUInt16BE(this.size.y, offset)
     offset += 2
 
+    /* Write viewport position. */
+    buffer.writeInt16BE(rectangle.p1.x, offset)
+    offset += 2
+
+    buffer.writeInt16BE(rectangle.p1.y, offset)
+    offset += 2
+
+    /* Write number of entities. */
     buffer.writeUInt16BE(entities.length, offset)
     offset += 2
 
+    /* Write entities. */
     entities.forEach(({ id, entity, length }) => {
+      /* Write entity id. */
       buffer.writeUInt16BE(id, offset)
       offset += 2
 
+      /* Write entity type. */
       buffer.writeUInt8(entity.constructor.getType(), offset)
       offset += 1
 
+      /* Write entity state. */
       entity.serialize(buffer, offset)
       offset += length
     })

@@ -33,16 +33,21 @@ export default class Game extends EventEmitter {
 
     this.svg.addEventListener('mousemove', ({ offsetX, offsetY }) => {
       this.sendControls({
-        pX: offsetX,
-        pY: offsetY
+        pX: World.viewport.x + offsetX,
+        pY: World.viewport.y + offsetY
       })
     })
 
     this.svg.addEventListener('mouseup', ({ offsetX, offsetY, button }) => {
       const controls = {
-        pX: offsetX,
-        pY: offsetY
+        pX: World.viewport.x + offsetX,
+        pY: World.viewport.y + offsetY
       }
+
+      console.log('viewport: ', World.viewport)
+      console.log('offset: ', { pX: offsetX, pY: offsetY })
+      console.log('controls: ', controls)
+      console.log('orb: ', EntityFactory.entities[this.orbID].position)
 
       if (button === 0) {
         controls.move = false
@@ -53,8 +58,8 @@ export default class Game extends EventEmitter {
 
     this.svg.addEventListener('mousedown', ({ offsetX, offsetY, button }) => {
       const controls = {
-        pX: offsetX,
-        pY: offsetY
+        pX: World.viewport.x + offsetX,
+        pY: World.viewport.y + offsetY
       }
 
       if (button === 0) {
@@ -140,6 +145,20 @@ export default class Game extends EventEmitter {
         //     next: currentTimestamp
         //   })
         // }
+
+        let div = this.div
+        if (!this.div) {
+          div = this.div = this.div || document.createElement('div')
+          div.style.border = '3px solid black'
+          div.style.position = 'fixed'
+          div.style.width = World.size.x + 'px'
+          div.style.height = World.size.y + 'px'
+          div.style.pointerEvents = 'none'
+          document.body.appendChild(div)
+        }
+
+        div.style.left = -World.viewport.x + 'px'
+        div.style.top = -World.viewport.y + 'px'
 
         World.render()
         if (EntityFactory.entities[this.orbID]) {

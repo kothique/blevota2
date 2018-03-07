@@ -90,15 +90,18 @@ class Orb extends Entity {
 
   /**
    * Set attributes of the SVG nodes.
+   *
+   * @param {Vector} viewport
    */
-  render() {
+  render(viewport = V(0, 0)) {
     if (!this.toRender) {
       return
     }
     this.toRender = false
 
-    const hpValue = this.hp / this.maxHp,
-          mpValue = this.mp / this.maxMp
+    const hpValue  = this.maxHp ? this.hp / this.maxHp : 0,
+          mpValue  = this.maxMp ? this.mp / this.maxMp : 0,
+          position = Vector.subtract(this.position, viewport)
 
     this.nodes.circle.setAttributeNS(null, 'r', this.radius)
     this.nodes.mp    .setAttributeNS(null, 'r', 0.8 * this.radius)
@@ -107,7 +110,29 @@ class Orb extends Entity {
     this.nodes.mp    .setAttributeNS(null, 'fill-opacity', mpValue)
     this.nodes.hp    .setAttributeNS(null, 'fill-opacity', hpValue)
 
-    this.node        .setAttributeNS(null, 'transform', `translate(${this.position.x} ${this.position.y})`)
+    this.node        .setAttributeNS(null, 'transform', `translate(${position.x} ${position.y})`)
+  }
+
+  /**
+   * Hide the orb from the screen.
+   *
+   * @override
+   */
+  hide() {
+    super.hide()
+
+    this.node.setAttributeNS(null, 'visibility', 'hidden')
+  }
+
+  /**
+   * Show the orb on the screen.
+   *
+   * @override
+   */
+  show() {
+    super.show()
+
+    this.node.setAttributeNS(null, 'visibility', 'visible')
   }
 }
 

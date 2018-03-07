@@ -2,6 +2,8 @@
  * @module server/game/entities/orb
  */
 
+ const forIn = require('lodash/forIn')
+
 const SkillManager = require('../skill-manager')
 const Entity = require('./entity')
 const { ORB } = require('../../../common/entities')
@@ -35,6 +37,7 @@ class Orb extends Entity {
     this.maxMp  = options.maxMp
     this.mp     = options.mp
 
+    /* Don't forget to change client/Orb#parse when adding new skills */
     this.skillManager = new SkillManager(this, {
       skillA1: new SpeedUp,
       skillA2: new SlowDown
@@ -134,11 +137,10 @@ class Orb extends Entity {
   serializeSkills(buffer, offset = 0) {
     const skills = this.skillManager.skills
 
-    skills.skillA1.serialize(buffer, offset)
-    offset += skills.skillA1.serializedLength()
-
-    skills.skillA2.serialize(buffer, offset)
-    offset += skills.skillA2.serializedLength()
+    forIn(this.skillManager.skills, (skill) => {
+      skill.serialize(buffer, offset)
+      offset += skill.serializedLength()
+    })
 
     return this
   }
@@ -149,10 +151,13 @@ class Orb extends Entity {
    * @return {number}
    */
   serializedSkillsLength() {
-    const skills = this.skillManager.skills
+    let length = 0
 
-    return skills.skillA1.serializedLength() +
-           skills.skillA2.serializedLength()
+    forIn(this.skillManager.skills, (skill) => {
+      length += skill.serializedLength()
+    })
+    
+    return length
   }
 
   /**

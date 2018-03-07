@@ -130,6 +130,12 @@ describe('World', () => {
     expect(buffer.readUInt16BE(offset)).toBe(600)
     offset += 2
 
+    expect(buffer.readUInt16BE(offset)).toBe(0)
+    offset += 2
+
+    expect(buffer.readUInt16BE(offset)).toBe(0)
+    offset += 2
+
     const entitiesCount = buffer.readUInt16BE(offset)
     offset += 2
     expect(entitiesCount).toBe(2)

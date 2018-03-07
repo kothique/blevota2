@@ -33,6 +33,7 @@ const World = {
   clear() {
     this.svg = null
     this.size = V(0, 0)
+    this.viewport = V(0, 0)
     EntityFactory.clear()
 
     return this
@@ -80,21 +81,33 @@ const World = {
    * @chainable
    */
   parse(buffer, offset = 0) {
+    /* Hide all entities. */
+    forIn(EntityFactory.entities, (entity) => entity.hide())
+
+    /* Read world size. */
     this.size = V(
-      /** 0-1: this.size.x */
       buffer.readUInt16BE(offset),
-      /** 2-3 this.size.y */
       buffer.readUInt16BE(offset + 2)
     )
     offset += 4
 
-    /** 4-5: number of entities */
+    /* Read viewport position. */
+    this.viewport = V(
+      buffer.readInt16BE(offset),
+      buffer.readInt16BE(offset + 2)
+    )
+    offset += 4
+
+    /* Read number of entities. */
     const entitiesCount = buffer.readUInt16BE(offset)
     offset += 2
 
-    /** 6-?: entities */
+    /* Read entities. */
     for (let i = 0; i < entitiesCount; i++) {
       const result = EntityFactory.deserialize(buffer, offset)
+
+      /* Only show received entities. */
+      result.entity.show()
 
       offset = result.offset
     }
@@ -109,7 +122,9 @@ const World = {
    */
   render() {
     forIn(EntityFactory.entities, (entity) => {
-      entity.render()
+      if (!entity.invisible) {
+        entity.render(this.viewport)
+      }
     })
 
     return this
