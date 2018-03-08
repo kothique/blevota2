@@ -97,3 +97,52 @@ const getReactComponentDisplayName = (Component) => {
   return Component.displayName || Component.name || 'Component'
 }
 module.exports.getReactComponentDisplayName = getReactComponentDisplayName
+
+/**
+ * Convert global position to SVG viewBox position.
+ *
+ * @param {Node}   svg
+ * @param {Vector} point
+ * @return {Vector}
+ */
+const globalToSVG = (svg, point) => {
+  let svgPoint = svg.createSVGPoint()
+  svgPoint.x = point.x
+  svgPoint.y = point.y
+  svgPoint = svgPoint.matrixTransform(svg.getScreenCTM().inverse())
+
+  return V(svgPoint.x, svgPoint.y)
+}
+module.exports.globalToSVG = globalToSVG
+
+/**
+ * Convert SVG viewBox position to global position.
+ *
+ * @param {Node}   svg
+ * @param {Vector} point
+ * @return {Vector}
+ */
+const svgToGlobal = (svg, point) => {
+  let svgPoint = svg.createSVGPoint()
+  svgPoint.x = point.x
+  svgPoint.y = point.y
+  svgPoint = svgPoint.matrixTransform(svg.getScreenCTM())
+
+  return V(svgPoint.x, svgPoint.y)
+}
+module.exports.svgToGlobal = svgToGlobal
+
+/**
+ * Get viewBox min and max points.
+ *
+ * @param {Node} svg
+ * @return {object}
+ */
+const getViewBox = (svg) => {
+  return {
+    minP: svgToGlobal(svg, V(0, 0)),
+    maxP: svgToGlobal(svg, V(1365, 767)),
+    scale: svg.getScreenCTM().a
+  }
+}
+module.exports.getViewBox = getViewBox

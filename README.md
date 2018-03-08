@@ -2,6 +2,9 @@
 
 ## ROADMAP
 
+### Now!!
+* store vision size in common/game.js
+
 ### Refactoring
 
 ### Physics

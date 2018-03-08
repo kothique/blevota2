@@ -2,9 +2,11 @@
  * @module client/game/decorator
  */
 
-import { Vector, V } from '@common/vector'
+import { Vector, V }  from '@common/vector'
+import { getViewBox } from '@common/util'
 
-import Border from '@client/game/decorations/border'
+import Border      from '@client/game/decorations/border'
+import Letterboxer from '@client/game/decorations/letterboxer'
 
 /**
  * @class
@@ -20,21 +22,17 @@ const Decorator = {
     this.clear()
 
     this.svg = options.svg
-
-    this.border = new Border
-    this.svg.appendChild(this.border.node)
+    this.border = new Border(this.svg)
+    Letterboxer.init()
   },
 
   /**
    * Remove all decorations.
    */
   clear() {
-    if (this.svg) {
-      this.svg.removeChild(this.border.node)
-    }
-
-    this.border = null
     this.svg = null
+    this.border = null
+    Letterboxer.clear()
   },
 
   /**
@@ -45,10 +43,14 @@ const Decorator = {
    * @param {Vector} options.viewport
    */
   render(options) {
-    const { worldSize, viewport } = options
+    const { worldSize, viewport } = options,
+          viewBox = getViewBox(this.svg),
+          tileSize = 64
 
-    this.svg.style.backgroundPosition = `${-viewport.x % 64}px ${-viewport.y % 64}px`
+    this.svg.style.backgroundPosition = `${viewBox.minP.x + -viewport.x % tileSize}px ${viewBox.minP.y + -viewport.y % tileSize}px`
+    this.svg.style.backgroundSize = `${tileSize}px ${tileSize}px`
     this.border.render(worldSize, viewport)
+    Letterboxer.render(viewBox)
   }
 }
 

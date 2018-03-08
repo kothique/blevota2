@@ -122,8 +122,14 @@ class GamePage extends Component {
           id="gp-game"
           version="1.1"
           baseProfile="full"
-          xmlns="http://www.w3.org/2000/svg">
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1366 768"
+          preserveAspectRatio="xMidYMin meet">
         </svg>
+        <div id="gp-bar-top" className="gp-bar"></div>
+        <div id="gp-bar-bottom" className="gp-bar"></div>
+        <div id="gp-bar-left" className="gp-bar"></div>
+        <div id="gp-bar-right" className="gp-bar"></div>
         <HUD {...this.state} />
       </main>
     )

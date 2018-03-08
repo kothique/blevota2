@@ -1,5 +1,5 @@
 /**
- * @module client/game/index
+  this* @module client/game/index
  */
 
 import EventEmitter from 'events'
@@ -13,11 +13,42 @@ import World         from '@client/game/world'
 import EntityFactory from '@client/game/entity-factory'
 import Decorator     from '@client/game/decorator'
 
-import * as entities from '@common/entities'
-import SkillState    from '@common/skill-state'
-import { Vector, V } from '@common/vector'
+import * as entities   from '@common/entities'
+import SkillState      from '@common/skill-state'
+import { Vector, V }   from '@common/vector'
+import { globalToSVG } from '@common/util'
 
 import '@client/game/registerWorldObjects'
+
+/**
+ * @constant
+ */
+const KEYMAP = {
+  'q': 'skillA1',
+  'w': 'skillA2',
+  'e': 'skillA3',
+
+  'r': 'skillA4',
+  't': 'skillA5',
+  'y': 'skillA6',
+
+  'a': 'skillB1',
+  's': 'skillB2',
+  'd': 'skillB3',
+
+  'f': 'skillB4',
+  'g': 'skillB5',
+  'h': 'skillB6',
+
+  'z': 'skillC1',
+  'x': 'skillC2',
+  'c': 'skillC3',
+
+  'v': 'skillC4',
+  'b': 'skillC5',
+  'n': 'skillC6',
+}
+
 
 /**
  * @class
@@ -26,110 +57,25 @@ class Game extends EventEmitter {
   constructor(options) {
     super()
 
-    const { svg, host, token, user, regionName } = options
-    this.user = user
-    this.orbID = null
-    this.regionName = regionName
+    const { svg, scene, host, token, user, regionName } = options
+    this.svg = svg
     this.host = host
+    this.user = user
+    this.regionName = regionName
 
-    this.lastP = V(0, 0) // last pointer position
+    this.orbID = null
+    this.lastP = null
     this.skills = Object.create(null)
 
     World.init({ svg })
     Decorator.init({ svg })
 
-    svg.addEventListener('mousemove', ({ offsetX, offsetY }) => {
-      this.sendControls({
-        pX: World.viewport.x + offsetX,
-        pY: World.viewport.y + offsetY
-      })
-
-      this.lastP = V(offsetX, offsetY)
-    })
-
-    svg.addEventListener('mouseup', ({ offsetX, offsetY, button }) => {
-      const controls = {
-        pX: World.viewport.x + offsetX,
-        pY: World.viewport.y + offsetY
-      }
-
-      if (button === 0) {
-        controls.move = false
-      }
-
-      this.sendControls(controls)
-    })
-
-    svg.addEventListener('mousedown', ({ offsetX, offsetY, button }) => {
-      const controls = {
-        pX: World.viewport.x + offsetX,
-        pY: World.viewport.y + offsetY
-      }
-
-      if (button === 0) {
-        controls.move = true
-      }
-
-      this.sendControls(controls)
-    })
-
-    svg.addEventListener('mouseleave', () => {
-      this.sendControls({ move: false })
-    })
-
-    const keymap = {
-      'q': 'skillA1',
-      'w': 'skillA2',
-      'e': 'skillA3',
-
-      'r': 'skillA4',
-      't': 'skillA5',
-      'y': 'skillA6',
-
-      'a': 'skillB1',
-      's': 'skillB2',
-      'd': 'skillB3',
-
-      'f': 'skillB4',
-      'g': 'skillB5',
-      'h': 'skillB6',
-
-      'z': 'skillC1',
-      'x': 'skillC2',
-      'c': 'skillC3',
-
-      'v': 'skillC4',
-      'b': 'skillC5',
-      'n': 'skillC6',
-    }
-
-    document.addEventListener('keyup', (event) => {
-      const controls = Object.create(null)
-
-      const skill = keymap[event.key]
-      if (skill) {
-        controls[skill] = false
-        event.preventDefault()
-      }
-
-      if (Object.keys(controls).length !== 0) {
-        this.sendControls(controls)
-      }
-    })
-
-    document.addEventListener('keydown', (event) => {
-      const controls = Object.create(null)
-
-      const skill = keymap[event.key]
-      if (skill) {
-        controls[skill] = true
-        event.preventDefault()
-      }
-
-      if (Object.keys(controls).length !== 0) {
-        this.sendControls(controls)
-      }
-    })
+    document.addEventListener('mousemove',  this.onMouseMove)
+    document.addEventListener('mouseup',    this.onMouseUp)
+    document.addEventListener('mousedown',  this.onMouseDown)
+    document.addEventListener('mouseleave', this.onMouseLeave)
+    document.addEventListener('keyup',      this.onKeyUp)
+    document.addEventListener('keydown',    this.onKeyDown)
 
     /*
       Configure playout buffer
@@ -148,12 +94,14 @@ class Game extends EventEmitter {
 
       /**
        * Even though World.viewport has changed, pointer position has not,
-       * so, mousemove will not be triggered. Hence send new position manually.
+       * so mousemove will not be triggered. Hence send new position manually.
        */
-      this.sendControls({
-        pX: World.viewport.x + this.lastP.x,
-        pY: World.viewport.y + this.lastP.y
-      })
+      if (this.lastP) {
+        this.sendControls({
+          pX: this.lastP.x,
+          pY: this.lastP.y
+        })
+      }
 
       // if (previousFrame) {
       //   World.extrapolate({
@@ -238,11 +186,92 @@ class Game extends EventEmitter {
     })
   }
 
+  onMouseMove = ({ clientX, clientY }) => {
+    this.sendControls({
+      pX: clientX,
+      pY: clientY
+    })
+
+    this.lastP = V(clientX, clientY)
+  }
+
+  onMouseUp = ({ clientX, clientY, button }) => {
+    const controls = {
+      viewport: World.viewport,
+      clientX,
+      clientY
+    }
+
+    if (button === 0) {
+      controls.move = false
+    }
+
+    this.sendControls(controls)
+  }
+ 
+  onMouseDown = ({ clientX, clientY, button }) => {
+    const controls = {
+      viewport: World.viewport,
+      clientX,
+      clientY
+    }
+
+    if (button === 0) {
+      controls.move = true
+    }
+
+    this.sendControls(controls)
+  }
+
+  onMouseLeave = () => {
+    this.sendControls({ move: false })
+  }
+
+  onKeyUp = (event) => {
+    const controls = Object.create(null)
+
+    const skill = KEYMAP[event.key]
+    if (skill) {
+      controls[skill] = false
+      event.preventDefault()
+    }
+
+    if (Object.keys(controls).length !== 0) {
+      this.sendControls(controls)
+    }
+  }
+
+  onKeyDown = (event) => {
+    const controls = Object.create(null)
+
+    const skill = KEYMAP[event.key]
+    if (skill) {
+      controls[skill] = true
+      event.preventDefault()
+    }
+
+    if (Object.keys(controls).length !== 0) {
+      this.sendControls(controls)
+    }
+  }
+
   sendControls = (controls) => {
+    if (controls.pX) {
+      const newPoint = globalToSVG(this.svg, V(controls.pX, controls.pY))
+
+      controls.pX = World.viewport.x + newPoint.x
+      controls.pY = World.viewport.y + newPoint.y
+    }
+
     this.socket.emit('controls', controls)
   }
 
   stop = () => {
+    document.body.removeEventListener('mousemove',  this.onMouseMove)
+    document.body.removeEventListener('mouseup',    this.onMouseUp)
+    document.body.removeEventListener('mousedown',  this.onMouseDown)
+    document.body.removeEventListener('mouseleave', this.onMouseLeave)
+
     World.clear()
     Decorator.clear()
     this.socket.disconnect()

@@ -10,12 +10,16 @@ import { Vector, V } from '@common/vector'
 class Border {
   /**
    * Create a new border.
+   *
+   * @param {Node} svg
    */
-  constructor() {
+  constructor(svg) {
     this.node = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     this.node.setAttributeNS(null, 'stroke', 'rgb(216, 112, 130)')
     this.node.setAttributeNS(null, 'stroke-width', 4)
     this.node.setAttributeNS(null, 'fill', 'none')
+
+    svg.appendChild(this.node)
   }
 
   /**
