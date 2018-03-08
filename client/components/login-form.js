@@ -23,7 +23,9 @@ class LoginForm extends Component {
   }
 
   focusTextUsername() {
-    this.textUsername.focus()
+    if (this.textUsername) {
+      this.textUsername.focus()
+    }
   }
 
   render() {
@@ -58,7 +60,7 @@ class LoginForm extends Component {
         </Fragment>
     }
 
-    return(
+    return (
       <div id="login-form"
         className={'modal-shadow' +
                   (open ? ' open' : '') +

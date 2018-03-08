@@ -15,14 +15,13 @@ const World = {
    * Initialize the world.
    *
    * @param {object} options
-   * @param {Node} options.svg - The <svg> element.
+   * @param {Node}   options.svg - The <svg> element.
    * @chainable
    */
   init(options) {
-    const { svg } = options
-
     this.clear()
-    this.svg = svg
+
+    this.svg = options.svg
   },
 
   /**

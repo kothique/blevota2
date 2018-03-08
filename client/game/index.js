@@ -1,53 +1,53 @@
+/**
+ * @module client/game/index
+ */
+
 import EventEmitter from 'events'
 import ioc from 'socket.io-client'
 import { Buffer } from 'buffer-browserify'
 import _ from 'lodash'
 
-import Keyboard from './keyboard'
-import PlayoutBuffer from './playoutbuffer'
-import World from './game/world'
-import EntityFactory from './game/entity-factory'
+import Keyboard      from '@client/keyboard'
+import PlayoutBuffer from '@client/playoutbuffer'
+import World         from '@client/game/world'
+import EntityFactory from '@client/game/entity-factory'
+import Decorator     from '@client/game/decorator'
 
 import * as entities from '@common/entities'
-import SkillState from '@common/skill-state'
+import SkillState    from '@common/skill-state'
 
-import './registerWorldObjects'
+import '@client/game/registerWorldObjects'
 
-export default class Game extends EventEmitter {
+/**
+ * @class
+ */
+class Game extends EventEmitter {
   constructor(options) {
     super()
 
-    const { context, host, token, user, regionName } = options
+    const { svg, host, token, user, regionName } = options
     this.user = user
     this.orbID = null
     this.regionName = regionName
-
     this.host = host
 
-    this.svg = context
     this.skills = Object.create(null)
 
-    World.init({
-      svg:  this.svg
-    })
+    World.init({ svg })
+    Decorator.init({ svg })
 
-    this.svg.addEventListener('mousemove', ({ offsetX, offsetY }) => {
+    svg.addEventListener('mousemove', ({ offsetX, offsetY }) => {
       this.sendControls({
         pX: World.viewport.x + offsetX,
         pY: World.viewport.y + offsetY
       })
     })
 
-    this.svg.addEventListener('mouseup', ({ offsetX, offsetY, button }) => {
+    svg.addEventListener('mouseup', ({ offsetX, offsetY, button }) => {
       const controls = {
         pX: World.viewport.x + offsetX,
         pY: World.viewport.y + offsetY
       }
-
-      console.log('viewport: ', World.viewport)
-      console.log('offset: ', { pX: offsetX, pY: offsetY })
-      console.log('controls: ', controls)
-      console.log('orb: ', EntityFactory.entities[this.orbID].position)
 
       if (button === 0) {
         controls.move = false
@@ -56,7 +56,7 @@ export default class Game extends EventEmitter {
       this.sendControls(controls)
     })
 
-    this.svg.addEventListener('mousedown', ({ offsetX, offsetY, button }) => {
+    svg.addEventListener('mousedown', ({ offsetX, offsetY, button }) => {
       const controls = {
         pX: World.viewport.x + offsetX,
         pY: World.viewport.y + offsetY
@@ -127,43 +127,33 @@ export default class Game extends EventEmitter {
       Configure playout buffer
     */
     this.buffer = new PlayoutBuffer()
-    this.buffer.on('frame', ({
-      previousFrame,
-      frame,
-      currentTimestamp
-    }) => {
-      if (frame) {
-        if (frame.skills) {
-          this.parseSkills(frame.skills)
-        }
-        World.parse(frame.world)
+    this.buffer.on('frame', ({ previousFrame, frame, currentTimestamp }) => {
+      if (!frame) {
+        return
+      }
 
-        // if (previousFrame) {
-        //   World.extrapolate({
-        //     prev: previousFrame.timestamp,
-        //     curr: frame.timestamp,
-        //     next: currentTimestamp
-        //   })
-        // }
+      if (frame.skills) {
+        this.parseSkills(frame.skills)
+      }
 
-        let div = this.div
-        if (!this.div) {
-          div = this.div = this.div || document.createElement('div')
-          div.style.border = '3px solid black'
-          div.style.position = 'fixed'
-          div.style.width = World.size.x + 'px'
-          div.style.height = World.size.y + 'px'
-          div.style.pointerEvents = 'none'
-          document.body.appendChild(div)
-        }
+      World.parse(frame.world)
 
-        div.style.left = -World.viewport.x + 'px'
-        div.style.top = -World.viewport.y + 'px'
+      // if (previousFrame) {
+      //   World.extrapolate({
+      //     prev: previousFrame.timestamp,
+      //     curr: frame.timestamp,
+      //     next: currentTimestamp
+      //   })
+      // }
 
-        World.render()
-        if (EntityFactory.entities[this.orbID]) {
-          this.emit('orb', EntityFactory.entities[this.orbID])
-        }
+      World.render()
+      Decorator.render({
+        worldSize: World.size,
+        viewport: World.viewport
+      })
+
+      if (EntityFactory.entities[this.orbID]) {
+        this.emit('orb', EntityFactory.entities[this.orbID])
       }
     })
 
@@ -237,7 +227,10 @@ export default class Game extends EventEmitter {
 
   stop = () => {
     World.clear()
+    Decorator.clear()
     this.socket.disconnect()
+
+    this.svg = null
   }
 
   /**
@@ -284,3 +277,5 @@ export default class Game extends EventEmitter {
     }
   }
 }
+
+export default Game

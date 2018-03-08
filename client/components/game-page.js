@@ -83,14 +83,11 @@ class GamePage extends Component {
   componentDidMount() {
     const { dispatch, match, token, user } = this.props
     const { params: { regionName } } = match,
-          context = document.getElementById('gp-game')
+          svg = document.getElementById('gp-game')
 
     const game = this.game = new Game({
       host: HOST,
-      context,
-      token,
-      user,
-      regionName
+      svg, token, user, regionName
     })
 
     game.on('skills', this.onGameSkills)

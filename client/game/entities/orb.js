@@ -32,7 +32,7 @@ class Orb extends Entity {
 
     this.toRender = true
 
-    this.nodes = {}
+    this.nodes = Object.create(null)
 
     this.nodes.circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     this.nodes.circle.setAttributeNS(null, 'fill', isPlayer ? 'rgb(0, 255, 212)' : 'rgb(0, 101, 255)')
