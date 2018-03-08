@@ -33,7 +33,7 @@ const Simulator = {
    */
   init(options = Object.create(null)) {
     this.world = options.world || new World({
-      size: V(10000, 10000)
+      size: V(2000, 2000)
     })
 
     this.world.on('death', (orbID) => {

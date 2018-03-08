@@ -47,6 +47,7 @@ const Decorator = {
   render(options) {
     const { worldSize, viewport } = options
 
+    this.svg.style.backgroundPosition = `${-viewport.x % 64}px ${-viewport.y % 64}px`
     this.border.render(worldSize, viewport)
   }
 }

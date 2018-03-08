@@ -14,7 +14,7 @@ class Border {
   constructor() {
     this.node = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     this.node.setAttributeNS(null, 'stroke', 'rgb(216, 112, 130)')
-    this.node.setAttributeNS(null, 'stroke-width', 2)
+    this.node.setAttributeNS(null, 'stroke-width', 4)
     this.node.setAttributeNS(null, 'fill', 'none')
   }
 

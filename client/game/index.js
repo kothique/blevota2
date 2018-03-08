@@ -15,6 +15,7 @@ import Decorator     from '@client/game/decorator'
 
 import * as entities from '@common/entities'
 import SkillState    from '@common/skill-state'
+import { Vector, V } from '@common/vector'
 
 import '@client/game/registerWorldObjects'
 
@@ -31,6 +32,7 @@ class Game extends EventEmitter {
     this.regionName = regionName
     this.host = host
 
+    this.lastP = V(0, 0) // last pointer position
     this.skills = Object.create(null)
 
     World.init({ svg })
@@ -41,6 +43,8 @@ class Game extends EventEmitter {
         pX: World.viewport.x + offsetX,
         pY: World.viewport.y + offsetY
       })
+
+      this.lastP = V(offsetX, offsetY)
     })
 
     svg.addEventListener('mouseup', ({ offsetX, offsetY, button }) => {
@@ -67,6 +71,10 @@ class Game extends EventEmitter {
       }
 
       this.sendControls(controls)
+    })
+
+    svg.addEventListener('mouseleave', () => {
+      this.sendControls({ move: false })
     })
 
     const keymap = {
@@ -137,6 +145,15 @@ class Game extends EventEmitter {
       }
 
       World.parse(frame.world)
+
+      /**
+       * Even though World.viewport has changed, pointer position has not,
+       * so, mousemove will not be triggered. Hence send new position manually.
+       */
+      this.sendControls({
+        pX: World.viewport.x + this.lastP.x,
+        pY: World.viewport.y + this.lastP.y
+      })
 
       // if (previousFrame) {
       //   World.extrapolate({
