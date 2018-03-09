@@ -16,7 +16,7 @@ import Decorator     from '@client/game/decorator'
 import * as entities   from '@common/entities'
 import SkillState      from '@common/skill-state'
 import { Vector, V }   from '@common/vector'
-import { globalToSVG } from '@common/util'
+import { globalToSVG } from '@common/game'
 
 import '@client/game/registerWorldObjects'
 

@@ -12,7 +12,9 @@ import LoginForm       from '@client/components/login-form'
 import ModalBackground from '@client/components/modal-background'
 import Forbidden       from '@client/components/error/forbidden'
 import withAccess      from '@client/components/wrappers/with-access'
-import SkillState      from '@common/skill-state'
+
+import SkillState        from '@common/skill-state'
+import { VISION_RADIUS } from '@common/game'
 
 import '@client/styles/game-page.styl'
 
@@ -123,7 +125,7 @@ class GamePage extends Component {
           version="1.1"
           baseProfile="full"
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1366 768"
+          viewBox={`0 0 ${VISION_RADIUS.x * 2} ${VISION_RADIUS.y * 2}`}
           preserveAspectRatio="xMidYMin meet">
         </svg>
         <div id="gp-bar-top" className="gp-bar"></div>

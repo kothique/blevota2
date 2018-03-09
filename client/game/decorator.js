@@ -3,7 +3,7 @@
  */
 
 import { Vector, V }  from '@common/vector'
-import { getViewBox } from '@common/util'
+import { getViewBox } from '@common/game'
 
 import Border      from '@client/game/decorations/border'
 import Letterboxer from '@client/game/decorations/letterboxer'

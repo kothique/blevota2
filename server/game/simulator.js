@@ -10,11 +10,7 @@ const forIn = require('lodash/forIn')
 const World = require('./world')
 const Orb = require('./entities/orb')
 const { Vector, V } = require('../../common/vector')
-
-/**
- * Define the rectangle around the orb that can be seen by the player.
- */
-const VISION = V(1366, 768).divide(2)
+const { VISION_RADIUS } = require('../../common/game')
 
 /**
  * @class
@@ -195,8 +191,8 @@ const Simulator = {
         const orb    = entity,
               skills = orb.skillsToBuffer(),
               world  = this.world.rectangleToBuffer({
-                p1: Vector.subtract(orb.position, VISION),
-                p2: Vector.     add(orb.position, VISION)
+                p1: Vector.subtract(orb.position, VISION_RADIUS),
+                p2: Vector.     add(orb.position, VISION_RADIUS)
               })
 
         frames[id] = {
