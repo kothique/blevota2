@@ -111,8 +111,8 @@ class World extends EventEmitter {
               radius   = entity.radius
 
         this.detector.set(id, {
-          p1: Vector.subtract(position, V(radius, radius)),
-          p2: Vector.add(position, V(radius, radius))
+          minP: Vector.subtract(position, V(radius, radius)),
+          maxP: Vector.add(position, V(radius, radius))
         })
       }
     })
@@ -286,15 +286,15 @@ class World extends EventEmitter {
   }
 
   /**
-   * Serialize only a limited rectangle area in the world.
+   * Serialize only a limited box area of the world.
    *
-   * @param {object} rectangle
-   * @param {Vector} rectangle.p1
-   * @param {Vector} rectangle.p2
+   * @param {object} box
+   * @param {Vector} box.minP
+   * @param {Vector} box.maxP
    * @return {Buffer}
    */
-  rectangleToBuffer(rectangle) {
-    const ids      = this.detector.queryRectangle(rectangle),
+  boxToBuffer(box) {
+    const ids      = this.detector.queryBox(box),
           entities = ids.map((id) => {
             const entity = this.entities[id]
 
@@ -316,10 +316,10 @@ class World extends EventEmitter {
     offset += 2
 
     /* Write viewport position. */
-    buffer.writeInt16BE(rectangle.p1.x, offset)
+    buffer.writeInt16BE(box.minP.x, offset)
     offset += 2
 
-    buffer.writeInt16BE(rectangle.p1.y, offset)
+    buffer.writeInt16BE(box.minP.y, offset)
     offset += 2
 
     /* Write number of entities. */

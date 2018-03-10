@@ -180,9 +180,9 @@ const Simulator = {
       if (entity instanceof Orb) {
         const orb    = entity,
               skills = orb.skillsToBuffer(),
-              world  = this.world.rectangleToBuffer({
-                p1: Vector.subtract(orb.position, VISION_RADIUS),
-                p2: Vector.     add(orb.position, VISION_RADIUS)
+              world  = this.world.boxToBuffer({
+                minP: Vector.subtract(orb.position, VISION_RADIUS),
+                maxP: Vector.     add(orb.position, VISION_RADIUS)
               })
 
         frames[id] = {

@@ -167,8 +167,8 @@ describe('World', () => {
   })
 
   /** @todo */
-  test('should serialize a rectangle correctly')
+  test('should serialize a box correctly')
 
   /** @todo */
-  test('rectangleToBuffer() should give the same result as serializeToBuffer(*new buffer*, 0)')
+  test('boxToBuffer() should give the same result as serializeToBuffer(*new buffer*, 0)')
 })

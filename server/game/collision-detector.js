@@ -66,8 +66,8 @@ class CollisionDetector {
         const id2 = ids[j],
               box2 = this.boxes[id2]
 
-        if (box1.p1.x < box2.p2.x && box1.p2.x > box2.p1.x &&
-            box1.p1.y < box2.p2.y && box2.p2.y > box2.p1.y) {
+        if (box1.minP.x < box2.maxP.x && box1.maxP.x > box2.minP.x &&
+            box1.minP.y < box2.maxP.y && box2.maxP.y > box2.minP.y) {
           this.collisions.push({
             type: 'object',
             id1,
@@ -78,13 +78,13 @@ class CollisionDetector {
 
       /** Collisions with walls */
       if (this.worldSize) {
-        if (box1.p1.x < 0) {
+        if (box1.minP.x < 0) {
           this.collisions.push({
             type: 'wall',
             wall: 'left',
             id: id1
           })
-        } else if (box1.p2.x >= this.worldSize.x) {
+        } else if (box1.maxP.x >= this.worldSize.x) {
           this.collisions.push({
             type: 'wall',
             wall: 'right',
@@ -92,13 +92,13 @@ class CollisionDetector {
           })
         }
 
-        if (box1.p1.y < 0) {
+        if (box1.minP.y < 0) {
           this.collisions.push({
             type: 'wall',
             wall: 'top',
             id: id1
           })
-        } else if (box1.p2.y >= this.worldSize.y) {
+        } else if (box1.maxP.y >= this.worldSize.y) {
           this.collisions.push({
             type: 'wall',
             wall: 'bottom',
@@ -110,19 +110,19 @@ class CollisionDetector {
   }
 
   /**
-   * Return all entitites in the specified rectangle.
+   * Return all entitites intersecting with the specified box.
    *
-   * @param {object} rectangle
-   * @param {Vector} rectangle.p1
-   * @param {Vector} rectangle.p2
+   * @param {object} box
+   * @param {Vector} box.minP
+   * @param {Vector} box.maxP
    * @return {array}
    */
-  queryRectangle({ p1, p2 }) {
+  queryBox({ minP, maxP }) {
     const result = []
 
     forIn(this.boxes, (box, id) => {
-      if (box.p1.x < p2.x && box.p2.x > p1.x &&
-          box.p1.y < p2.y && box.p2.y > p1.y) {
+      if (box.minP.x < maxP.x && box.maxP.x > minP.x &&
+          box.minP.y < maxP.y && box.maxP.y > minP.y) {
 
           result.push(id)
       }
