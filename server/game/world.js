@@ -36,6 +36,10 @@ class World extends EventEmitter {
     this.detector = new CollisionDetector(this.size)
 
     this.nextID = 0
+
+    this.effectAPI = {
+      queryBox: this.detector.queryBox.bind(this.detector)
+    }
   }
 
   /**
@@ -157,8 +161,6 @@ class World extends EventEmitter {
         if (entity instanceof Orb) {
           const orb = entity
 
-          orb.receiveEffect(new InstantDamage({ value: 5 }))
-
           switch (wall) {
             case 'left':
               orb.velocity.x *= -k
@@ -194,9 +196,6 @@ class World extends EventEmitter {
           if (dr < 0) {
             return
           }
-
-          orb1.receiveEffect(new InstantDamage({ value: orb2.mass * 10 }))
-          orb2.receiveEffect(new InstantDamage({ value: orb1.mass * 10 }))
 
           const v1 = orb1.velocity,
                 v2 = orb2.velocity,
@@ -342,6 +341,16 @@ class World extends EventEmitter {
     })
 
     return buffer
+  }
+
+  /**
+   * Create a new effect provided with World API.
+   *
+   * @param {function} constructor
+   * @param {object}   options      - Object to pass to the effect constructor.
+   */
+  createEffect(constructor, options) {
+    return new constructor(options, this.effectAPI)
   }
 }
 
