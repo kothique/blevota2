@@ -11,7 +11,8 @@ class SkillIcon extends Component {
       type:  number.isRequired,
       value: any
     }),
-    img: string
+    img: string,
+    shortcut: string
   }
 
   static defaultProps = {
@@ -21,7 +22,7 @@ class SkillIcon extends Component {
   }
 
   render() {
-    const { id, state, img } = this.props
+    const { id, state, img, shortcut } = this.props
 
     const icon = img
       ? <img className="si-img" src={img} />
@@ -43,6 +44,7 @@ class SkillIcon extends Component {
         <div className="si-time"></div>
         <div className="si-panel"></div>
         {icon}
+        {shortcut ? <div className="si-shortcut">{shortcut}</div> : ''}
       </div>
     )
   }
