@@ -3,11 +3,21 @@ const { V, Vector } = require('@common/vector')
 const { UNKNOWN } = require('@common/entities')
 
 describe('Entity', () => {
+  const entityAPI = {
+          createSkill: jest.fn(),
+          createEffect: jest.fn()
+        }
+
+  beforeEach(() => {
+    entityAPI.createSkill.mockClear()
+    entityAPI.createEffect.mockClear()
+  })
+
   test('applyControls() should set force', () => {
     const entity = new Entity({
       mass:      0.5,
       moveForce: 0.1
-    })
+    }, entityAPI)
 
     entity.applyControls({
       pX: 100,
@@ -21,7 +31,7 @@ describe('Entity', () => {
   describe('receiveEffect() & removeEffect()', () => {
     const entity = new Entity({
       mass: 0.5
-    })
+    }, entityAPI)
 
     const effect = {
       onReceive: jest.fn(),
@@ -47,7 +57,7 @@ describe('Entity', () => {
   describe('applyEffects()', () => {
     const entity = new Entity({
       mass: 0.5
-    })
+    }, entityAPI)
 
     const effect = {
       onTick: jest.fn(function () {
@@ -79,7 +89,7 @@ describe('Entity', () => {
         mass: 1,
         moveForce: 0.1,
         position: V(10, 10)
-      })
+      }, entityAPI)
     })
 
     test('should not move by itself', () => {
@@ -126,7 +136,7 @@ describe('Entity', () => {
       mass:      11,
       moveForce: 12,
       position:  V(13, 14)
-    })
+    }, entityAPI)
 
     entity.receiveEffect({
       onReceive: jest.fn(),
@@ -172,8 +182,7 @@ describe('Entity', () => {
   })
 
   test('should accept entityAPI', () => {
-    const entityAPI = {},
-          entity = new Entity({}, entityAPI)
+    const entity = new Entity({}, entityAPI)
 
     expect(entity.api).toBeDefined()
     expect(entity.api).toBe(entityAPI)

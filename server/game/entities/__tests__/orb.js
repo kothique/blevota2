@@ -3,6 +3,10 @@ const Entity = require('../entity')
 
 describe('Orb', () => {
   let orb
+  const entityAPI = {
+          createSkill: jest.fn(),
+          createEffect: jest.fn()
+        }
 
   beforeEach(() => {
     orb = new Orb({
@@ -10,7 +14,7 @@ describe('Orb', () => {
       hp:    80,
       maxMp: 120,
       mp:    10
-    })
+    }, entityAPI)
   })
 
   test('should have default mass', () => {

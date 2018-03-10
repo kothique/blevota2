@@ -4,12 +4,19 @@ import { Vector, V } from '@common/vector'
 
 describe('Orb', () => {
   let orb
-  const id = 'a'.repeat(24)
+  const id = 'a'.repeat(24),
+        entityAPI = {
+          createSkill: jest.fn(),
+          createEffect: jest.fn()
+        }
 
   beforeEach(() => {
     jest.resetModules()
 
-    orb = new Orb(id)
+    entityAPI.createSkill.mockClear()
+    entityAPI.createEffect.mockClear()
+
+    orb = new Orb(id, entityAPI)
   })
 
   test('has appropriate properties', () => {

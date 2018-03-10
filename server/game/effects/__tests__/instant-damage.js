@@ -5,13 +5,22 @@ const { INSTANT_DAMAGE } = require('@common/effects')
 describe('InstantDamage', () => {
   describe('onReceive()', () => {
     const effect = new InstantDamage({ value: 42 }),
+          entityAPI = {
+            createSkill: jest.fn(),
+            createEffect: jest.fn()
+          },
           target = new Orb({
             radius: 30,
             maxHp: 200,
             hp: 43,
             maxMp: 200,
             mp: 100
-          })
+          }, entityAPI)
+
+    beforeEach(() => {
+      entityAPI.createSkill.mockClear()
+      entityAPI.createEffect.mockClear()
+    })
 
     effect.onReceive(target)
 

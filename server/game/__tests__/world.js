@@ -5,11 +5,18 @@ const { Vector, V } = require('@common/vector')
 
 describe('World', () => {
   let world
+  const entityAPI = {
+          createSkill: jest.fn(),
+          createEffect: jest.fn()
+        }
 
   beforeEach(() => {
     world = new World({
       size: V(800, 600)
     })
+
+    entityAPI.createSkill.mockClear()
+    entityAPI.createEffect.mockClear()
   })
 
   describe('new() & remove()', () => {
@@ -19,7 +26,7 @@ describe('World', () => {
       entity = new Entity({
         mass: 0.1,
         moveForce: 15
-      })
+      }, entityAPI)
     })
 
     test('new() should add new entities', () => {
@@ -52,7 +59,7 @@ describe('World', () => {
       entity1 = new Entity({
         mass: 1,
         moveForce: 0.1,
-      })
+      }, entityAPI)
       mockObject(entity1)
       id1 = world.new(entity1)
 
@@ -60,7 +67,7 @@ describe('World', () => {
       entity2 = new Entity({
         mass: 2,
         moveForce: 0.25
-      })
+      }, entityAPI)
       mockObject(entity2)
       id2 = world.new(entity2)
     })
@@ -108,12 +115,12 @@ describe('World', () => {
     const entity1 = new Entity({
       mass: 1,
       moveForce: 0.1,
-    })
+    }, entityAPI)
 
     const entity2 = new Entity({
       mass: 2,
       moveForce: 0.25
-    })
+    }, entityAPI)
 
     const id1 = world.new(entity1),
           id2 = world.new(entity2)

@@ -39,25 +39,25 @@ describe('World serialization', () => {
     const serverWorld   =  new ServerWorld({
             size: V(801, 602)
           }),
-          serverOrb1    = new ServerOrb({
+          serverOrb1    = serverWorld.createEntity(ServerOrb, {
             maxHp: 100,
             hp:    62,
             maxMp: 150,
             mp:    30
           }),
-          serverOrb2    = new ServerOrb({
+          serverOrb2    = serverWorld.createEntity(ServerOrb, {
             maxHp: 120,
             hp:    30,
             maxMp: 1000,
             mp:    745
           }),
-          serverEffect1 = new ServerSpeedUp({
+          serverEffect1 = serverWorld.createEffect(ServerSpeedUp, {
             value: 0.1
           }),
-          serverEffect2 = new ServerInstantDamage({
+          serverEffect2 = serverWorld.createEffect(ServerInstantDamage, {
             value: 50
           }),
-          serverEffect3 = new ServerSpeedUp({
+          serverEffect3 = serverWorld.createEffect(ServerSpeedUp, {
             value: -0.05
           })
 

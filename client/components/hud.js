@@ -62,8 +62,8 @@ class HUD extends Component {
         <div id="hud-skill-bar-left">
           <SkillIcon id="hud-skill-1" state={skill1} shortcut="Q" />
           <SkillIcon id="hud-skill-2" state={skill2} shortcut="W" />
-          <SkillIcon id="hud-skill-3" state={skill3} shortcut="E" />
-          <SkillIcon id="hud-skill-4" state={skill4} shortcut="R" />
+          <SkillIcon id="hud-skill-5" state={skill3} shortcut="A" />
+          <SkillIcon id="hud-skill-6" state={skill4} shortcut="S" />
         </div>
         <svg id="hud-orb"
           version="1.1"
@@ -83,10 +83,10 @@ class HUD extends Component {
             fillOpacity={playerHP / playerMaxHP || 1} />
         </svg>
         <div id="hud-skill-bar-right">
-          <SkillIcon id="hud-skill-5" state={skill5} shortcut="A" />
-          <SkillIcon id="hud-skill-6" state={skill6} shortcut="S" />
+          <SkillIcon id="hud-skill-3" state={skill5} shortcut="E" />
+          <SkillIcon id="hud-skill-4" state={skill6} shortcut="R" />
           <SkillIcon id="hud-skill-7" state={skill7} shortcut="D" />
-          <SkillIcon id="hud-skill-7" state={skill8} shortcut="F" />
+          <SkillIcon id="hud-skill-8" state={skill8} shortcut="F" />
         </div>
         <div id="hud-chat" dangerouslySetInnerHTML={{ __html: chat }}></div>
       </div>

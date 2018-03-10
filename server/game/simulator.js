@@ -66,7 +66,7 @@ const Simulator = {
    * @return {number} - The ID of the new orb.
    */
   newOrb() {
-    const id = this.world.new(new Orb({
+    const id = this.world.new(this.world.createEntity(Orb, {
       radius: 20 + Math.random() * 30,
       maxHp: 100,
       hp: 80,

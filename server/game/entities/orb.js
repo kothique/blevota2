@@ -24,12 +24,12 @@ class Orb extends Entity {
    * @param {number}   options.maxMp  - Maximum mana points.
    * @param {number}   options.mp     - Current mana points.
    */
-  constructor(options) {
+  constructor(options, entityAPI) {
     super({
       ...options,
       mass: 1,
       moveForce: 0.1
-    })
+    }, entityAPI)
 
     this.radius = options.radius || 30
     this.maxHp  = options.maxHp
@@ -39,8 +39,8 @@ class Orb extends Entity {
 
     /* Don't forget to change client/Orb#parse when adding new skills */
     this.skillManager = new SkillManager(this, {
-      skill1: new SpeedUp,
-      skill2: new SlowDown
+      skill1: this.api.createSkill(SpeedUp),
+      skill2: this.api.createSkill(SlowDown)
     })
 
     this.alive = true

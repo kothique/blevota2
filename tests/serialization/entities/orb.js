@@ -3,6 +3,16 @@ const ServerOrb = require('@server/game/entities/orb')
 const { ORB } = require('@common/entities')
 
 describe('Orb entity serialization', () => {
+  const entityAPI = {
+    createSkill: jest.fn(),
+    createEffect: jest.fn()
+  }
+
+  beforeEach(() => {
+    entityAPI.createSkill.mockClear()
+    entityAPI.createEffect.mockClear()
+  })
+
   test('deserialized orb should match the original one', () => {
     const serverOrb = new ServerOrb({
       radius: 50,
@@ -10,7 +20,7 @@ describe('Orb entity serialization', () => {
       hp: 80,
       maxMp: 105,
       mp: 30
-    })
+    }, entityAPI)
 
     const serverLength = serverOrb.serializedLength(),
           buffer = Buffer.alloc(serverLength)

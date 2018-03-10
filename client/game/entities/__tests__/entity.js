@@ -5,9 +5,13 @@ describe('Entity', () => {
 
   beforeEach(() => {
     const id = 'a'.repeat(24),
+          entityAPI = {
+            createSkill: jest.fn(),
+            createEffect: jest.fn()
+          },
           type = 0x32
 
-    entity = new Entity(id)
+    entity = new Entity(id, entityAPI)
   })
 
   test('should have id, position, and effects', () => {
