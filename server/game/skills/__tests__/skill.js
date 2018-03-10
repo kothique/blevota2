@@ -3,9 +3,10 @@ const SkillState = require('../../../../common/skill-state')
 
 describe('Skill', () => {
   let skill
+  const skillAPI = {}
 
   beforeEach(() => {
-    skill = new Skill
+    skill = new Skill(null, skillAPI)
   })
 
   test('should have state', () => {
@@ -48,5 +49,10 @@ describe('Skill', () => {
         expect(buffer.readUInt8(10 + 0)).toBe(state)
       })
     }
+  })
+
+  test('should accept skillAPI', () => {
+    expect(skill.api).toBeDefined()
+    expect(skill.api).toBe(skillAPI)
   })
 })

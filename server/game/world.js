@@ -37,6 +37,10 @@ class World extends EventEmitter {
 
     this.nextID = 0
 
+    this.skillAPI = {
+      createEffect: this.createEffect.bind(this)
+    }
+
     this.effectAPI = {
       queryBox: this.detector.queryBox.bind(this.detector)
     }
@@ -344,10 +348,20 @@ class World extends EventEmitter {
   }
 
   /**
+   * Create a new skill provided with World API.
+   *
+   * @param {function} constructor
+   * @param {object}   options      - Object to pass to the skill's constructor.
+   */
+  createSkill(constructor, options) {
+    return new constructor(options, this.skillAPI)
+  }
+
+  /**
    * Create a new effect provided with World API.
    *
    * @param {function} constructor
-   * @param {object}   options      - Object to pass to the effect constructor.
+   * @param {object}   options      - Object to pass to the effect's constructor.
    */
   createEffect(constructor, options) {
     return new constructor(options, this.effectAPI)

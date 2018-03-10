@@ -169,6 +169,29 @@ describe('World', () => {
   /** @todo */
   test('should serialize a box correctly')
 
-  /** @todo */
-  test('boxToBuffer() should give the same result as serializeToBuffer(*new buffer*, 0)')
+  test('createSkill() should provide skillAPI', () => {
+    const TestSkill = jest.fn(function (options, skillAPI) {
+      this.api = skillAPI
+
+      return this
+    })
+
+    const skill = world.createSkill(TestSkill, {})
+
+    expect(skill.api).toBeDefined()
+    expect(skill.api).toBe(world.skillAPI)
+  })
+
+  test('createEffect() should provide effectAPI', () => {
+    const TestEffect = jest.fn(function (options, effectAPI) {
+      this.api = effectAPI
+
+      return this
+    })
+
+    const effect = world.createEffect(TestEffect, {})
+
+    expect(effect.api).toBeDefined()
+    expect(effect.api).toBe(world.effectAPI)
+  })
 })

@@ -7,8 +7,12 @@ const state = require('../../../common/skill-state')
 class Skill {
   /**
    * Create a new skill.
+   *
+   * @param {object} options
+   * @param {object} skillAPI
    */
-  constructor() {
+  constructor(options, skillAPI) {
+    this.api = skillAPI
     this.state = {
       type: state.READY
     }
