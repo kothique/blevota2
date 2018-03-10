@@ -169,6 +169,19 @@ describe('World', () => {
   /** @todo */
   test('should serialize a box correctly')
 
+  test('createEntity() should provide entityAPI', () => {
+    const TestEntity = jest.fn(function (options, entityAPI) {
+      this.api = entityAPI
+
+      return this
+    })
+
+    const entity = world.createEntity(TestEntity, {})
+
+    expect(entity.api).toBeDefined()
+    expect(entity.api).toBe(world.entityAPI)
+  })
+
   test('createSkill() should provide skillAPI', () => {
     const TestSkill = jest.fn(function (options, skillAPI) {
       this.api = skillAPI

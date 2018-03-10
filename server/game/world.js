@@ -37,6 +37,11 @@ class World extends EventEmitter {
 
     this.nextID = 0
 
+    this.entityAPI = {
+      createSkill: this.createSkill.bind(this),
+      createEffect: this.createEffect.bind(this)
+    }
+
     this.skillAPI = {
       createEffect: this.createEffect.bind(this)
     }
@@ -348,20 +353,30 @@ class World extends EventEmitter {
   }
 
   /**
-   * Create a new skill provided with World API.
+   * Create a new entity provided with World.entityAPI.
    *
    * @param {function} constructor
-   * @param {object}   options      - Object to pass to the skill's constructor.
+   * @param {object}   options - Object to pass to the entity's constructor.
+   */
+  createEntity(constructor, options) {
+    return new constructor(options, this.entityAPI)
+  }
+
+  /**
+   * Create a new skill provided with World.skillAPI.
+   *
+   * @param {function} constructor
+   * @param {object}   options - Object to pass to the skill's constructor.
    */
   createSkill(constructor, options) {
     return new constructor(options, this.skillAPI)
   }
 
   /**
-   * Create a new effect provided with World API.
+   * Create a new effect provided with World.effectAPI.
    *
    * @param {function} constructor
-   * @param {object}   options      - Object to pass to the effect's constructor.
+   * @param {object}   options - Object to pass to the effect's constructor.
    */
   createEffect(constructor, options) {
     return new constructor(options, this.effectAPI)

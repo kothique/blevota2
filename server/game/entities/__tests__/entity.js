@@ -170,4 +170,12 @@ describe('Entity', () => {
       offset += 15
     })
   })
+
+  test('should accept entityAPI', () => {
+    const entityAPI = {},
+          entity = new Entity({}, entityAPI)
+
+    expect(entity.api).toBeDefined()
+    expect(entity.api).toBe(entityAPI)
+  })
 })

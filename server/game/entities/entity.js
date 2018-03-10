@@ -18,8 +18,11 @@ class Entity {
    * @param {?Vector}  options.position
    * @param {?Vector}  options.velocity
    * @param {?Vector}  options.force
+   * @param {object}   entityAPI
    */
-  constructor(options) {
+  constructor(options, entityAPI) {
+    this.api = entityAPI
+
     this.mass            = options.mass
     this.moveForce       = options.moveForce         || 0
     this.dragForceFactor = options.dragForceFactor   || 1
