@@ -1,14 +1,14 @@
-const ServerInstantDamage = require('../../../server/game/effects/instant-damage')
+const ServerInstantDamage = require('@server/game/effects/instant-damage')
 
 let ClientEffectFactory
-const ClientInstantDamage = require('../../../client/game/effects/instant-damage').default
+import ClientInstantDamage from '@client/game/effects/instant-damage'
 
-const { INSTANT_DAMAGE } = require('../../../common/effects')
+const { INSTANT_DAMAGE } = require('@common/effects')
 
 beforeEach(() => {
   jest.resetModules()
 
-  ClientEffectFactory = require('../../../client/game/effect-factory').default
+  ClientEffectFactory = require('@client/game/effect-factory').default
   ClientEffectFactory.register({
     type: INSTANT_DAMAGE,
     constructor: ClientInstantDamage

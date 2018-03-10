@@ -1,14 +1,14 @@
-const ServerSpeedUp = require('../../../server/game/effects/speedup')
+const ServerSpeedUp = require('@server/game/effects/speedup')
 
 let ClientEffectFactory
-const ClientSpeedUp = require('../../../client/game/effects/speedup').default
+import ClientSpeedUp from '@client/game/effects/speedup'
 
-const { SPEEDUP } = require('../../../common/effects')
+const { SPEEDUP } = require('@common/effects')
 
 beforeEach(() => {
   jest.resetModules()
 
-  ClientEffectFactory = require('../../../client/game/effect-factory').default
+  ClientEffectFactory = require('@client/game/effect-factory').default
   ClientEffectFactory.register({
     type: SPEEDUP,
     constructor: ClientSpeedUp

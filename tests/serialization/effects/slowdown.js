@@ -1,14 +1,14 @@
-const ServerSlowDown = require('../../../server/game/effects/slowdown')
+const ServerSlowDown = require('@server/game/effects/slowdown')
 
 let ClientEffectFactory
-const ClientSlowDown = require('../../../client/game/effects/slowdown').default
+import ClientSlowDown from '@client/game/effects/slowdown'
 
-const { SLOWDOWN } = require('../../../common/effects')
+const { SLOWDOWN } = require('@common/effects')
 
 beforeEach(() => {
   jest.resetModules()
 
-  ClientEffectFactory = require('../../../client/game/effect-factory').default
+  ClientEffectFactory = require('@client/game/effect-factory').default
   ClientEffectFactory.register({
     type: SLOWDOWN,
     constructor: ClientSlowDown
