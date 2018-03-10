@@ -12,6 +12,7 @@
 * all 8 skills
 
 ### **UI**
+* show distance to border
 * game page
   * skill icons
 * _404 not found page_

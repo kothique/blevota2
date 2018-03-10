@@ -113,8 +113,7 @@ class Entity {
    */
   integrate(t, dt) {
     const dragForce = this.velocity.clone()
-      .setLength(-0.001 * this.velocity.length() ** 2)
-      .multiply(this.dragForceFactor)
+      .setLength(-0.001 * this.dragForceFactor * this.velocity.length() ** 2)
 
     this.force.add(dragForce)
     this.acceleration = Vector.divide(this.force, this.mass)

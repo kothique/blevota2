@@ -4,16 +4,16 @@ const { SPEEDUP } = require('@common/effects')
 describe('SpeedUp', () => {
   describe('onReceive() & onRemove()', () => {
     const effect = new SpeedUp(42),
-          target = { moveForce: 0 }
+          target = { dragForceFactor: 42 }
 
-    test('should increase movement force on applying', () => {
+    test('should decrease drag force factor on applying', () => {
       effect.onReceive(target)
-      expect(target.moveForce).toBe(42)
+      expect(target.dragForceFactor).toBeCloseTo(0)
     })
 
-    test('should decrease movement force back on removing', () => {
+    test('should increase drag force factor back on removing', () => {
       effect.onRemove(target)
-      expect(target.moveForce).toBe(0)
+      expect(target.dragForceFactor).toBeCloseTo(42)
     })
   })
 

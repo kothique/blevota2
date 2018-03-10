@@ -25,7 +25,7 @@ class SpeedUp extends Effect {
    * @param {Entity} target
    */
   onReceive(target) {
-    target.moveForce += this.value
+    target.dragForceFactor -= this.value
   }
 
   /**
@@ -34,7 +34,7 @@ class SpeedUp extends Effect {
    * @param {Entity} target
    */
   onRemove(target) {
-    target.moveForce -= this.value
+    target.dragForceFactor += this.value
   }
 
   /**

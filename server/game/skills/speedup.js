@@ -18,7 +18,7 @@ class SpeedUp extends Skill {
       type: SkillState.ACTIVE
     }
 
-    this.effect = new EffectSpeedUp(0.25)
+    this.effect = new EffectSpeedUp(1.0)
     owner.receiveEffect(this.effect)
   }
 
