@@ -29,7 +29,7 @@ const Simulator = {
    */
   init(options = Object.create(null)) {
     this.world = options.world || new World({
-      size: V(2000, 2000)
+      size: V(3000, 3000)
     })
 
     this.world.on('death', (orbID) => {
@@ -82,24 +82,14 @@ const Simulator = {
       pX: 0,
       pY: 0,
       move: false,
-      skillA1: false,
-      skillA2: false,
-      skillA3: false,
-      skillA4: false,
-      skillA5: false,
-      skillA6: false,
-      skillB1: false,
-      skillB2: false,
-      skillB3: false,
-      skillB4: false,
-      skillB5: false,
-      skillB6: false,
-      skillC1: false,
-      skillC2: false,
-      skillC3: false,
-      skillC4: false,
-      skillC5: false,
-      skillC6: false
+      skill1: false,
+      skill2: false,
+      skill3: false,
+      skill4: false,
+      skill5: false,
+      skill6: false,
+      skill7: false,
+      skill8: false,
     }
 
     return id

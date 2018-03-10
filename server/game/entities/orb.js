@@ -39,8 +39,8 @@ class Orb extends Entity {
 
     /* Don't forget to change client/Orb#parse when adding new skills */
     this.skillManager = new SkillManager(this, {
-      skillA1: new SpeedUp,
-      skillA2: new SlowDown
+      skill1: new SpeedUp,
+      skill2: new SlowDown
     })
 
     this.alive = true

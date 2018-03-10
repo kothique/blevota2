@@ -24,29 +24,14 @@ import '@client/game/registerWorldObjects'
  * @constant
  */
 const KEYMAP = {
-  'q': 'skillA1',
-  'w': 'skillA2',
-  'e': 'skillA3',
-
-  'r': 'skillA4',
-  't': 'skillA5',
-  'y': 'skillA6',
-
-  'a': 'skillB1',
-  's': 'skillB2',
-  'd': 'skillB3',
-
-  'f': 'skillB4',
-  'g': 'skillB5',
-  'h': 'skillB6',
-
-  'z': 'skillC1',
-  'x': 'skillC2',
-  'c': 'skillC3',
-
-  'v': 'skillC4',
-  'b': 'skillC5',
-  'n': 'skillC6',
+  'q': 'skill1',
+  'w': 'skill2',
+  'e': 'skill3',
+  'r': 'skill4',
+  'a': 'skill5',
+  's': 'skill6',
+  'd': 'skill7',
+  'f': 'skill8'
 }
 
 
@@ -303,19 +288,19 @@ class Game extends EventEmitter {
     let changed = false
 
     let result = parseSkill(buffer, offset)
-    if (this.skills.skillA1 &&
-        result.skill.type !== this.skills.skillA1.type) {
+    if (this.skills.skill1 &&
+        result.skill.type !== this.skills.skill1.type) {
       changed = true
     }
-    this.skills.skillA1 = result.skill
+    this.skills.skill1 = result.skill
     offset = result.offset
 
     result = parseSkill(buffer, offset)
-    if (this.skills.skillA2 &&
-        result.skill.type !== this.skills.skillA2.type) {
+    if (this.skills.skill2 &&
+        result.skill.type !== this.skills.skill2.type) {
       changed = true
     }
-    this.skills.skillA2 = result.skill
+    this.skills.skill2 = result.skill
     offset = result.offset
 
     if (changed) {

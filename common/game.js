@@ -7,7 +7,7 @@ const { Vector, V } = require('./vector')
 /**
  * @constant
  */
-const VISION_RADIUS = V(1500, 1500).divide(2)
+const VISION_RADIUS = V(1366, 768).divide(2)
 module.exports.VISION_RADIUS = VISION_RADIUS
 
 /**

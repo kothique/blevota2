@@ -9,7 +9,7 @@
 * _spacial partitioning instead of brute-force_
 
 ### **Game Mechanics**
-* all 18 skills
+* all 8 skills
 
 ### **UI**
 * game page

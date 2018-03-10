@@ -17,24 +17,14 @@ import '@client/styles/hud.styl'
  */
 class HUD extends Component {
   static propTypes = {
-    skillA1: object,
-    skillA2: object,
-    skillA3: object,
-    skillA4: object,
-    skillA5: object,
-    skillA6: object,
-    skillB1: object,
-    skillB2: object,
-    skillB3: object,
-    skillB4: object,
-    skillB5: object,
-    skillB6: object,
-    skillC1: object,
-    skillC2: object,
-    skillC3: object,
-    skillC4: object,
-    skillC5: object,
-    skillC6: object,
+    skill1: object,
+    skill2: object,
+    skill3: object,
+    skill4: object,
+    skill5: object,
+    skill6: object,
+    skill7: object,
+    skill8: object,
     playerMaxHP: number,
     playerHP:    number,
     playerMaxMP: number,
@@ -43,24 +33,13 @@ class HUD extends Component {
   }
    
   static defaultProps = {
-    skillA1: { type: SkillState.READY },
-    skillA2: { type: SkillState.READY },
-    skillA3: { type: SkillState.READY },
-    skillA4: { type: SkillState.READY },
-    skillA5: { type: SkillState.READY },
-    skillA6: { type: SkillState.READY },
-    skillB1: { type: SkillState.READY },
-    skillB2: { type: SkillState.READY },
-    skillB3: { type: SkillState.READY },
-    skillB4: { type: SkillState.READY },
-    skillB5: { type: SkillState.READY },
-    skillB6: { type: SkillState.READY },
-    skillC1: { type: SkillState.READY },
-    skillC2: { type: SkillState.READY },
-    skillC3: { type: SkillState.READY },
-    skillC4: { type: SkillState.READY },
-    skillC5: { type: SkillState.READY },
-    skillC6: { type: SkillState.READY },
+    skill1: { type: SkillState.READY },
+    skill2: { type: SkillState.READY },
+    skill3: { type: SkillState.READY },
+    skill4: { type: SkillState.READY },
+    skill5: { type: SkillState.READY },
+    skill7: { type: SkillState.READY },
+    skill8: { type: SkillState.READY },
     playerMaxHP: 0,
     playerHP:    0,
     playerMaxMP: 0,
@@ -70,9 +49,8 @@ class HUD extends Component {
 
   render() {
     const { dispatch } = this.props
-    const { skillA1, skillA2, skillA3, skillA4, skillA5, skillA6,
-            skillB1, skillB2, skillB3, skillB4, skillB5, skillB6,
-            skillC1, skillC2, skillC3, skillC4, skillC5, skillC6,
+    const { skill1, skill2, skill3, skill4,
+            skill5, skill6, skill7, skill8,
             playerRadius, playerMaxHP, playerHP, playerMaxMP, playerMP,
             chat } = this.props
 
@@ -82,15 +60,10 @@ class HUD extends Component {
           onClick={() => dispatch(push('/regions'))} />
 
         <div id="hud-skill-bar-left">
-          <SkillIcon id="hud-skill-a1" state={skillA1} />
-          <SkillIcon id="hud-skill-a2" state={skillA2} />
-          <SkillIcon id="hud-skill-a3" state={skillA3} />
-          <SkillIcon id="hud-skill-b1" state={skillB1} />
-          <SkillIcon id="hud-skill-b2" state={skillB2} />
-          <SkillIcon id="hud-skill-b3" state={skillB3} />
-          <SkillIcon id="hud-skill-c1" state={skillC1} />
-          <SkillIcon id="hud-skill-c2" state={skillC2} />
-          <SkillIcon id="hud-skill-c3" state={skillC3} />
+          <SkillIcon id="hud-skill-1" state={skill1} />
+          <SkillIcon id="hud-skill-2" state={skill2} />
+          <SkillIcon id="hud-skill-3" state={skill3} />
+          <SkillIcon id="hud-skill-4" state={skill4} />
         </div>
         <svg id="hud-orb"
           version="1.1"
@@ -110,15 +83,10 @@ class HUD extends Component {
             fillOpacity={playerHP / playerMaxHP || 1} />
         </svg>
         <div id="hud-skill-bar-right">
-          <SkillIcon id="hud-skill-a4" state={skillA4} />
-          <SkillIcon id="hud-skill-a5" state={skillA5} />
-          <SkillIcon id="hud-skill-a6" state={skillA6} />
-          <SkillIcon id="hud-skill-b4" state={skillB4} />
-          <SkillIcon id="hud-skill-b5" state={skillB5} />
-          <SkillIcon id="hud-skill-b6" state={skillB6} />
-          <SkillIcon id="hud-skill-c4" state={skillC4} />
-          <SkillIcon id="hud-skill-c5" state={skillC5} />
-          <SkillIcon id="hud-skill-c6" state={skillC6} />
+          <SkillIcon id="hud-skill-5" state={skill5} />
+          <SkillIcon id="hud-skill-6" state={skill6} />
+          <SkillIcon id="hud-skill-7" state={skill7} />
+          <SkillIcon id="hud-skill-7" state={skill8} />
         </div>
         <div id="hud-chat" dangerouslySetInnerHTML={{ __html: chat }}></div>
       </div>

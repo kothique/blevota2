@@ -35,10 +35,10 @@ class GamePage extends Component {
 
     this.state = {
       chat: '',
-      skillA1: {
+      skill1: {
         type: SkillState.READY
       },
-      skillA2: {
+      skill2: {
         type: SkillState.READY
       }
     }
