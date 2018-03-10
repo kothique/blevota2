@@ -10,6 +10,7 @@ const { ORB }      = require('../../../common/entities')
 const SpeedUp      = require('../skills/speedup')
 const SlowDown     = require('../skills/slowdown')
 const Pull         = require('../skills/pull')
+const Push         = require('../skills/push')
 
 /**
  * @class
@@ -42,7 +43,8 @@ class Orb extends Entity {
     this.skillManager = new SkillManager(this, {
       skill1: this.api.createSkill(SpeedUp),
       skill2: this.api.createSkill(SlowDown),
-      skill3: this.api.createSkill(Pull)
+      skill3: this.api.createSkill(Pull),
+      skill4: this.api.createSkill(Push)
     })
 
     this.alive = true
