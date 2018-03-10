@@ -3,7 +3,7 @@ const { SLOWDOWN } = require('@common/effects')
 
 describe('SlowDown', () => {
   describe('onReceive() & onRemove()', () => {
-    const effect = new SlowDown(0.2),
+    const effect = new SlowDown({ value: 0.2 }, null),
           target = { dragForceFactor: 1 }
 
     test('should increse drag force factor on applying', () => {
@@ -18,7 +18,7 @@ describe('SlowDown', () => {
   })
 
   test('serialization', () => {
-    const effect = new SlowDown(0.5),
+    const effect = new SlowDown({ value: 0.5 }, null),
           buffer = Buffer.alloc(effect.serializedLength() + 10)
 
     effect.serialize(buffer, 10)

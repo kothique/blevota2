@@ -18,7 +18,7 @@ class SlowDown extends Skill {
       type: SkillState.ACTIVE
     }
 
-    this.effect = new EffectSlowDown(1.0)
+    this.effect = new EffectSlowDown({ value: 1.0 })
     owner.receiveEffect(this.effect)
   }
 

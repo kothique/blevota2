@@ -11,12 +11,14 @@ class SlowDown extends Effect {
   /**
    * Create a new slow down effect.
    *
-   * @param {number} value - Added to the target's move force.
+   * @param {object} options
+   * @param {number} options.value - Added to the target's drag force factor.
+   * @param {object} effectAPI
    */
-  constructor(value) {
-    super()
+  constructor(options, effectAPI) {
+    super(options, effectAPI)
 
-    this.value = value
+    this.value = options.value
   }
 
   /**

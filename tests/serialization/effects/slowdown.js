@@ -17,7 +17,7 @@ beforeEach(() => {
 
 describe('SlowDown effect serialization', () => {
   test('deserialized effect should match the original one', () => {
-    const serverEffect = new ServerSlowDown(42),
+    const serverEffect = new ServerSlowDown({ value: 42 }),
           serverLength = serverEffect.serializedLength(),
           buffer = Buffer.alloc(serverLength)
 
@@ -30,6 +30,6 @@ describe('SlowDown effect serialization', () => {
 
     expect(serverLength).toBe(clientLength)
     expect(clientEffect).toBeInstanceOf(ClientSlowDown)
-    expect(clientEffect.value).toBe(42)
+    expect(clientEffect.value).toBeCloseTo(42)
   } )
 })

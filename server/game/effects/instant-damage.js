@@ -15,9 +15,10 @@ class InstantDamage extends Effect {
    * @param {object}  options
    * @param {number}  options.value
    * @param {string?} options.from
+   * @param {object}  effectAPI
    */
-  constructor(options) {
-    super()
+  constructor(options, effectAPI) {
+    super(options, effectAPI)
 
     this.value = options.value
     this.from = options.from || null

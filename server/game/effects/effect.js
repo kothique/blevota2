@@ -4,13 +4,18 @@
 
 /**
  * @class
+ * @abstract
  */
 class Effect {
   /**
    * Create a new effect.
+   * 
+   * @param {any}    options
+   * @param {object} effectAPI
    */
-  constructor() {
+  constructor(options, effectAPI) {
     this.alive = true
+    this.api = effectAPI
   }
 
   /**

@@ -17,7 +17,7 @@ beforeEach(() => {
 
 describe('SpeedUp effect serialization', () => {
   test('deserialized effect should match the original one', () => {
-    const serverEffect = new ServerSpeedUp(42),
+    const serverEffect = new ServerSpeedUp({ value: 42 }),
           serverLength = serverEffect.serializedLength(),
           buffer = Buffer.alloc(serverLength)
 
@@ -30,6 +30,6 @@ describe('SpeedUp effect serialization', () => {
 
     expect(serverLength).toBe(clientLength)
     expect(clientEffect).toBeInstanceOf(ClientSpeedUp)
-    expect(clientEffect.value).toBe(42)
+    expect(clientEffect.value).toBeCloseTo(42)
   } )
 })
