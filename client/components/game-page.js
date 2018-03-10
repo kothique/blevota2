@@ -18,7 +18,7 @@ import { VISION_RADIUS } from '@common/game'
 
 import '@client/styles/game-page.styl'
 
-const HOST = 'http://localhost:3000/'
+const HOST = 'http://192.168.0.104:3000/'
 
 /**
  * @class
@@ -39,6 +39,9 @@ class GamePage extends Component {
         type: SkillState.READY
       },
       skill2: {
+        type: SkillState.READY
+      },
+      skill3: {
         type: SkillState.READY
       }
     }

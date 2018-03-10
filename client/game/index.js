@@ -287,21 +287,16 @@ class Game extends EventEmitter {
 
     let changed = false
 
-    let result = parseSkill(buffer, offset)
-    if (this.skills.skill1 &&
-        result.skill.type !== this.skills.skill1.type) {
-      changed = true
-    }
-    this.skills.skill1 = result.skill
-    offset = result.offset
+    for (let i = 1; i <= 3; i++) {
+      let result = parseSkill(buffer, offset)
+      if (this.skills[`skill${i}`] &&
+          result.skill.type !== this.skills[`skill${i}`].type) {
+        changed = true
+      }
 
-    result = parseSkill(buffer, offset)
-    if (this.skills.skill2 &&
-        result.skill.type !== this.skills.skill2.type) {
-      changed = true
+      this.skills[`skill${i}`] = result.skill
+      offset = result.offset
     }
-    this.skills.skill2 = result.skill
-    offset = result.offset
 
     if (changed) {
       this.emit('skills', this.skills)

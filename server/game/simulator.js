@@ -138,8 +138,8 @@ const Simulator = {
       while (this.accumulator >= this.dt) {
         this.world
           .applyControls(this.controls)
-          .integrate(this.t / 1000, this.dt / 1000)
           .applyEffects(this.t / 1000, this.dt / 1000)
+          .integrate(this.t / 1000, this.dt / 1000)
         integrated = true
 
         this.t += this.dt

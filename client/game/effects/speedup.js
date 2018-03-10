@@ -1,6 +1,6 @@
 import Effect from './effect'
 
-class SpeedUp extends Effect{
+class SpeedUp extends Effect {
   /**
    * Read effect info from a buffer.
    *

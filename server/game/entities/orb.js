@@ -5,10 +5,11 @@
  const forIn = require('lodash/forIn')
 
 const SkillManager = require('../skill-manager')
-const Entity = require('./entity')
-const { ORB } = require('../../../common/entities')
-const SpeedUp = require('../skills/speedup')
-const SlowDown = require('../skills/slowdown')
+const Entity       = require('./entity')
+const { ORB }      = require('../../../common/entities')
+const SpeedUp      = require('../skills/speedup')
+const SlowDown     = require('../skills/slowdown')
+const Pull         = require('../skills/pull')
 
 /**
  * @class
@@ -40,7 +41,8 @@ class Orb extends Entity {
     /* Don't forget to change client/Orb#parse when adding new skills */
     this.skillManager = new SkillManager(this, {
       skill1: this.api.createSkill(SpeedUp),
-      skill2: this.api.createSkill(SlowDown)
+      skill2: this.api.createSkill(SlowDown),
+      skill3: this.api.createSkill(Pull)
     })
 
     this.alive = true

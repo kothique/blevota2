@@ -1,8 +1,8 @@
 import Effect from './effect'
 
-class SlowDown extends Effect{
+class SlowDown extends Effect {
   /**
-   * Read effect info from a buffer.
+   * Read effect from a buffer.
    *
    * @param {Buffer} buffer
    * @param {number} offset

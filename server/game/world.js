@@ -47,7 +47,8 @@ class World extends EventEmitter {
     }
 
     this.effectAPI = {
-      queryBox: this.detector.queryBox.bind(this.detector)
+      queryBox: this.detector.queryBox.bind(this.detector),
+      getEntity: (id) => this.entities[id]
     }
   }
 
