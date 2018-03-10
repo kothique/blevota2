@@ -2,7 +2,7 @@ import Unknown from '../unknown'
 
 describe('Unknown', () => {
   const type = 0x42,
-        id = 'a'.repeat(24)
+        id = 42
 
   let entity
 

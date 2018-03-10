@@ -4,7 +4,7 @@ describe('Entity', () => {
   let entity
 
   beforeEach(() => {
-    const id = 'a'.repeat(24),
+    const id = 42,
           entityAPI = {
             createSkill: jest.fn(),
             createEffect: jest.fn()

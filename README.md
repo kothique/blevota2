@@ -9,7 +9,7 @@
 * _spacial partitioning instead of brute-force_
 
 ### **Game Mechanics**
-* all 8 skills
+* all skills (**2**/8)
 
 ### **UI**
 * show distance to border
@@ -27,5 +27,4 @@
 ### Tests
 * tests/serialization/entities/entity
 * server/game/collision-detector.js
-* change entity ids from 24b-strings to numbers
 * react components (far away future)

@@ -4,7 +4,7 @@ import { Vector, V } from '@common/vector'
 
 describe('Orb', () => {
   let orb
-  const id = 'a'.repeat(24),
+  const id = 42,
         entityAPI = {
           createSkill: jest.fn(),
           createEffect: jest.fn()

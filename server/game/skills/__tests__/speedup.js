@@ -16,14 +16,22 @@ describe('SpeedUp', () => {
     })
   }
 
+  const skillAPI = {
+    createEffect: jest.fn(function (constructor, options) {
+      return new constructor(options, {})
+    })
+  }
+
   beforeEach(() => {
     orb.effects = []
     orb.receiveEffect.mockClear()
     orb.removeEffect.mockClear()
+
+    skillAPI.createEffect.mockClear()
   })
 
   describe('onDown() & onUp()', () => {
-    let skill = new SpeedUp
+    let skill = new SpeedUp({}, skillAPI)
 
     test('should apply effect on down', () => {
       skill.onDown(orb)

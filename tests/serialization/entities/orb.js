@@ -27,7 +27,7 @@ describe('Orb entity serialization', () => {
 
     serverOrb.serialize(buffer)
 
-    const clientOrb = new ClientOrb('a'.repeat(24)),
+    const clientOrb = new ClientOrb(42),
           clientLength = clientOrb.parse(buffer)
 
     expect(serverLength).toBe(clientLength)

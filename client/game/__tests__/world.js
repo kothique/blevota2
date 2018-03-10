@@ -3,7 +3,9 @@ let World
 let EntityFactory
 
 describe('World', () => {
-  const id = 'a'.repeat(24)
+  const id = 42,
+        id1 = id,
+        id2 = 54
 
   const entityDesc1 = {
     type: 0x1,
@@ -38,10 +40,10 @@ describe('World', () => {
 
     expect(Object.keys(EntityFactory.entities)).toHaveLength(0)
 
-    World.new('a'.repeat(24), ORB)
+    World.new(id, ORB)
     expect(Object.keys(EntityFactory.entities)).toHaveLength(1)
 
-    World.remove('a'.repeat(24))
+    World.remove(id)
     expect(Object.keys(EntityFactory.entities)).toHaveLength(0)
 
     done()
@@ -54,8 +56,8 @@ describe('World', () => {
 
     expect(Object.keys(EntityFactory.entities)).toHaveLength(0)
 
-    World.new('a'.repeat(24), ORB)
-    World.new('b'.repeat(24), ORB)
+    World.new(id1, ORB)
+    World.new(id2, ORB)
     expect(Object.keys(EntityFactory.entities)).toHaveLength(2)
 
     World.clear()
