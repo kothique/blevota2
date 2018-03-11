@@ -15,7 +15,12 @@ class Invisibility extends Skill {
     if (this.state.type === READY) {
       this.state = { type: ACTIVE }
 
-      this.effect = this.api.createEffect(EffectInvisibility)
+      this.effect = this.api.createEffect(EffectInvisibility, {
+        onEnd: () => {
+          this.state = { type: READY }
+          delete this.effect
+        }
+      })
       owner.receiveEffect(this.effect)
     }
   }

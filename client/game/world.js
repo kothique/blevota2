@@ -64,10 +64,12 @@ const World = {
   remove(id) {
     const entity = EntityFactory.get(id)
 
-    if (entity.node) {
-      this.svg.removeChild(entity.node)
+    if (entity) {
+      if (entity.node) {
+        this.svg.removeChild(entity.node)
+      }
+      EntityFactory.remove(id)
     }
-    EntityFactory.remove(id)
 
     return this
   },

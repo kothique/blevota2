@@ -16,13 +16,13 @@ class HiddenStrike extends Skill {
    * @param {Orb} owner
    */
   onDown(owner) {
-    if (this.state.type === READY) {
+    if (this.state.type === READY && !owner.isVisible()) {
       this.state = { type: ACTIVE }
 
       this.effect = this.api.createEffect(EffectHiddenStrike, {
-        minDamage:       5,
-        maxDamage:       40,
-        maxCastDuration: 0.8,
+        minDamage:       0,
+        maxDamage:       30,
+        maxCastDuration: 3,
         radius:          200,
         onEnd:           () => {
           this.state = { type: READY }
@@ -40,8 +40,11 @@ class HiddenStrike extends Skill {
    * @param {Orb} owner 
    */
   onUp(owner) {
-    if (this.state.type === ACTIVE && this.effect && this.effect.alive) {
-      owner.removeEffect(this.effect)
+    if (this.state.type === ACTIVE) {
+      if (this.effect && this.effect.alive) {
+        owner.removeEffect(this.effect)
+      }
+
       this.state = { type: READY }
       delete this.effect
     }

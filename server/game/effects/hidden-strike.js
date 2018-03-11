@@ -2,8 +2,9 @@
  * @module server/game/effects/hidden-strike
  */
 
-const Effect = require('./effect')
+const Effect        = require('./effect')
 const InstantDamage = require('./instant-damage')
+const Invisibility  = require('./invisibility')
 
 const { Vector, V } = require('../../../common/vector')
 const { HIDDEN_STRIKE } = require('../../../common/effects')
@@ -48,8 +49,7 @@ class HiddenStrike extends Effect {
   onTick(target, t, dt) {
     this.duration += dt
 
-    if (this.duration >= this.maxCastDuration) {
-      this.onEnd()
+    if (this.duration >= this.maxCastDuration || target.isVisible()) {
       this.die()
     }
   }
@@ -60,19 +60,29 @@ class HiddenStrike extends Effect {
    * @param {Entity} target
    */
   onRemove(target) {
-    const entities = this.api.queryBox({
-      minP: Vector.subtract(target.position, V(this.radius, this.radius)),
-      maxP: Vector.     add(target.position, V(this.radius, this.radius))
-    }).map(this.api.getEntity)
+    this.onEnd()
 
-    entities.forEach((entity) => {
-      if (entity.radius && entity !== target) {
-        const k = Math.max(1, this.duration / this.maxCastDuration),
-              value = this.minDamage + k * (this.maxDamage - this.minDamage)
+    if (!target.isVisible()) {
+      target.effects.forEach((effect) => {
+        if (effect instanceof Invisibility) {
+          target.removeEffect(effect)
+        }
+      })
 
-        entity.receiveEffect(this.api.createEffect(InstantDamage, { value }))
-      }
-    })
+      const entities = this.api.queryBox({
+        minP: Vector.subtract(target.position, V(this.radius, this.radius)),
+        maxP: Vector.     add(target.position, V(this.radius, this.radius))
+      }).map(this.api.getEntity)
+
+      entities.forEach((entity) => {
+        if (entity.radius && entity !== target) {
+          const k = Math.max(1, this.duration / this.maxCastDuration),
+                value = this.minDamage + k * (this.maxDamage - this.minDamage)
+
+          entity.receiveEffect(this.api.createEffect(InstantDamage, { value }))
+        }
+      })
+    }
   }
 
   /**
