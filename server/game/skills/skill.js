@@ -25,6 +25,8 @@ class Skill {
    */
   onDown(owner) {}
 
+  onTick(owner, t, dt) {}
+
   /**
    * When the skill button is released.
    *

@@ -3,7 +3,6 @@
  */
 
 const Skill = require('./skill')
-const EffectInvisibility = require('../effects/invisibility')
 
 const { READY, ACTIVE } = require('../../../common/skill-state')
 

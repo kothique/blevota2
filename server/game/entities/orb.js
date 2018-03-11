@@ -120,6 +120,10 @@ class Orb extends Entity {
    * @override
    */
   applyEffects(t, dt) {
+    forIn(this.skillManager.skills, (skill) => {
+      skill.onTick(this, t, dt)
+    })
+
     this.effects.forEach((effect) => {
       effect.onTick(this, t, dt)
 

@@ -3,8 +3,16 @@
  */
 
 const Skill = require('./skill')
-const EffectHiddenStrike = require('../effects/hidden-strike')
+const InstantDamage = require('../effects/instant-damage')
+
 const { READY, ACTIVE } = require('../../../common/skill-state')
+const { Vector, V } = require('../../../common/vector')
+const { ORB } = require('../../../common/entities')
+
+const MIN_DAMAGE = 0
+const MAX_DAMAGE = 30
+const MAX_CAST_DURATION = 3
+const RADIUS = 200
 
 /**
  * @class
@@ -18,19 +26,20 @@ class HiddenStrike extends Skill {
   onDown(owner) {
     if (this.state.type === READY && !owner.visible) {
       this.state = { type: ACTIVE }
+      this.duration = 0
+      owner.casting = true
+    }
+  }
 
-      this.effect = this.api.createEffect(EffectHiddenStrike, {
-        minDamage:       0,
-        maxDamage:       30,
-        maxCastDuration: 3,
-        radius:          200,
-        onEnd:           () => {
-          this.state = { type: READY }
-          delete this.effect
-        }
-      })
+  onTick(owner, t, dt) {
+    if (this.state.type === ACTIVE) {
+      this.duration += dt
 
-      owner.receiveEffect(this.effect)
+      if (this.duration >= MAX_CAST_DURATION || owner.visible) {
+        this.state = { type: READY }
+        this.release(owner)
+        owner.casting = false
+      }
     }
   }
 
@@ -41,12 +50,32 @@ class HiddenStrike extends Skill {
    */
   onUp(owner) {
     if (this.state.type === ACTIVE) {
-      if (this.effect && this.effect.alive) {
-        owner.removeEffect(this.effect)
-      }
-
       this.state = { type: READY }
-      delete this.effect
+      this.release(owner)
+      owner.casting = false
+    }
+  }
+
+  release(owner) {
+    this.state = { type: READY }
+    owner.casting = false
+
+    if (!owner.visible) {
+      owner.show()
+
+      const entities = this.api.queryBox({
+        minP: Vector.subtract(owner.position, V(this.radius, this.radius)),
+        maxP: Vector.add(owner.position, V(this.radius, this.radius))
+      }).map(this.api.getEntity)
+
+      entities.forEach((entity) => {
+        if (entity.type === ORB && entity !== owner) {
+          const k = Math.max(1, this.duration / MAX_CAST_DURATION),
+                value = MIN_DAMAGE + k * (MAX_DAMAGE - MIN_DAMAGE)
+
+          entity.receiveEffect(this.api.createEffect(InstantDamage, { value }))
+        }
+      })
     }
   }
 }

@@ -43,14 +43,10 @@ class World extends EventEmitter {
       createEffect: this.createEffect.bind(this)
     }
 
-    this.skillAPI = {
-      createEffect: this.createEffect.bind(this)
-    }
-
-    this.effectAPI = {
+    this.skillAPI = this.effectAPI = {
       queryBox: this.detector.queryBox.bind(this.detector),
-      createEffect: this.createEffect.bind(this),
-      getEntity: (id) => this.entities[id]
+      getEntity: (id) => this.entities[id],
+      createEffect: this.createEffect.bind(this)
     }
   }
 

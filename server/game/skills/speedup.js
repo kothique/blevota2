@@ -6,6 +6,8 @@ const Skill = require('./skill')
 const EffectSpeedUp = require('../effects/speedup')
 const SkillState = require('../../../common/skill-state')
 
+const VALUE = 1
+
 class SpeedUp extends Skill {
   /**
    * Apply speed up effect.
@@ -18,8 +20,7 @@ class SpeedUp extends Skill {
       type: SkillState.ACTIVE
     }
 
-    this.effect = this.api.createEffect(EffectSpeedUp, { value: 1.0 })
-    owner.receiveEffect(this.effect)
+    owner.dragForceFactor -= VALUE
   }
 
   /**
@@ -33,8 +34,7 @@ class SpeedUp extends Skill {
       type: SkillState.READY
     }
 
-    owner.removeEffect(this.effect)
-    delete this.effect
+    owner.dragForceFactor += VALUE
   }
 }
 
