@@ -11,6 +11,8 @@ const SpeedUp      = require('../skills/speedup')
 const SlowDown     = require('../skills/slowdown')
 const Pull         = require('../skills/pull')
 const Push         = require('../skills/push')
+// const Inviibility = ....
+const HiddenStrike = require('../skills/hidden-strike')
 
 /**
  * @class
@@ -44,7 +46,9 @@ class Orb extends Entity {
       skill1: this.api.createSkill(SpeedUp),
       skill2: this.api.createSkill(SlowDown),
       skill3: this.api.createSkill(Pull),
-      skill4: this.api.createSkill(Push)
+      skill4: this.api.createSkill(Push),
+
+      skill6: this.api.createSkill(HiddenStrike)
     })
 
     this.alive = true
@@ -76,11 +80,13 @@ class Orb extends Entity {
   /**
    * Make sure hp and mp >= 0 after effects are applied.
    *
+   * @param {number} t
+   * @param {number} dt
    * @chainable
    * @override
    */
-  applyEffects() {
-    super.applyEffects()
+  applyEffects(t, dt) {
+    super.applyEffects(t, dt)
 
     if (this.hp < 0) {
       this.hp = 0

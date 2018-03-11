@@ -24,8 +24,8 @@ const Simulator = {
    *
    * @param {?object} options
    * @param {?object} options.world
-   * @param {?number} t
-   * @param {?number} dt
+   * @param {?number} options.t
+   * @param {?number} options.dt
    */
   init(options = Object.create(null)) {
     this.world = options.world || new World({

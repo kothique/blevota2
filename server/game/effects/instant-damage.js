@@ -2,7 +2,6 @@
  * @module server/game/effects/instant-damage
  */
 const Effect = require('./effect')
-const Orb = require('../entities/orb')
 const { INSTANT_DAMAGE } = require('../../../common/effects')
 
 /**
@@ -30,7 +29,7 @@ class InstantDamage extends Effect {
    * @param {Entity} target
    */
   onReceive(target) {
-    if (target instanceof Orb) {
+    if (target.radius) {
       target.hp -= this.value
 
       if (target.hp < 0) {

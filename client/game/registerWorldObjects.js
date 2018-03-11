@@ -9,6 +9,7 @@ import SpeedUp       from '@client/game/effects/speedup'
 import SlowDown      from '@client/game/effects/slowdown'
 import InstantDamage from '@client/game/effects/instant-damage'
 import Magnetism     from '@client/game/effects/magnetism'
+import HiddenStrike  from '@client/game/effects/hidden-strike'
 
 EntityFactory.register({
   type: entities.ORB,
@@ -33,4 +34,9 @@ EffectFactory.register({
 EffectFactory.register({
   type: effects.MAGNETISM,
   constructor: Magnetism
+})
+
+EffectFactory.register({
+  type: effects.HIDDEN_STRIKE,
+  constructor: HiddenStrike
 })

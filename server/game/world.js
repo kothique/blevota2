@@ -48,6 +48,7 @@ class World extends EventEmitter {
 
     this.effectAPI = {
       queryBox: this.detector.queryBox.bind(this.detector),
+      createEffect: this.createEffect.bind(this),
       getEntity: (id) => this.entities[id]
     }
   }
@@ -145,7 +146,7 @@ class World extends EventEmitter {
     forIn(this.entities, (entity, id) => {
       entity.applyEffects(t, dt)
 
-      if (entity instanceof Orb && entity.alive === false) {
+      if (entity.radius && entity.alive === false) {
         this.emit('death', id)
       }
     })

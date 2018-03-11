@@ -18,7 +18,7 @@ import { VISION_RADIUS } from '@common/game'
 
 import '@client/styles/game-page.styl'
 
-const HOST = 'http://localhost:3000/'
+const HOST = ''
 
 /**
  * @class
