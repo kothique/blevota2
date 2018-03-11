@@ -11,9 +11,9 @@ export default (history) => {
     routerMiddleware(history)
   ]
 
-  if (process.env.NODE_ENV !== 'production') {
-    middlewares.push(logger)
-  }
+  // if (process.env.NODE_ENV !== 'production') {
+  //   middlewares.push(logger)
+  // }
 
   return createStore(
     combineReducers({

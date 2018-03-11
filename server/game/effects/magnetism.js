@@ -6,6 +6,7 @@ const Effect = require('./effect')
 
 const { MAGNETISM } = require('../../../common/effects')
 const { Vector, V } = require('../../../common/vector')
+const { ORB }       = require('../../../common/entities')
 
 /**
  * @class
@@ -40,7 +41,7 @@ class Magnetism extends Effect {
     }).map(this.api.getEntity)
 
     entities.forEach((entity) => {
-      if (entity.radius && entity !== target) {
+      if (entity.type === ORB && entity !== target) {
         const orb = entity,
               distance = Math.max(0, Vector.distance(target.position, orb.position) - target.radius - orb.radius)
 

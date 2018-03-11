@@ -29,85 +29,6 @@ class Entity {
     this.position        = options.position          || V(0, 0)
     this.velocity        = options.velocity          || V(0, 0)
     this.force           = options.force             || V(0, 0)
-
-    this.effects   = []
-    this.invisible = 0
-    this.casting   = false
-  }
-
-  /**
-   * Return the type of the entity.
-   *
-   * @return {number}
-   */
-  static getType() {
-    return UNKNOWN
-  }
-
-  /**
-   * Set forces according to controls.
-   *
-   * @param {object} controls
-   * @chainable
-   */
-  applyControls(controls) {
-    const { pX, pY, move } = controls
-
-    if (move && this.moveForce && !this.casting) {
-      this.force.add(
-        V(pX, pY).subtract(this.position).setLength(this.moveForce)
-      )
-    }
-
-    return this
-  }
-
-  /**
-   * Receive an effect.
-   *
-   * @param {Effect} effect
-   * @chainable
-   */
-  receiveEffect(effect) {
-    this.effects.push(effect)
-    effect.onReceive(this)
-
-    return this
-  }
-
-  /**
-   * Remove the specified effect.
-   *
-   * @param {Effect} effect
-   * @chainable
-   */
-  removeEffect(effect) {
-    const index = this.effects.indexOf(effect)
-    if (index !== -1) {
-      effect.onRemove(this)
-      this.effects.splice(index, 1)
-    }
-
-    return this
-  }
-
-  /**
-   * Apply the entity's effects.
-   *
-   * @param {number} t - Timestamp.
-   * @param {number} dt - Timestep.
-   * @chainable
-   */
-  applyEffects(t, dt) {
-    this.effects.forEach((effect) => {
-      effect.onTick(this, t, dt)
-
-      if (effect.alive === false) {
-        this.removeEffect(effect)
-      }
-    })
-
-    return this
   }
 
   /**
@@ -156,8 +77,8 @@ class Entity {
     return 16
   }
 
-  isVisible() {
-    return this.invisible === 0
+  get type() {
+    return UNKNOWN
   }
 }
 

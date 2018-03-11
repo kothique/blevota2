@@ -6,8 +6,9 @@ const Effect        = require('./effect')
 const InstantDamage = require('./instant-damage')
 const Invisibility  = require('./invisibility')
 
-const { Vector, V } = require('../../../common/vector')
+const { Vector, V }     = require('../../../common/vector')
 const { HIDDEN_STRIKE } = require('../../../common/effects')
+const { ORB }           = require('../../../common/entities')
 
 /**
  * @class
@@ -50,7 +51,7 @@ class HiddenStrike extends Effect {
   onTick(target, t, dt) {
     this.duration += dt
 
-    if (this.duration >= this.maxCastDuration || target.isVisible()) {
+    if (this.duration >= this.maxCastDuration || target.visible) {
       this.die()
     }
   }
@@ -64,7 +65,7 @@ class HiddenStrike extends Effect {
     target.casting = false
     this.onEnd()
 
-    if (!target.isVisible()) {
+    if (!target.visible) {
       target.effects.forEach((effect) => {
         if (effect instanceof Invisibility) {
           target.removeEffect(effect)
@@ -77,7 +78,7 @@ class HiddenStrike extends Effect {
       }).map(this.api.getEntity)
 
       entities.forEach((entity) => {
-        if (entity.radius && entity !== target) {
+        if (entity.type === ORB && entity !== target) {
           const k = Math.max(1, this.duration / this.maxCastDuration),
                 value = this.minDamage + k * (this.maxDamage - this.minDamage)
 

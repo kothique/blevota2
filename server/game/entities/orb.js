@@ -14,6 +14,8 @@ const Push         = require('../skills/push')
 const Invisibility = require('../skills/invisibility')
 const HiddenStrike = require('../skills/hidden-strike')
 
+const { Vector, V } = require('../../../common/vector')
+
 /**
  * @class
  */
@@ -51,28 +53,57 @@ class Orb extends Entity {
       skill6: this.api.createSkill(HiddenStrike)
     })
 
-    this.alive     = true
+    this._alive     = true
+    this._invisible = 0
+    this.casting   = false
+    this.effects   = []
   }
 
   /**
-   * Return the type of the entity.
-   *
-   * @return {number}
-   */
-  static getType() {
-    return ORB
-  }
-
-  /**
-   * Handle skills.
+   * Handle skills and set forces according to controls.
    *
    * @param {object} controls
    * @chainable
-   * @override
    */
   applyControls(controls) {
+    const { pX, pY, move } = controls
+
     this.skillManager.handleControls(controls)
-    super.applyControls(controls)
+
+    if (move && this.moveForce && !this.casting) {
+      this.force.add(
+        V(pX, pY).subtract(this.position).setLength(this.moveForce)
+      )
+    }
+
+    return this
+  }
+
+  /**
+   * Receive an effect.
+   *
+   * @param {Effect} effect
+   * @chainable
+   */
+  receiveEffect(effect) {
+    this.effects.push(effect)
+    effect.onReceive(this)
+
+    return this
+  }
+
+  /**
+   * Remove the specified effect.
+   *
+   * @param {Effect} effect
+   * @chainable
+   */
+  removeEffect(effect) {
+    const index = this.effects.indexOf(effect)
+    if (index !== -1) {
+      effect.onRemove(this)
+      this.effects.splice(index, 1)
+    }
 
     return this
   }
@@ -86,7 +117,13 @@ class Orb extends Entity {
    * @override
    */
   applyEffects(t, dt) {
-    super.applyEffects(t, dt)
+    this.effects.forEach((effect) => {
+      effect.onTick(this, t, dt)
+
+      if (effect.alive === false) {
+        this.removeEffect(effect)
+      }
+    })
 
     if (this.hp < 0) {
       this.hp = 0
@@ -124,7 +161,7 @@ class Orb extends Entity {
     buffer.writeDoubleBE(this.mp, offset)
     offset += 8
 
-    buffer.writeUInt8(this.isVisible(), offset++)
+    buffer.writeUInt8(this.visible, offset++)
 
     return this
   }
@@ -190,9 +227,25 @@ class Orb extends Entity {
    * @chainable
    */
   die() {
-    this.alive = false
+    this._alive = false
 
     return this
+  }
+
+  get alive() {
+    return this._alive
+  }
+
+  get visible() {
+    return this._invisible === 0
+  }
+
+  // get casting() {
+  //   return this._casting
+  // }
+
+  get type() {
+    return ORB
   }
 }
 

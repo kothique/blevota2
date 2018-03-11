@@ -2,6 +2,9 @@
 
 ## ROADMAP
 
+### Bugs
+* fix client/World and client/GamePage init/deinit cycle
+
 ### Refactoring
 
 ### Physics

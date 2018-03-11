@@ -103,7 +103,7 @@ class World extends EventEmitter {
     forIn(controls, (controls, id) => {
       const entity = this.entities[id]
 
-      if (entity) {
+      if (entity && entity.type === ORB) {
         entity.applyControls(controls)
       }
     })
@@ -122,7 +122,7 @@ class World extends EventEmitter {
     forIn(this.entities, (entity, id) => {
       entity.integrate(t, dt) 
 
-      if (entity instanceof Orb) {
+      if (entity.type === ORB) {
         const position = entity.position,
               radius   = entity.radius
 
@@ -145,10 +145,12 @@ class World extends EventEmitter {
    */
   applyEffects(t, dt) {
     forIn(this.entities, (entity, id) => {
-      entity.applyEffects(t, dt)
+      if (entity.type === ORB) {
+        entity.applyEffects(t, dt)
 
-      if (entity.radius && entity.alive === false) {
-        this.emit('death', id)
+        if (!entity.alive) {
+          this.emit('death', id)
+        }
       }
     })
 
@@ -170,7 +172,7 @@ class World extends EventEmitter {
 
         const entity = this.entities[id]
 
-        if (entity instanceof Orb) {
+        if (entity.type === ORB) {
           const orb = entity
 
           switch (wall) {
@@ -198,7 +200,7 @@ class World extends EventEmitter {
         const entity1 = this.entities[id1],
               entity2 = this.entities[id2]
 
-        if (entity1 instanceof Orb && entity2 instanceof Orb) {
+        if (entity1.type === ORB && entity2.type === ORB) {
           let orb1 = entity1,
               orb2 = entity2
 
@@ -261,7 +263,7 @@ class World extends EventEmitter {
       offset += 2
 
       /** Write entity type. */
-      buffer.writeUInt8(entity.constructor.getType(), offset)
+      buffer.writeUInt8(entity.type, offset)
       offset += 1
 
       /** Write entity state. */
@@ -312,7 +314,7 @@ class World extends EventEmitter {
 
         return { id, entity, length: entity.serializedLength() }
       })
-      .filter(({ entity }) => entity.isVisible() || entity === box.for)
+      .filter(({ entity }) => entity.type !== ORB || entity.visible || entity === box.for)
 
     const entitiesLength = entities.reduce((acc, { length }) => acc + 2 + 1 + length, 0),
           buffer         = Buffer.allocUnsafe(5 * 2 + entitiesLength)
@@ -343,7 +345,7 @@ class World extends EventEmitter {
       offset += 2
 
       /* Write entity type. */
-      buffer.writeUInt8(entity.constructor.getType(), offset)
+      buffer.writeUInt8(entity.type, offset)
       offset += 1
 
       /* Write entity state. */

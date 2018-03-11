@@ -16,7 +16,7 @@ class HiddenStrike extends Skill {
    * @param {Orb} owner
    */
   onDown(owner) {
-    if (this.state.type === READY && !owner.isVisible()) {
+    if (this.state.type === READY && !owner.visible) {
       this.state = { type: ACTIVE }
 
       this.effect = this.api.createEffect(EffectHiddenStrike, {

@@ -10,8 +10,9 @@ const forIn = require('lodash/forIn')
 const World = require('./world')
 const Orb = require('./entities/orb')
 
-const { Vector, V } = require('../../common/vector')
+const { Vector, V }     = require('../../common/vector')
 const { VISION_RADIUS } = require('../../common/game')
+const { ORB }           = require('../../common/entities')
 
 /**
  * @class
@@ -178,7 +179,7 @@ const Simulator = {
     const frames = Object.create(null)
 
     forIn(this.world.entities, (entity, id) => {
-      if (entity instanceof Orb) {
+      if (entity.type === ORB) {
         const orb    = entity,
               skills = orb.skillsToBuffer(),
               world  = this.world.boxToBuffer({

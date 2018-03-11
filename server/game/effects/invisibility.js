@@ -14,11 +14,11 @@ class Invisibility extends Effect {
     this.onEnd = options.onEnd
   }
 
-  onReceive(target) { target.invisible++ }
+  onReceive(target) { target._invisible++ }
 
   onRemove(target) {
     this.onEnd()
-    target.invisible--
+    target._invisible--
   }
 }
 
