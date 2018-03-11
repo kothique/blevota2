@@ -15,13 +15,11 @@ class Invisibility extends Skill {
     if (this.state.type === READY) {
       this.state = { type: ACTIVE }
 
-      this.effect = this.api.createEffect(EffectInvisibility, {
-        onEnd: () => {
-          this.state = { type: READY }
-          delete this.effect
-        }
-      })
-      owner.receiveEffect(this.effect)
+      if (owner.visible) {
+        owner.events.once('appear', () => this.state = { type: READY })
+      }
+
+      owner.hide()
     }
   }
 
@@ -29,8 +27,7 @@ class Invisibility extends Skill {
     if (this.state.type === ACTIVE) {
       this.state = { type: READY }
 
-      owner.removeEffect(this.effect)
-      delete this.effect
+      owner.show()
     }
   }
 }

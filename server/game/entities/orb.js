@@ -2,7 +2,8 @@
  * @module server/game/entities/orb
  */
 
- const forIn = require('lodash/forIn')
+const forIn        = require('lodash/forIn')
+const EventEmitter = require('events')
 
 const SkillManager = require('../skill-manager')
 const Entity       = require('./entity')
@@ -43,6 +44,8 @@ class Orb extends Entity {
     this.maxMp  = options.maxMp
     this.mp     = options.mp
 
+    this.events = new EventEmitter
+
     /* Don't forget to change client/Orb#parse when adding new skills */
     this.skillManager = new SkillManager(this, {
       skill1: this.api.createSkill(SpeedUp),
@@ -53,10 +56,10 @@ class Orb extends Entity {
       skill6: this.api.createSkill(HiddenStrike)
     })
 
-    this._alive     = true
-    this._invisible = 0
-    this.casting   = false
-    this.effects   = []
+    this._alive   = true
+    this._visible = true
+    this.casting  = false
+    this.effects  = []
   }
 
   /**
@@ -221,24 +224,35 @@ class Orb extends Entity {
     return buffer
   }
 
-  /**
-   * Mark the entity as dead.
-   *
-   * @chainable
-   */
-  die() {
-    this._alive = false
+  get alive() { return this._alive }
 
-    return this
+  set alive(nextAlive) {
+    if (!this.alive && nextAlive) {
+      this.events.emit('resurrect')
+    } else if (this.alive && !nextAlive) {
+      this.events.emit('die')
+    }
+
+    this._alive = nextAlive
   }
 
-  get alive() {
-    return this._alive
+  die()       { this.alive = false }
+  resurrect() { this.alive = true }
+
+  get visible() { return this._visible }
+
+  set visible(nextVisible) {
+    if (!this.visible && nextVisible) {
+      this.events.emit('appear')
+    } else if (this.visible && !nextVisible) {
+      this.events.emit('disappear')
+    }
+
+    this._visible = nextVisible
   }
 
-  get visible() {
-    return this._invisible === 0
-  }
+  hide() { this.visible = false }
+  show() { this.visible = true }
 
   // get casting() {
   //   return this._casting
