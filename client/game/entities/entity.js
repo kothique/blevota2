@@ -4,7 +4,6 @@
 
 import Set from 'collections/set'
 
-import EffectFactory from '../effect-factory'
 import { Vector, V } from '@common/vector'
 
 /**
@@ -19,14 +18,12 @@ class Entity {
   constructor(id) {
     this.id = id
 
-    this.previous = {}
-
     this.position = V(0, 0)
-    this.previous.position = V(0, 0)
+    this.previous = {
+      position: V(0, 0)
+    }
 
-    this.effects = new Set
-
-    this.invisible = false
+    this.reserved = false
   }
 
   /**
@@ -39,23 +36,8 @@ class Entity {
   parse(buffer, offset = 0) {
     this.previous.position = this.position.clone()
 
-    this.position = V(
-      buffer.readDoubleBE(offset),
-      buffer.readDoubleBE(offset + 8)
-    )
+    this.position = V(buffer.readDoubleBE(offset), buffer.readDoubleBE(offset + 8))
     offset += 16
-
-    this.effects.clear()
-
-    const effectsCount = buffer.readUInt8(offset)
-    offset += 1
-
-    for (let i = 0; i < effectsCount; i++) {
-      const result = EffectFactory.deserialize(buffer, offset)
-
-      offset = result.offset
-      this.effects.add(result.effect)
-    }
 
     return offset
   }
@@ -83,19 +65,9 @@ class Entity {
    */
   render() {}
 
-  /**
-   * Make the entity invisible.
-   */
-  hide() {
-    this.invisible = true
-  }
+  reserve() { this.reserved = true }
 
-  /**
-   * Show the entity on the screen.
-   */
-  show() {
-    this.invisible = false
-  }
+  return() { this.reserved = false }
 }
 
 export default Entity

@@ -30,8 +30,8 @@ class Entity {
     this.velocity        = options.velocity          || V(0, 0)
     this.force           = options.force             || V(0, 0)
 
-    /** @todo use array */
-    this.effects         = new Set
+    this.effects   = []
+    this.invisible = 0
   }
 
   /**
@@ -68,7 +68,7 @@ class Entity {
    * @chainable
    */
   receiveEffect(effect) {
-    this.effects.add(effect)
+    this.effects.push(effect)
     effect.onReceive(this)
 
     return this
@@ -81,8 +81,11 @@ class Entity {
    * @chainable
    */
   removeEffect(effect) {
-    effect.onRemove(this)
-    this.effects.remove(effect)
+    const index = this.effects.indexOf(effect)
+    if (index !== -1) {
+      effect.onRemove(this)
+      this.effects.splice(index, 1)
+    }
 
     return this
   }
@@ -140,15 +143,6 @@ class Entity {
     buffer.writeDoubleBE(this.position.y, offset)
     offset += 8
 
-    buffer.writeUInt8(this.effects.length, offset)
-    offset += 1
-
-    this.effects.forEach((effect) => {
-      effect.serialize(buffer, offset)
-
-      offset += effect.serializedLength()
-    })
-
     return this
   }
 
@@ -158,12 +152,11 @@ class Entity {
    * @return {number}
    */
   serializedLength() {
-    const effectsLength = this.effects.reduce(
-      (acc, effect) => acc + effect.serializedLength(),
-      0
-    )
+    return 16
+  }
 
-    return 16 + 1 + effectsLength
+  isVisible() {
+    return this.invisible === 0
   }
 }
 

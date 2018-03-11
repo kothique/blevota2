@@ -80,8 +80,8 @@ const World = {
    * @chainable
    */
   parse(buffer, offset = 0) {
-    /* Hide all entities. */
-    forIn(EntityFactory.entities, (entity) => entity.hide())
+    /* Reserve all entities. */
+    forIn(EntityFactory.entities, (entity) => entity.reserve())
 
     /* Read world size. */
     this.size = V(
@@ -106,7 +106,7 @@ const World = {
       const result = EntityFactory.deserialize(buffer, offset)
 
       /* Only show received entities. */
-      result.entity.show()
+      result.entity.return()
 
       offset = result.offset
     }
@@ -121,7 +121,7 @@ const World = {
    */
   render() {
     forIn(EntityFactory.entities, (entity) => {
-      if (!entity.invisible) {
+      if (!entity.reserved) {
         entity.render(this.viewport)
       }
     })

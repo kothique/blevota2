@@ -11,7 +11,7 @@ const SpeedUp      = require('../skills/speedup')
 const SlowDown     = require('../skills/slowdown')
 const Pull         = require('../skills/pull')
 const Push         = require('../skills/push')
-// const Inviibility = ....
+const Invisibility = require('../skills/invisibility')
 const HiddenStrike = require('../skills/hidden-strike')
 
 /**
@@ -47,11 +47,11 @@ class Orb extends Entity {
       skill2: this.api.createSkill(SlowDown),
       skill3: this.api.createSkill(Pull),
       skill4: this.api.createSkill(Push),
-
+      skill5: this.api.createSkill(Invisibility),
       skill6: this.api.createSkill(HiddenStrike)
     })
 
-    this.alive = true
+    this.alive     = true
   }
 
   /**
@@ -124,6 +124,8 @@ class Orb extends Entity {
     buffer.writeDoubleBE(this.mp, offset)
     offset += 8
 
+    buffer.writeUInt8(this.isVisible(), offset++)
+
     return this
   }
 
@@ -134,7 +136,7 @@ class Orb extends Entity {
    * @override
    */
   serializedLength() {
-    return super.serializedLength() + 8 * 5
+    return super.serializedLength() + 8 * 5 + 1
   }
 
   /**

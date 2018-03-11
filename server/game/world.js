@@ -5,12 +5,13 @@
 const forIn = require('lodash/forIn')
 const EventEmitter = require('events')
 
-const { V, Vector } = require('../../common/vector')
-const { ORB } = require('../../common/entities')
 const CollisionDetector = require('./collision-detector')
-const InstantDamage = require('./effects/instant-damage')
-const Entity = require('./entities/entity')
-const Orb = require('./entities/orb')
+const InstantDamage     = require('./effects/instant-damage')
+const Entity            = require('./entities/entity')
+const Orb               = require('./entities/orb')
+
+const { V, Vector }     = require('../../common/vector')
+const { ORB }           = require('../../common/entities')
 
 /**
  * @class
@@ -301,20 +302,19 @@ class World extends EventEmitter {
    * @param {object} box
    * @param {Vector} box.minP
    * @param {Vector} box.maxP
+   * @param {Orb}    box.for
    * @return {Buffer}
    */
   boxToBuffer(box) {
-    const ids      = this.detector.queryBox(box),
-          entities = ids.map((id) => {
-            const entity = this.entities[id]
+    const entities = this.detector.queryBox(box)
+      .map((id) => {
+        const entity = this.entities[id]
 
-            return {
-              id,
-              entity,
-              length: entity.serializedLength()
-            }
-          }),
-          entitiesLength = entities.reduce((acc, { length }) => acc + 2 + 1 + length, 0),
+        return { id, entity, length: entity.serializedLength() }
+      })
+      .filter(({ entity }) => entity.isVisible() || entity === box.for)
+
+    const entitiesLength = entities.reduce((acc, { length }) => acc + 2 + 1 + length, 0),
           buffer         = Buffer.allocUnsafe(5 * 2 + entitiesLength)
 
     let offset = 0
@@ -358,9 +358,9 @@ class World extends EventEmitter {
    * Create a new entity provided with World.entityAPI.
    *
    * @param {function} constructor
-   * @param {object}   options - Object to pass to the entity's constructor.
+   * @param {?object}  options - Object to pass to the entity's constructor.
    */
-  createEntity(constructor, options) {
+  createEntity(constructor, options = {}) {
     return new constructor(options, this.entityAPI)
   }
 
@@ -368,9 +368,9 @@ class World extends EventEmitter {
    * Create a new skill provided with World.skillAPI.
    *
    * @param {function} constructor
-   * @param {object}   options - Object to pass to the skill's constructor.
+   * @param {?object}  options - Object to pass to the skill's constructor.
    */
-  createSkill(constructor, options) {
+  createSkill(constructor, options = {}) {
     return new constructor(options, this.skillAPI)
   }
 
@@ -378,9 +378,9 @@ class World extends EventEmitter {
    * Create a new effect provided with World.effectAPI.
    *
    * @param {function} constructor
-   * @param {object}   options - Object to pass to the effect's constructor.
+   * @param {?object}  options - Object to pass to the effect's constructor.
    */
-  createEffect(constructor, options) {
+  createEffect(constructor, options = {}) {
     return new constructor(options, this.effectAPI)
   }
 }

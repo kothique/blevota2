@@ -3,10 +3,10 @@
  */
 
 import Entity from './entity'
-import Set from 'collections/set'
+
 import { Vector, V } from '@common/vector'
-import { ORB } from '@common/entities'
-import { SVG } from '@common/util'
+import { ORB }       from '@common/entities'
+import { SVG }       from '@common/util'
 
 /**
  * @class
@@ -24,18 +24,18 @@ class Orb extends Entity {
 
     const isPlayer = options.isPlayer || false    
 
-    this.radius = 0
-    this.maxHp = 0
-    this.hp = 0
-    this.maxMp = 0
-    this.mp = 0
+    this.radius  = 0
+    this.maxHp   = 0
+    this.hp      = 0
+    this.maxMp   = 0
+    this.mp      = 0
+    this.visible = true
 
     this.toRender = true
 
     this.nodes = Object.create(null)
 
     this.nodes.circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-    this.nodes.circle.setAttributeNS(null, 'fill', isPlayer ? 'rgb(0, 255, 212)' : 'rgb(0, 101, 255)')
     this.nodes.circle.setAttributeNS(null, 'cx', 0)
     this.nodes.circle.setAttributeNS(null, 'cy', 0)
     this.nodes.circle.setAttributeNS(null, 'r',  0)
@@ -85,6 +85,8 @@ class Orb extends Entity {
     this.mp = buffer.readDoubleBE(offset)
     offset += 8
 
+    this.visible = buffer.readUInt8(offset++)
+
     return offset
   }
 
@@ -107,6 +109,8 @@ class Orb extends Entity {
     this.nodes.mp    .setAttributeNS(null, 'r', 0.8 * this.radius)
     this.nodes.hp    .setAttributeNS(null, 'r', 0.5 * this.radius)
 
+    this.nodes.circle.setAttributeNS(null, 'fill', this.visible ? 'rgb(0, 101, 255)' : 'white')
+
     this.nodes.mp    .setAttributeNS(null, 'fill-opacity', mpValue)
     this.nodes.hp    .setAttributeNS(null, 'fill-opacity', hpValue)
 
@@ -118,8 +122,8 @@ class Orb extends Entity {
    *
    * @override
    */
-  hide() {
-    super.hide()
+  reserve() {
+    super.reserve()
 
     this.node.setAttributeNS(null, 'visibility', 'hidden')
   }
@@ -129,8 +133,8 @@ class Orb extends Entity {
    *
    * @override
    */
-  show() {
-    super.show()
+  return() {
+    super.return()
 
     this.node.setAttributeNS(null, 'visibility', 'visible')
   }

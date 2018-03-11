@@ -11,18 +11,6 @@ const { READY, ACTIVE } = require('../../../common/skill-state')
  */
 class HiddenStrike extends Skill {
   /**
-   * Create a new hidden strike skill.
-   *
-   * @param {object} options
-   * @param {object} skillAPI
-   */
-  constructor(options, skillAPI) {
-    super(options, skillAPI)
-
-    this.clear()
-  }
-
-  /**
    * Start casting.
    *
    * @param {Orb} owner
@@ -36,7 +24,10 @@ class HiddenStrike extends Skill {
         maxDamage:       40,
         maxCastDuration: 0.8,
         radius:          200,
-        onEnd:           this.clear.bind(this)
+        onEnd:           () => {
+          this.state = { type: READY }
+          delete this.effect
+        }
       })
 
       owner.receiveEffect(this.effect)
@@ -50,17 +41,10 @@ class HiddenStrike extends Skill {
    */
   onUp(owner) {
     if (this.state.type === ACTIVE && this.effect && this.effect.alive) {
-      this.effect.die()
-      this.clear()
+      owner.removeEffect(this.effect)
+      this.state = { type: READY }
+      delete this.effect
     }
-  }
-
-  /**
-   * Return the skill to its default state.
-   */
-  clear() {
-    this.state  = { type: READY }
-    this.effect = null
   }
 }
 

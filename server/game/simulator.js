@@ -9,6 +9,7 @@ const forIn = require('lodash/forIn')
 
 const World = require('./world')
 const Orb = require('./entities/orb')
+
 const { Vector, V } = require('../../common/vector')
 const { VISION_RADIUS } = require('../../common/game')
 
@@ -182,7 +183,8 @@ const Simulator = {
               skills = orb.skillsToBuffer(),
               world  = this.world.boxToBuffer({
                 minP: Vector.subtract(orb.position, VISION_RADIUS),
-                maxP: Vector.     add(orb.position, VISION_RADIUS)
+                maxP: Vector.     add(orb.position, VISION_RADIUS),
+                for:  orb
               })
 
         frames[id] = {
