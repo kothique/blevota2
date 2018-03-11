@@ -39,6 +39,7 @@ class HiddenStrike extends Effect {
    */
   onReceive(target) {
     this.duration = 0
+    target.casting = true
   }
 
   /**
@@ -60,6 +61,7 @@ class HiddenStrike extends Effect {
    * @param {Entity} target
    */
   onRemove(target) {
+    target.casting = false
     this.onEnd()
 
     if (!target.isVisible()) {

@@ -32,6 +32,7 @@ class Entity {
 
     this.effects   = []
     this.invisible = 0
+    this.casting   = false
   }
 
   /**
@@ -52,7 +53,7 @@ class Entity {
   applyControls(controls) {
     const { pX, pY, move } = controls
 
-    if (move && this.moveForce) {
+    if (move && this.moveForce && !this.casting) {
       this.force.add(
         V(pX, pY).subtract(this.position).setLength(this.moveForce)
       )
