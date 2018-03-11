@@ -3,7 +3,6 @@
  */
 
 const Skill = require('./skill')
-const InstantDamage = require('../effects/instant-damage')
 
 const { READY, ACTIVE } = require('../../../common/skill-state')
 const { Vector, V } = require('../../../common/vector')
@@ -73,7 +72,7 @@ class HiddenStrike extends Skill {
           const k = Math.max(1, this.duration / MAX_CAST_DURATION),
                 value = MIN_DAMAGE + k * (MAX_DAMAGE - MIN_DAMAGE)
 
-          entity.receiveEffect(this.api.createEffect(InstantDamage, { value }))
+          entity.receiveDamage(value, owner)
         }
       })
     }

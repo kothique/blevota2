@@ -57,26 +57,6 @@ class Effect {
 
     return true
   }
-
-  /**
-   * Write the effect to a buffer.
-   *
-   * @param {Buffer} buffer
-   * @param {number} offset
-   * @chainable
-   */
-  serialize(buffer, offset = 0) {
-    return this
-  }
-
-  /**
-   * Size in bytes that the effect takes when serialized.
-   *
-   * @return {number}
-   */
-  get binaryLength() {
-    return 0
-  }
 }
 
 module.exports = Effect

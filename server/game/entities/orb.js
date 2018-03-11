@@ -262,6 +262,20 @@ class Orb extends Entity {
   //   return this._casting
   // }
 
+  /**
+   * Receive the specified amount of damage.
+   *
+   * @param {number} value
+   * @param {Orb} source
+   */
+  receiveDamage(value, source) {
+    this.hp -= value
+
+    if (this.hp <= 0) {
+      this.alive = false
+    }
+  }
+
   get type() {
     return ORB
   }

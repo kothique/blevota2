@@ -6,7 +6,6 @@ const forIn = require('lodash/forIn')
 const EventEmitter = require('events')
 
 const CollisionDetector = require('./collision-detector')
-const InstantDamage     = require('./effects/instant-damage')
 const Entity            = require('./entities/entity')
 const Orb               = require('./entities/orb')
 

@@ -4,7 +4,6 @@
 
 const Effect = require('./effect')
 
-const { MAGNETISM } = require('../../../common/effects')
 const { Vector, V } = require('../../../common/vector')
 const { ORB }       = require('../../../common/entities')
 
@@ -53,41 +52,6 @@ class Magnetism extends Effect {
         }
       }
     })
-  }
-
-  /**
-   * Write the effect to a buffer.
-   *
-   * @param {Buffer} buffer
-   * @param {number} offset
-   * @chainable
-   */
-  serialize(buffer, offset = 0) {
-    super.serialize(buffer, offset)
-    offset += super.binaryLength
-
-    buffer.writeUInt8(MAGNETISM, offset)
-    offset += 1
-
-    buffer.writeDoubleBE(this.minValue, offset)
-    offset += 8
-
-    buffer.writeDoubleBE(this.maxValue, offset)
-    offset += 8
-
-    buffer.writeDoubleBE(this.radius, offset)
-    offset += 8
-
-    return this
-  }
-
-  /**
-   * Return the size of the effect serialized.
-   *
-   * @return {number}
-   */
-  get binaryLength() {
-    return super.binaryLength + 1 + 3 * 8
   }
 }
 
