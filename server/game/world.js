@@ -268,7 +268,7 @@ class World extends EventEmitter {
 
       /** Write entity state. */
       entity.serialize(buffer, offset)
-      offset += entity.serializedLength()
+      offset += entity.binaryLength
     })
   }
 
@@ -277,10 +277,10 @@ class World extends EventEmitter {
    *
    * @return {number}
    */
-  serializedLength() {
+  get binaryLength() {
     let entitiesLength = 0
     forIn(this.entities, (entity) => {
-      entitiesLength += 2 + 1 + entity.serializedLength()
+      entitiesLength += 2 + 1 + entity.binaryLength
     })
 
     return 2 + 2 + 2 + 2 + 2 + entitiesLength
@@ -292,7 +292,7 @@ class World extends EventEmitter {
    * @return {Buffer}
    */
   toBuffer() {
-    const buffer = Buffer.allocUnsafe(this.serializedLength())
+    const buffer = Buffer.allocUnsafe(this.binaryLength)
     this.serialize(buffer)
 
     return buffer
@@ -312,7 +312,7 @@ class World extends EventEmitter {
       .map((id) => {
         const entity = this.entities[id]
 
-        return { id, entity, length: entity.serializedLength() }
+        return { id, entity, length: entity.binaryLength }
       })
       .filter(({ entity }) => entity.type !== ORB || entity.visible || entity === box.for)
 

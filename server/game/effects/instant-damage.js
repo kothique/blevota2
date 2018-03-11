@@ -49,7 +49,7 @@ class InstantDamage extends Effect {
    */
   serialize(buffer, offset = 0) {
     super.serialize(buffer, offset)
-    offset += super.serializedLength()
+    offset += super.binaryLength
 
     buffer.writeUInt8(INSTANT_DAMAGE, offset)
     offset += 1
@@ -65,8 +65,8 @@ class InstantDamage extends Effect {
    *
    * @return {number}
    */
-  serializedLength() {
-    return super.serializedLength() + 9
+  get binaryLength() {
+    return super.binaryLength + 9
   }
 }
 

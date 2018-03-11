@@ -56,7 +56,7 @@ class Skill {
    *
    * @return {number}
    */
-  serializedLength() {
+  get binaryLength() {
     return 1 + 2 * (this.state.type === state.COOLDOWN)
   }
 }

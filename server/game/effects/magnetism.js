@@ -64,7 +64,7 @@ class Magnetism extends Effect {
    */
   serialize(buffer, offset = 0) {
     super.serialize(buffer, offset)
-    offset += super.serializedLength()
+    offset += super.binaryLength
 
     buffer.writeUInt8(MAGNETISM, offset)
     offset += 1
@@ -86,8 +86,8 @@ class Magnetism extends Effect {
    *
    * @return {number}
    */
-  serializedLength() {
-    return super.serializedLength() + 1 + 3 * 8
+  get binaryLength() {
+    return super.binaryLength + 1 + 3 * 8
   }
 }
 

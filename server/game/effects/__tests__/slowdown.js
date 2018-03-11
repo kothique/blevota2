@@ -19,7 +19,7 @@ describe('SlowDown', () => {
 
   test('serialization', () => {
     const effect = new SlowDown({ value: 0.5 }, null),
-          buffer = Buffer.alloc(effect.serializedLength() + 10)
+          buffer = Buffer.alloc(effect.binaryLength + 10)
 
     effect.serialize(buffer, 10)
 

@@ -48,7 +48,7 @@ class SpeedUp extends Effect {
    */
   serialize(buffer, offset = 0) {
     super.serialize(buffer, offset)
-    offset += super.serializedLength()
+    offset += super.binaryLength
 
     buffer.writeUInt8(SPEEDUP, offset)
     offset += 1
@@ -64,8 +64,8 @@ class SpeedUp extends Effect {
    *
    * @return {number}
    */
-  serializedLength() {
-    return super.serializedLength() + 9
+  get binaryLength() {
+    return super.binaryLength + 9
   }
 }
 

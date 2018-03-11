@@ -40,7 +40,7 @@ describe('Magnetism', () => {
       radius: 60
     }, effectAPI)
 
-    const buffer = Buffer.alloc(effect.serializedLength() + 10)
+    const buffer = Buffer.alloc(effect.binaryLength + 10)
 
     effect.serialize(buffer, 10)
 

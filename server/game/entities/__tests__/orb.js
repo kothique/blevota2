@@ -26,7 +26,7 @@ describe('Orb', () => {
   })
 
   test('should serialize correctly', () => {
-    const length = orb.serializedLength(),
+    const length = orb.binaryLength,
           buffer = Buffer.alloc(length)
     orb.serialize(buffer)
 

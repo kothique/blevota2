@@ -18,7 +18,7 @@ beforeEach(() => {
 describe('SlowDown effect serialization', () => {
   test('deserialized effect should match the original one', () => {
     const serverEffect = new ServerSlowDown({ value: 42 }),
-          serverLength = serverEffect.serializedLength(),
+          serverLength = serverEffect.binaryLength,
           buffer = Buffer.alloc(serverLength)
 
     serverEffect.serialize(buffer)

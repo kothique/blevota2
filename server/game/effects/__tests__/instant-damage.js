@@ -35,7 +35,7 @@ describe('InstantDamage', () => {
 
   test('serialization', () => {
     const effect = new InstantDamage({ value: 42 }),
-          buffer = Buffer.alloc(effect.serializedLength() + 10)
+          buffer = Buffer.alloc(effect.binaryLength + 10)
 
     effect.serialize(buffer, 10)
 

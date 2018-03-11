@@ -140,7 +140,7 @@ describe('Entity', () => {
 
     entity.receiveEffect({
       onReceive: jest.fn(),
-      serializedLength: jest.fn(function () {
+      binaryLength: jest.fn(function () {
         return 10
       }),
       serialize(buffer, offset = 0) {
@@ -150,7 +150,7 @@ describe('Entity', () => {
 
     entity.receiveEffect({
       onReceive: jest.fn(),
-      serializedLength: jest.fn(function () {
+      binaryLength: jest.fn(function () {
         return 15
       }),
       serialize(buffer, offset = 0) {
@@ -159,7 +159,7 @@ describe('Entity', () => {
     })
 
     test('should serialize correctly', () => {
-      const buffer = Buffer.alloc(entity.serializedLength() + 10)
+      const buffer = Buffer.alloc(entity.binaryLength + 10)
       entity.serialize(buffer, 10)
 
       let offset = 10

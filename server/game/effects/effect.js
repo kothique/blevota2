@@ -74,7 +74,7 @@ class Effect {
    *
    * @return {number}
    */
-  serializedLength() {
+  get binaryLength() {
     return 0
   }
 }

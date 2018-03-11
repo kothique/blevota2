@@ -23,7 +23,7 @@ describe('Magnetism effect serialization', () => {
       radius:   60
     })
 
-    const serverLength = serverEffect.serializedLength(),
+    const serverLength = serverEffect.binaryLength,
           buffer = Buffer.alloc(serverLength)
 
     serverEffect.serialize(buffer)

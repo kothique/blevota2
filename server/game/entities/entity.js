@@ -68,18 +68,8 @@ class Entity {
     return this
   }
 
-  /**
-   * The size of the entity serialized.
-   *
-   * @return {number}
-   */
-  serializedLength() {
-    return 16
-  }
-
-  get type() {
-    return UNKNOWN
-  }
+  get binaryLength() { return 16 }
+  get type() { return UNKNOWN }
 }
 
 module.exports = Entity

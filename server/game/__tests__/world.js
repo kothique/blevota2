@@ -125,7 +125,7 @@ describe('World', () => {
     const id1 = world.new(entity1),
           id2 = world.new(entity2)
 
-    const length = world.serializedLength(),
+    const length = world.binaryLength,
           buffer = Buffer.alloc(length)
     world.serialize(buffer)
 
@@ -153,7 +153,7 @@ describe('World', () => {
     expect(buffer.readUInt8(offset)).toBe(UNKNOWN)
     offset += 1
 
-    offset += entity1.serializedLength()
+    offset += entity1.binaryLength
 
     expect(buffer.readInt16BE(offset)).toBe(id2)
     offset += 2
@@ -161,13 +161,13 @@ describe('World', () => {
     expect(buffer.readUInt8(offset)).toBe(UNKNOWN)
     offset += 1
 
-    offset += entity2.serializedLength()
+    offset += entity2.binaryLength
 
     expect(offset).toBe(length)
   })
 
   test('toBuffer() should give the same result as serialize(*new buffer*, 0)', () => {
-    const buffer = Buffer.alloc(world.serializedLength())
+    const buffer = Buffer.alloc(world.binaryLength)
     world.serialize(buffer)
 
     expect(world.toBuffer().equals(buffer)).toBeTruthy()

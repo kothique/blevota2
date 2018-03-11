@@ -22,7 +22,7 @@ describe('Orb entity serialization', () => {
       mp: 30
     }, entityAPI)
 
-    const serverLength = serverOrb.serializedLength(),
+    const serverLength = serverOrb.binaryLength,
           buffer = Buffer.alloc(serverLength)
 
     serverOrb.serialize(buffer)

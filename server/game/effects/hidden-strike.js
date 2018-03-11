@@ -97,7 +97,7 @@ class HiddenStrike extends Effect {
    */
   serialize(buffer, offset = 0) {
     super.serialize(buffer, offset)
-    offset += super.serializedLength()
+    offset += super.binaryLength
 
     buffer.writeUInt8(HIDDEN_STRIKE, offset)
     offset += 1
@@ -113,8 +113,8 @@ class HiddenStrike extends Effect {
   /**
    * The size of the effect sreialized.
    */
-  serializedLength() {
-    return super.serializedLength() + 1 + 1
+  get binaryLength() {
+    return super.binaryLength + 1 + 1
   }
 }
 

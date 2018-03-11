@@ -144,7 +144,7 @@ class Orb extends Entity {
    */
   serialize(buffer, offset = 0) {
     super.serialize(buffer, offset)
-    offset += super.serializedLength()
+    offset += super.binaryLength
 
     buffer.writeDoubleBE(this.radius, offset)
     offset += 8
@@ -172,8 +172,8 @@ class Orb extends Entity {
    * @return {number}
    * @override
    */
-  serializedLength() {
-    return super.serializedLength() + 8 * 5 + 1
+  get binaryLength() {
+    return super.binaryLength + 8 * 5 + 1
   }
 
   /**
@@ -188,7 +188,7 @@ class Orb extends Entity {
 
     forIn(this.skillManager.skills, (skill) => {
       skill.serialize(buffer, offset)
-      offset += skill.serializedLength()
+      offset += skill.binaryLength
     })
 
     return this
@@ -203,7 +203,7 @@ class Orb extends Entity {
     let length = 0
 
     forIn(this.skillManager.skills, (skill) => {
-      length += skill.serializedLength()
+      length += skill.binaryLength
     })
     
     return length

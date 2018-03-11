@@ -20,7 +20,7 @@ describe('Skill', () => {
         value: 1320
       }
 
-      const length = skill.serializedLength(),
+      const length = skill.binaryLength,
             buffer = Buffer.alloc(10 + length)
 
       skill.serialize(buffer, 10)
@@ -41,7 +41,7 @@ describe('Skill', () => {
           type: state
         }
 
-        const length = skill.serializedLength(),
+        const length = skill.binaryLength,
               buffer = Buffer.alloc(10 + length)
 
         skill.serialize(buffer, 10)
