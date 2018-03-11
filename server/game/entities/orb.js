@@ -14,6 +14,7 @@ const Pull         = require('../skills/pull')
 const Push         = require('../skills/push')
 const Invisibility = require('../skills/invisibility')
 const HiddenStrike = require('../skills/hidden-strike')
+const DamageAura   = require('../skills/damage-aura')
 
 const { Vector, V } = require('../../../common/vector')
 
@@ -53,7 +54,8 @@ class Orb extends Entity {
       skill3: this.api.createSkill(Pull),
       skill4: this.api.createSkill(Push),
       skill5: this.api.createSkill(Invisibility),
-      skill6: this.api.createSkill(HiddenStrike)
+      skill6: this.api.createSkill(HiddenStrike),
+      skill7: this.api.createSkill(DamageAura)
     })
 
     this._alive   = true

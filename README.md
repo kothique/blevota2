@@ -12,7 +12,7 @@
 * _spacial partitioning instead of brute-force_
 
 ### **Game Mechanics**
-* all skills (**6**/8)
+* all skills (**7**/8)
 
 ### **UI**
 * show distance to border

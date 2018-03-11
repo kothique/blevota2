@@ -63,8 +63,8 @@ class HiddenStrike extends Skill {
       owner.show()
 
       const entities = this.api.queryBox({
-        minP: Vector.subtract(owner.position, V(this.radius, this.radius)),
-        maxP: Vector.add(owner.position, V(this.radius, this.radius))
+        minP: Vector.subtract(owner.position, V(RADIUS, RADIUS)),
+        maxP: Vector.add(owner.position, V(RADIUS, RADIUS))
       }).map(this.api.getEntity)
 
       entities.forEach((entity) => {
