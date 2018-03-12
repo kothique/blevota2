@@ -30,7 +30,7 @@ class DamageAura extends Skill {
 
       entities.forEach((entity) => {
         if (entity.type === ORB && entity !== owner) {
-          entity.receiveDamage(DAMAGE, owner)
+          entity.hurt(DAMAGE, owner)
         }
       })
     }

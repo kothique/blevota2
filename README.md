@@ -11,8 +11,7 @@
 * verlet integration
 * _spacial partitioning instead of brute-force_
 
-### **Game Mechanics**
-* all skills (**7**/8)
+### Game Mechanics
 
 ### **UI**
 * show distance to border
@@ -28,6 +27,4 @@
 * profiling
 
 ### Tests
-* tests/serialization/entities/entity
-* server/game/collision-detector.js
 * react components (far away future)

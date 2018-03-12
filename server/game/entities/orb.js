@@ -15,6 +15,7 @@ const Push         = require('../skills/push')
 const Invisibility = require('../skills/invisibility')
 const HiddenStrike = require('../skills/hidden-strike')
 const DamageAura   = require('../skills/damage-aura')
+const Shield       = require('../skills/shield')
 
 const { Vector, V } = require('../../../common/vector')
 
@@ -41,7 +42,7 @@ class Orb extends Entity {
 
     this.radius = options.radius || 30
     this.maxHp  = options.maxHp
-    this.hp     = options.hp
+    this._hp    = options.hp
     this.maxMp  = options.maxMp
     this.mp     = options.mp
 
@@ -55,11 +56,12 @@ class Orb extends Entity {
       skill4: this.api.createSkill(Push),
       skill5: this.api.createSkill(Invisibility),
       skill6: this.api.createSkill(HiddenStrike),
-      skill7: this.api.createSkill(DamageAura)
+      skill7: this.api.createSkill(DamageAura),
+      skill8: this.api.createSkill(Shield)
     })
 
-    this._alive   = true
     this._visible = true
+    this._shield  = 0
     this.casting  = false
     this.effects  = []
   }
@@ -133,10 +135,6 @@ class Orb extends Entity {
         this.removeEffect(effect)
       }
     })
-
-    if (this.hp < 0) {
-      this.hp = 0
-    }
 
     if (this.mp < 0) {
       this.mp = 0
@@ -230,28 +228,20 @@ class Orb extends Entity {
     return buffer
   }
 
-  get alive() { return this._alive }
+  /** @return {bool} */
+  get alive() { return this.hp > 0 }
 
-  set alive(nextAlive) {
-    if (!this.alive && nextAlive) {
-      this.events.emit('resurrect')
-    } else if (this.alive && !nextAlive) {
-      this.events.emit('die')
-    }
-
-    this._alive = nextAlive
-  }
-
-  die()       { this.alive = false }
-  resurrect() { this.alive = true }
-
+  /** @return {bool} */
   get visible() { return this._visible }
 
+  /**
+   * @param {bool} nextVisible
+   */
   set visible(nextVisible) {
     if (!this.visible && nextVisible) {
-      this.events.emit('appear')
+      this.events.emit('show')
     } else if (this.visible && !nextVisible) {
-      this.events.emit('disappear')
+      this.events.emit('hide')
     }
 
     this._visible = nextVisible
@@ -260,27 +250,62 @@ class Orb extends Entity {
   hide() { this.visible = false }
   show() { this.visible = true }
 
-  // get casting() {
-  //   return this._casting
-  // }
-
   /**
-   * Receive the specified amount of damage.
-   *
-   * @param {number} value
-   * @param {Orb} source
+   * @param {number} nextHP
+   * @param {?Orb}   source
    */
-  receiveDamage(value, source) {
-    this.hp -= value
+  _setHpBy(nextHP, source = null) {
+    if (nextHP > this._hp) {
+      this.events.emit('heal', nextHP - this._hp, source)
+    } else if (nextHP < this._hp) {
+      this.events.emit('damage', this.hp - nextHP, source)
+    }
 
-    if (this.hp <= 0) {
-      this.alive = false
+    if (this._hp <= 0 && nextHP > 0) {
+      this.events.emit('resurrection', source)
+    } else if (this._hp > 0 && nextHP <= 0) {
+      this.events.emit('death', source)
+    }
+
+    this._hp = nextHP
+    if (this._hp <= 0) {
+      this._hp = 0
     }
   }
 
-  get type() {
-    return ORB
+  /** @return {number} */
+  get hp() { return this._hp }
+
+  /** @param {number} nextHP */
+  set hp(nextHP) {
+    this._setHpBy(nextHP, null)
   }
+
+  /**
+   * @param {number} value
+   * @param {?Orb}   source
+   */
+  hurt(value, source = null) {
+    value *= 1 - this._shield
+
+    this._setHpBy(this._hp - value, source)
+  }
+
+  /**
+   * @param {number} value
+   * @param {?Orb}   source
+   */
+  heal(value, source = null) {
+    this._setHpBy(this._hp + value, source)
+  }
+
+  /** @return {number} */
+  get shield() { return this._shield }
+  
+  /** @param {number} nextShield */
+  set shield(nextShield) { this._shield = nextShield }
+
+  get type() { return ORB }
 }
 
 module.exports = Orb

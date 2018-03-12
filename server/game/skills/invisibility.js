@@ -15,7 +15,7 @@ class Invisibility extends Skill {
       this.state = { type: ACTIVE }
 
       if (owner.visible) {
-        owner.events.once('appear', () => this.state = { type: READY })
+        owner.events.once('show', () => this.state = { type: READY })
       }
 
       owner.hide()

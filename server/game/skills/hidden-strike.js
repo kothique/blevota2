@@ -72,7 +72,7 @@ class HiddenStrike extends Skill {
           const k = Math.max(1, this.duration / MAX_CAST_DURATION),
                 value = MIN_DAMAGE + k * (MAX_DAMAGE - MIN_DAMAGE)
 
-          entity.receiveDamage(value, owner)
+          entity.hurt(value, owner)
         }
       })
     }
