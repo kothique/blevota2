@@ -9,7 +9,6 @@
 * game page
   * skill icons
 * user profile
-* **persistent redux state**
 * **mobile menu**
 
 ---
