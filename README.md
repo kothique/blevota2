@@ -1,30 +1,35 @@
-[![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
+![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
 
 ## ROADMAP
 
-### Bugs
-* fix client/World and client/GamePage init/deinit cycle
+### Client
 
-### Refactoring
-
-### Physics
-* verlet integration
-* _spacial partitioning instead of brute-force_
-
-### Game Mechanics
-
-### **UI**
+#### UI
 * show distance to border
 * game page
   * skill icons
-* _404 not found page_
+* **404 not found page**
 * user profile
-* _persistent redux state_
-* _mobile menu_
+* **persistent redux state**
+* **mobile menu**
 
-### Optimization
+---
+
+### Server
+
+#### Physics
+* verlet integration
+* **spacial partitioning instead of brute-force**
+
+---
+
+### Common
+
+#### Optimization
 * UDP (WebRTC??)
 * profiling
+
+---
 
 ### Tests
 * react components (far away future)

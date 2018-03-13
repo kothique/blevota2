@@ -4,12 +4,15 @@
 
 import Unknown from './entities/unknown'
 
-const constructors = Object.create(null)
-
 /**
  * @class
  */
-const EntityFactory = {
+class EntityFactory {
+  constructor() {
+    this.constructors = Object.create(null)
+    this.entities = Object.create(null)
+  }
+
   /**
    * Register a new entity.
    *
@@ -20,8 +23,8 @@ const EntityFactory = {
   register(options) {
     const { type, constructor } = options
 
-    constructors[type] = constructor    
-  },
+    this.constructors[type] = constructor    
+  }
 
   /**
    * Create a new entity from a buffer.
@@ -37,7 +40,7 @@ const EntityFactory = {
     const type = buffer.readUInt8(offset)
     offset += 1
 
-    const constructor = constructors[type]
+    const constructor = this.constructors[type]
     if (!constructor) {
       console.warn(`Entity #${type} is not registered`)
 
@@ -54,7 +57,7 @@ const EntityFactory = {
     offset = entity.parse(buffer, offset)
 
     return { entity, offset }
-  },
+  }
 
   /**
    * Get the entity with the specified id.
@@ -63,7 +66,7 @@ const EntityFactory = {
    */
   get(id) {
     return this.entities[id]
-  },
+  }
 
   /**
    * Add a new entity if it doesn't exist.
@@ -73,7 +76,7 @@ const EntityFactory = {
    * @param {?object} options
    */
   new(id, type, options = undefined) {
-    const constructor = constructors[type]
+    const constructor = this.constructors[type]
 
     if (!constructor) {
       console.warn(`Entitty #${type} is not registered`)
@@ -87,7 +90,7 @@ const EntityFactory = {
     }
 
     return entity
-  },
+  }
 
   /**
    * Remove an entity.
@@ -96,16 +99,11 @@ const EntityFactory = {
    */
   remove(id) {
     delete this.entities[id]
-  },
+  }
 
-  /**
-   * Remove all entitites.
-   */
-  clear() {
-    this.entities = Object.create(null)
-  },
-
-  entities: Object.create(null)
+  empty() {
+    this.entities = {}
+  }
 }
 
 export default EntityFactory

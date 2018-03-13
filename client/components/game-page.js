@@ -99,7 +99,7 @@ class GamePage extends Component {
     const game = this.game
 
     if (game) {
-      game.stop()
+      game.end()
       game.removeListener('skills', this.onGameSkills)
       game.removeListener('orb', this.onGameOrb)
       game.removeListener('connect', this.onGameConnect)
@@ -120,7 +120,7 @@ class GamePage extends Component {
           baseProfile="full"
           xmlns="http://www.w3.org/2000/svg"
           viewBox={`0 0 ${VISION_RADIUS.x * 2} ${VISION_RADIUS.y * 2}`}
-          preserveAspectRatio="xMidYMin meet">
+          preserveAspectRatio="xMidYMid slice">
         </svg>
         <div id="gp-bar-top" className="gp-bar"></div>
         <div id="gp-bar-bottom" className="gp-bar"></div>

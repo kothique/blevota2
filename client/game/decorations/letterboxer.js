@@ -5,22 +5,14 @@
 /**
  * @class
  */
-const Letterboxer = {
-  /**
-   * Initialize the letterboxer.
-   */
-  init() {
-    this.bars = {}
+class Letterboxer {
+  constructor() {
+    this.bars = Object.create(null)
      
-    Array('top', 'bottom', 'left', 'right').forEach((side) => {
+    Array.of('top', 'bottom', 'left', 'right').forEach((side) => {
       this.bars[side] = document.getElementById(`gp-bar-${side}`)
     })
-  },
-
-  /**
-   * Clear the instance.
-   */
-  clear() {},
+  }
 
   /**
    * Render the bars.

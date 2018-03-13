@@ -10,15 +10,12 @@ import _ from 'lodash'
 import Keyboard      from '@client/keyboard'
 import PlayoutBuffer from '@client/playoutbuffer'
 import World         from '@client/game/world'
-import EntityFactory from '@client/game/entity-factory'
 import Decorator     from '@client/game/decorator'
 
 import * as entities   from '@common/entities'
 import SkillState      from '@common/skill-state'
 import { Vector, V }   from '@common/vector'
 import { globalToSVG } from '@common/game'
-
-import '@client/game/registerWorldObjects'
 
 /**
  * @constant
@@ -34,7 +31,6 @@ const KEYMAP = {
   'f': 'skill8'
 }
 
-
 /**
  * @class
  */
@@ -43,17 +39,17 @@ class Game extends EventEmitter {
     super()
 
     const { svg, scene, host, token, user, regionName } = options
-    this.svg = svg
-    this.host = host
-    this.user = user
+    this.svg        = svg
+    this.host       = host
+    this.user       = user
     this.regionName = regionName
 
-    this.orbID = null
-    this.lastP = null
+    this.orbID  = null
+    this.lastP  = null
     this.skills = Object.create(null)
 
-    World.init({ svg })
-    Decorator.init({ svg })
+    this.world     = new World({ svg })
+    this.decorator = new Decorator({ svg })
 
     document.addEventListener('mousemove',  this.onMouseMove)
     document.addEventListener('mouseup',    this.onMouseUp)
@@ -62,9 +58,9 @@ class Game extends EventEmitter {
     document.addEventListener('keyup',      this.onKeyUp)
     document.addEventListener('keydown',    this.onKeyDown)
 
-    /*
-      Configure playout buffer
-    */
+    /**
+     * Configure playout buffer.
+     */
     this.buffer = new PlayoutBuffer()
     this.buffer.on('frame', ({ previousFrame, frame, currentTimestamp }) => {
       if (!frame) {
@@ -75,10 +71,10 @@ class Game extends EventEmitter {
         this.parseSkills(frame.skills)
       }
 
-      World.parse(frame.world)
+      this.world.parse(frame.world)
 
       /**
-       * Even though World.viewport has changed, pointer position has not,
+       * Even though this.world.viewport has changed, pointer position has not,
        * so mousemove will not be triggered. Hence send new position manually.
        */
       if (this.lastP) {
@@ -89,21 +85,21 @@ class Game extends EventEmitter {
       }
 
       // if (previousFrame) {
-      //   World.extrapolate({
+      //   this.world.extrapolate({
       //     prev: previousFrame.timestamp,
       //     curr: frame.timestamp,
       //     next: currentTimestamp
       //   })
       // }
 
-      World.render()
-      Decorator.render({
-        worldSize: World.size,
-        viewport: World.viewport
+      this.world.render()
+      this.decorator.render({
+        worldSize: this.world.size,
+        viewport: this.world.viewport
       })
 
-      if (EntityFactory.entities[this.orbID]) {
-        this.emit('orb', EntityFactory.entities[this.orbID])
+      if (this.world.entityFactory.entities[this.orbID]) {
+        this.emit('orb', this.world.entityFactory.entities[this.orbID])
       }
     })
 
@@ -157,11 +153,11 @@ class Game extends EventEmitter {
         isPlayer: orbID === this.orbID
       }
 
-      World.new(orbID, entities.ORB, options)
+      this.world.new(orbID, entities.ORB, options)
     })
 
     socket.on('remove-orb', (orbID) => {
-      World.remove(orbID)
+      this.world.remove(orbID)
     })
 
     socket.on('event:death', (data) => {
@@ -182,7 +178,7 @@ class Game extends EventEmitter {
 
   onMouseUp = ({ clientX, clientY, button }) => {
     const controls = {
-      viewport: World.viewport,
+      viewport: this.world.viewport,
       clientX,
       clientY
     }
@@ -196,7 +192,7 @@ class Game extends EventEmitter {
  
   onMouseDown = ({ clientX, clientY, button }) => {
     const controls = {
-      viewport: World.viewport,
+      viewport: this.world.viewport,
       clientX,
       clientY
     }
@@ -244,24 +240,21 @@ class Game extends EventEmitter {
     if (controls.pX) {
       const newPoint = globalToSVG(this.svg, V(controls.pX, controls.pY))
 
-      controls.pX = World.viewport.x + newPoint.x
-      controls.pY = World.viewport.y + newPoint.y
+      controls.pX = this.world.viewport.x + newPoint.x
+      controls.pY = this.world.viewport.y + newPoint.y
     }
 
     this.socket.emit('controls', controls)
   }
 
-  stop = () => {
+  end = () => {
     document.body.removeEventListener('mousemove',  this.onMouseMove)
     document.body.removeEventListener('mouseup',    this.onMouseUp)
     document.body.removeEventListener('mousedown',  this.onMouseDown)
     document.body.removeEventListener('mouseleave', this.onMouseLeave)
 
-    World.clear()
-    Decorator.clear()
+    this.world.clear()
     this.socket.disconnect()
-
-    this.svg = null
   }
 
   /**
