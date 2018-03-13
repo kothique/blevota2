@@ -8,7 +8,6 @@
 * show distance to border
 * game page
   * skill icons
-* **404 not found page**
 * user profile
 * **persistent redux state**
 * **mobile menu**

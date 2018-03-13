@@ -4,9 +4,10 @@ import { BrowserRouter, Switch, Route } from 'react-router'
 import { ConnectedRouter } from 'react-router-redux'
 import { object } from 'prop-types'
 
-import WelcomePage from './welcome-page'
-import GamePage from './game-page'
-import RegionsPage from './regions-page'
+import WelcomePage  from './welcome-page'
+import GamePage     from './game-page'
+import RegionsPage  from './regions-page'
+import NotFoundPage from './not-found-page'
 
 import '@client/styles/common.styl'
 
@@ -27,6 +28,7 @@ class Root extends Component {
             <Route path="/region/:regionName" component={GamePage} />
             <Route path="/regions/:page" component={RegionsPage} />
             <Route path="/regions" component={RegionsPage} />
+            <Route path="/" component={NotFoundPage} />
           </Switch>
         </ConnectedRouter>
       </Provider>
