@@ -55,7 +55,7 @@ class HUD extends Component {
             chat } = this.props
 
     return (
-      <div id="hud">
+      <div id="hud" className="unselectable">
         <img id="hud-quit" src="/images/icons/quit.svg"
           onClick={() => dispatch(push('/regions'))} />
 
