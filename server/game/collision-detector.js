@@ -110,7 +110,7 @@ class CollisionDetector {
   }
 
   /**
-   * Return all entitites intersecting with the specified box.
+   * Return all boxes intersecting with the specified box.
    *
    * @param {object} box
    * @param {Vector} box.minP

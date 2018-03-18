@@ -23,7 +23,7 @@ class SpeedUp extends Effect {
   /**
    * Increase the target's movement force.
    *
-   * @param {Entity} target
+   * @param {Orb} target
    */
   onReceive(target) {
     target.dragForceFactor -= this.value
@@ -32,7 +32,7 @@ class SpeedUp extends Effect {
   /**
    * Decrease the target's movement force back.
    *
-   * @param {Entity} target
+   * @param {Orb} target
    */
   onRemove(target) {
     target.dragForceFactor += this.value

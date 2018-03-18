@@ -40,13 +40,13 @@ describe('World serialization', () => {
             size: V(801, 602)
           }),
           serverOrb1    = serverWorld.createEntity(ServerOrb, {
-            maxHp: 100,
+            maxHP: 100,
             hp:    62,
             maxMp: 150,
             mp:    30
           }),
           serverOrb2    = serverWorld.createEntity(ServerOrb, {
-            maxHp: 120,
+            maxHP: 120,
             hp:    30,
             maxMp: 1000,
             mp:    745

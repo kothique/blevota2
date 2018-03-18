@@ -1,10 +1,10 @@
-import * as entities from '@common/entities'
+import { ORBS } from '@common/const'
 
-import Orb from '@client/game/entities/orb'
+import Orb from '@client/game/orbs/orb'
 
 export default (factory) => {
   factory.register({
-    type: entities.ORB,
+    type: ORBS.UNKNOWN,
     constructor: Orb
   })
 }

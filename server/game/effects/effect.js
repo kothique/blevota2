@@ -19,9 +19,9 @@ class Effect {
   }
 
   /**
-   * Called when the effect is received by some entity.
+   * Called when the effect is received by some orb.
    *
-   * @param {Entity} target
+   * @param {Orb} target
    */
   onReceive(target) {
     // does nothing
@@ -30,7 +30,7 @@ class Effect {
   /**
    * Called when integrating the physics.
    *
-   * @param {Entity} target
+   * @param {Orb} target
    * @param {number} t
    * @param {number} dt
    */
@@ -39,9 +39,9 @@ class Effect {
   }
 
   /**
-   * Called when removed from its entity.
+   * Called when removed from its orb.
    *
-   * @param {Entity} target
+   * @param {Orb} target
    */
   onRemove(target) {
     // does nothing

@@ -23,7 +23,7 @@ class SlowDown extends Effect {
   /**
    * Increase the target's drag force factor.
    *
-   * @param {Entity} target
+   * @param {Orb} target
    */
   onReceive(target) {
     target.dragForceFactor += this.value
@@ -32,7 +32,7 @@ class SlowDown extends Effect {
   /**
    * Decrease the target's drag force factor back.
    *
-   * @param {Entity} target
+   * @param {Orb} target
    */
   onRemove(target) {
     target.dragForceFactor -= this.value

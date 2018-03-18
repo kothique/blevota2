@@ -30,7 +30,7 @@ const RegionManager = {
 }
 
 /** Two default regions. */
-createRegion('wonderland')
-createRegion('cedade-de-deus')
+createRegion('Wonderland')
+createRegion('Cedade de Deus')
 
 module.exports = RegionManager

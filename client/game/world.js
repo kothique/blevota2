@@ -4,7 +4,7 @@
 
 import forIn from 'lodash/forIn'
 
-import EntityFactory   from './entity-factory'
+import OrbFactory      from './orb-factory'
 import registerObjects from './registerWorldObjects'
 
 import { V, Vector } from '@common/vector'
@@ -24,45 +24,45 @@ class World {
     this.size     = V(0, 0)
     this.viewport = V(0, 0)
 
-    this.entityFactory = new EntityFactory
-    registerObjects(this.entityFactory)
+    this.orbFactory = new OrbFactory
+    registerObjects(this.orbFactory)
   }
 
   /**
-   * Spawn a new entity.
+   * Spawn a new orb.
    *
    * @param {number}  id
    * @param {number}  type
    * @param {?object} options
    */
   new(id, type, options = undefined) {
-    const entity = this.entityFactory.new(id, type, options)
-    if (entity.node) {
-      this.svg.appendChild(entity.node)
+    const orb = this.orbFactory.new(id, type, options)
+    if (orb.node) {
+      this.svg.appendChild(orb.node)
     }
   }
 
   /**
-   * Remove the specified entity.
+   * Remove the specified orb.
    *
    * @param {number} id
    */
   remove(id) {
-    const entity = this.entityFactory.get(id)
+    const orb = this.orbFactory.get(id)
 
-    if (entity) {
-      if (entity.node) {
-        this.svg.removeChild(entity.node)
+    if (orb) {
+      if (orb.node) {
+        this.svg.removeChild(orb.node)
       }
-      this.entityFactory.remove(id)
+      this.orbFactory.remove(id)
     }
   }
 
-  /** Remove all entities. */
+  /** Remove all orbs. */
   clear() {
-    forIn(this.entityFactory.entities, (entity) => {
-      if (entity.node) {
-        this.svg.removeChild(entity.node)
+    forIn(this.orbFactory.orbs, (orb) => {
+      if (orb.node) {
+        this.svg.removeChild(orb.node)
       }
     })
   }
@@ -74,8 +74,8 @@ class World {
    * @param {number} offset
    */
   parse(buffer, offset = 0) {
-    /* Reserve all entities. */
-    forIn(this.entityFactory.entities, (entity) => entity.reserve())
+    /* Reserve all orbs. */
+    forIn(this.orbFactory.orbs, (orb) => orb.reserve())
 
     /* Read world size. */
     this.size = V(
@@ -91,16 +91,16 @@ class World {
     )
     offset += 4
 
-    /* Read number of entities. */
-    const entitiesCount = buffer.readUInt16BE(offset)
+    /* Read number of orbs. */
+    const orbsCount = buffer.readUInt16BE(offset)
     offset += 2
 
-    /* Read entities. */
-    for (let i = 0; i < entitiesCount; i++) {
-      const result = this.entityFactory.deserialize(buffer, offset)
+    /* Read orbs. */
+    for (let i = 0; i < orbsCount; i++) {
+      const result = this.orbFactory.deserialize(buffer, offset)
 
-      /* Only show received entities. */
-      result.entity.return()
+      /* Only show received orbs. */
+      result.orb.return()
 
       offset = result.offset
     }
@@ -110,9 +110,9 @@ class World {
    * Update SVG attributes.
    */
   render() {
-    forIn(this.entityFactory.entities, (entity) => {
-      if (!entity.reserved) {
-        entity.render(this.viewport)
+    forIn(this.orbFactory.orbs, (orb) => {
+      if (!orb.reserved) {
+        orb.render(this.viewport)
       }
     })
   }
@@ -123,8 +123,8 @@ class World {
    * @param {object} timestamp - { prev, curr, next }
    */
   extrapolate(timestamp) {
-    forIn(this.entityFactory.entities, (entity) => {
-      entity.extrapolate(timestamp)
+    forIn(this.orbFactory.orbs, (orb) => {
+      orb.extrapolate(timestamp)
     })
   }
 }

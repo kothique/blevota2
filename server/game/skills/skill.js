@@ -43,7 +43,7 @@ class Skill {
    */
   serialize(buffer, offset = 0) {
     buffer.writeUInt8(this.state.type, offset)
-    offset += 1
+    offset++
 
     if (this.state.type === state.COOLDOWN) {
       buffer.writeUInt16BE(this.state.value, offset)

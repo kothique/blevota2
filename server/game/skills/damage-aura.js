@@ -6,7 +6,6 @@ const Skill = require('./skill')
 
 const { READY, ACTIVE } = require('../../../common/skill-state')
 const { Vector, V }     = require('../../../common/vector')
-const { ORB }           = require('../../../common/entities')
 
 const RADIUS = 200
 const DAMAGE = 0.2
@@ -23,14 +22,14 @@ class DamageAura extends Skill {
 
   onTick(owner, t, dt) {
     if (this.state.type === ACTIVE) {
-      const entities = this.api.queryBox({
+      const orbs = this.api.queryBox({
         minP: Vector.subtract(owner.position, V(RADIUS, RADIUS)),
         maxP: Vector.add(owner.position, V(RADIUS, RADIUS))
-      }).map(this.api.getEntity)
+      }).map(this.api.getOrb)
 
-      entities.forEach((entity) => {
-        if (entity.type === ORB && entity !== owner) {
-          entity.hurt(DAMAGE, owner)
+      orbs.forEach((orb) => {
+        if (orb !== owner) {
+          orb.hurt(DAMAGE, owner)
         }
       })
     }

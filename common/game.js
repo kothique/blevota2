@@ -2,13 +2,8 @@
  * @module common/game
  */
 
-const { Vector, V } = require('./vector')
-
-/**
- * @constant
- */
-const VISION_RADIUS = V(1366, 768).divide(2)
-module.exports.VISION_RADIUS = VISION_RADIUS
+const { Vector, V }     = require('./vector')
+const { VISION_RADIUS } = require('./const')
 
 /**
  * Convert global position to SVG viewBox position.

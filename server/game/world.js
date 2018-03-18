@@ -6,19 +6,17 @@ const forIn = require('lodash/forIn')
 const EventEmitter = require('events')
 
 const CollisionDetector = require('./collision-detector')
-const Entity            = require('./entities/entity')
-const Orb               = require('./entities/orb')
+const Orb               = require('./orbs/orb')
 
 const { V, Vector }     = require('../../common/vector')
-const { ORB }           = require('../../common/entities')
 
 /**
  * @class
  *
- * @event death - entity
+ * @event death - orb
  *
  * @description
- * Manage all entities in the world and their interaction
+ * Manage all orbs in the world and their interaction
  * including collision detection, using skills, etc.
  */
 class World extends EventEmitter {
@@ -31,59 +29,57 @@ class World extends EventEmitter {
   constructor(options) {
     super()
 
-    this.size = options.size
-    this.entities = Object.create(null)
+    this.size     = options.size
+    this.orbs     = {}
     this.detector = new CollisionDetector(this.size)
 
     this.nextID = 0
 
-    this.entityAPI = {
+    this.orbAPI = {
       createSkill: this.createSkill.bind(this),
       createEffect: this.createEffect.bind(this)
     }
 
     this.skillAPI = this.effectAPI = {
       queryBox: this.detector.queryBox.bind(this.detector),
-      getEntity: (id) => this.entities[id],
+      getOrb: (id) => this.orbs[id],
       createEffect: this.createEffect.bind(this)
     }
   }
 
   /**
-   * Add a new entity to the world.
+   * Add a new orb to the world.
    *
-   * @param {Entity} entity
-   * @return {number} - ID of the new entity.
+   * @param {Orb} orb
+   * @return {number} - ID of the new orb.
    */
-  new(entity) {
+  new(orb) {
     const id = this.nextID++
-    this.entities[id] = entity
+    this.orbs[id] = orb
 
     return id
   }
 
   /**
-   * Remove the entity with the specified ID from the world.
+   * Remove the orb with the specified ID from the world.
    *
    * @param {number} id
    * @chainable
    */
   remove(id) {
     this.detector.remove(id)
-    delete this.entities[id]
+    delete this.orbs[id]
 
     return this
   }
 
   /**
-   * Clear forces of all entities.
+   * Clear forces of all orbs.
    * 
    * @chainable
    */
   clearForces() {
-    forIn(this.entities, (entity) => {
-      entity.force = V(0, 0)
-    })
+    forIn(this.orbs, (orb) => { orb.force = V(0, 0) })
 
     return this
   }
@@ -96,10 +92,10 @@ class World extends EventEmitter {
    */
   applyControls(controls) {
     forIn(controls, (controls, id) => {
-      const entity = this.entities[id]
+      const orb = this.orbs[id]
 
-      if (entity && entity.type === ORB) {
-        entity.applyControls(controls)
+      if (orb) {
+        orb.applyControls(controls)
       }
     })
 
@@ -114,38 +110,34 @@ class World extends EventEmitter {
    * @chainable
    */
   integrate(t, dt) {
-    forIn(this.entities, (entity, id) => {
-      entity.integrate(t, dt) 
+    forIn(this.orbs, (orb, id) => {
+      orb.integrate(t, dt)
 
-      if (entity.type === ORB) {
-        const position = entity.position,
-              radius   = entity.radius
+      const position = orb.position,
+            radius   = orb.radius
 
-        this.detector.set(id, {
-          minP: Vector.subtract(position, V(radius, radius)),
-          maxP: Vector.add(position, V(radius, radius))
-        })
-      }
+      this.detector.set(id, {
+        minP: Vector.subtract(position, V(radius, radius)),
+        maxP: Vector     .add(position, V(radius, radius))
+      })
     })
 
     return this
   }
 
   /**
-   * Apply effects of all entities.
+   * Apply effects of all orbs.
    *
    * @param {number} t  - Current timestamp.
    * @param {number} dt - Timestep in seconds.
    * @chainable
    */
   applyEffects(t, dt) {
-    forIn(this.entities, (entity, id) => {
-      if (entity.type === ORB) {
-        entity.applyEffects(t, dt)
+    forIn(this.orbs, (orb, id) => {
+      orb.applyEffects(t, dt)
 
-        if (!entity.alive) {
-          this.emit('death', id)
-        }
+      if (!orb.alive) {
+        this.emit('orb:death', id)
       }
     })
 
@@ -165,61 +157,52 @@ class World extends EventEmitter {
       if (collision.type === 'wall') {
         const { wall, id } = collision
 
-        const entity = this.entities[id]
+        const orb = this.orbs[id]
 
-        if (entity.type === ORB) {
-          const orb = entity
-
-          switch (wall) {
-            case 'left':
-              orb.velocity.x *= -k
-              orb.position.x = orb.radius
-              break
-            case 'right':
-              orb.velocity.x *= -k
-              orb.position.x = this.size.x - orb.radius
-              break
-            case 'top':
-              orb.velocity.y *= -k
-              orb.position.y = orb.radius
-              break
-            case 'bottom':
-              orb.velocity.y *= -k
-              orb.position.y = this.size.y - orb.radius
-              break
-          }
+        switch (wall) {
+          case 'left':
+            orb.velocity.x *= -k
+            orb.position.x = orb.radius
+            break
+          case 'right':
+            orb.velocity.x *= -k
+            orb.position.x = this.size.x - orb.radius
+            break
+          case 'top':
+            orb.velocity.y *= -k
+            orb.position.y = orb.radius
+            break
+          case 'bottom':
+            orb.velocity.y *= -k
+            orb.position.y = this.size.y - orb.radius
+            break
         }
       } else if (collision.type === 'object') {
         const { id1, id2 } = collision
 
-        const entity1 = this.entities[id1],
-              entity2 = this.entities[id2]
+        const orb1 = this.orbs[id1],
+              orb2 = this.orbs[id2]
 
-        if (entity1.type === ORB && entity2.type === ORB) {
-          let orb1 = entity1,
-              orb2 = entity2
+        const dr = orb1.radius + orb2.radius - Vector.distance(orb1.position, orb2.position)
 
-          const dr = orb1.radius + orb2.radius - Vector.distance(orb1.position, orb2.position)
-
-          /** If only bounding boxes collide, not the orbs themselves. */
-          if (dr < 0) {
-            return
-          }
-
-          const v1 = orb1.velocity,
-                v2 = orb2.velocity,
-                m1 = orb1.mass,
-                m2 = orb2.mass
-
-          const o1v = Vector.add(v1.clone().multiply(m1 - m2), v2.clone().multiply(2 * m2)).divide(m1 + m2),
-                o2v = Vector.add(v2.clone().multiply(m2 - m1), v1.clone().multiply(2 * m1)).divide(m1 + m2)
-
-          orb1.velocity = o1v
-          orb2.velocity = o2v
-
-          orb1.position.add(orb1.velocity)
-          orb2.position.add(orb2.velocity)
+        /** If only bounding boxes collide, not the orbs themselves. */
+        if (dr < 0) {
+          return
         }
+
+        const v1 = orb1.velocity,
+              v2 = orb2.velocity,
+              m1 = orb1.mass,
+              m2 = orb2.mass
+
+        const o1v = Vector.add(v1.clone().multiply(m1 - m2), v2.clone().multiply(2 * m2)).divide(m1 + m2),
+              o2v = Vector.add(v2.clone().multiply(m2 - m1), v1.clone().multiply(2 * m1)).divide(m1 + m2)
+
+        orb1.velocity = o1v
+        orb2.velocity = o2v
+
+        orb1.position.add(orb1.velocity)
+        orb2.position.add(orb2.velocity)
       }
     })
 
@@ -247,23 +230,23 @@ class World extends EventEmitter {
     buffer.writeUInt16BE(0, offset)
     offset += 2
 
-    /** Write number of entities. */
-    buffer.writeUInt16BE(Object.keys(this.entities).length, offset)
+    /** Write number of orbs. */
+    buffer.writeUInt16BE(Object.keys(this.orbs).length, offset)
     offset += 2
 
-    /** Write entities. */
-    forIn(this.entities, (entity, id) => {
-      /** Write entity id. */
+    /** Write orbs. */
+    forIn(this.orbs, (orb, id) => {
+      /** Write orb id. */
       buffer.writeUInt16BE(id, offset)
       offset += 2
 
-      /** Write entity type. */
-      buffer.writeUInt8(entity.type, offset)
+      /** Write orb type. */
+      buffer.writeUInt8(orb.type, offset)
       offset += 1
 
-      /** Write entity state. */
-      entity.serialize(buffer, offset)
-      offset += entity.binaryLength
+      /** Write orb state. */
+      orb.serialize(buffer, offset)
+      offset += orb.binaryLength
     })
   }
 
@@ -273,12 +256,12 @@ class World extends EventEmitter {
    * @return {number}
    */
   get binaryLength() {
-    let entitiesLength = 0
-    forIn(this.entities, (entity) => {
-      entitiesLength += 2 + 1 + entity.binaryLength
+    let orbsLength = 0
+    forIn(this.orbs, (orb) => {
+      orbsLength += 2 + 1 + orb.binaryLength
     })
 
-    return 2 + 2 + 2 + 2 + 2 + entitiesLength
+    return 2 + 2 + 2 + 2 + 2 + orbsLength
   }
 
   /**
@@ -303,16 +286,16 @@ class World extends EventEmitter {
    * @return {Buffer}
    */
   boxToBuffer(box) {
-    const entities = this.detector.queryBox(box)
+    const orbs = this.detector.queryBox(box)
       .map((id) => {
-        const entity = this.entities[id]
+        const orb = this.orbs[id]
 
-        return { id, entity, length: entity.binaryLength }
+        return { id, orb, length: orb.binaryLength }
       })
-      .filter(({ entity }) => entity.type !== ORB || entity.visible || entity === box.for)
+      .filter(({ orb }) => orb.visible || orb === box.for)
 
-    const entitiesLength = entities.reduce((acc, { length }) => acc + 2 + 1 + length, 0),
-          buffer         = Buffer.allocUnsafe(5 * 2 + entitiesLength)
+    const orbsLength = orbs.reduce((acc, { length }) => acc + 2 + 1 + length, 0),
+          buffer     = Buffer.allocUnsafe(5 * 2 + orbsLength)
 
     let offset = 0
     /* Write world size. */
@@ -329,22 +312,22 @@ class World extends EventEmitter {
     buffer.writeInt16BE(box.minP.y, offset)
     offset += 2
 
-    /* Write number of entities. */
-    buffer.writeUInt16BE(entities.length, offset)
+    /* Write number of orbs. */
+    buffer.writeUInt16BE(orbs.length, offset)
     offset += 2
 
-    /* Write entities. */
-    entities.forEach(({ id, entity, length }) => {
-      /* Write entity id. */
+    /* Write orbs. */
+    orbs.forEach(({ id, orb, length }) => {
+      /* Write orb id. */
       buffer.writeUInt16BE(id, offset)
       offset += 2
 
-      /* Write entity type. */
-      buffer.writeUInt8(entity.type, offset)
+      /* Write orb type. */
+      buffer.writeUInt8(orb.type, offset)
       offset += 1
 
-      /* Write entity state. */
-      entity.serialize(buffer, offset)
+      /* Write orb state. */
+      orb.serialize(buffer, offset)
       offset += length
     })
 
@@ -352,13 +335,13 @@ class World extends EventEmitter {
   }
 
   /**
-   * Create a new entity provided with World.entityAPI.
+   * Create a new orb provided with World.orbAPI.
    *
    * @param {function} constructor
-   * @param {?object}  options - Object to pass to the entity's constructor.
+   * @param {?object}  options - Object to pass to the orb's constructor.
    */
-  createEntity(constructor, options = {}) {
-    return new constructor(options, this.entityAPI)
+  createOrb(constructor, options = {}) {
+    return new constructor(options, this.orbAPI)
   }
 
   /**

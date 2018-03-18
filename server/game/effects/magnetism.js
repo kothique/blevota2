@@ -5,7 +5,6 @@
 const Effect = require('./effect')
 
 const { Vector, V } = require('../../../common/vector')
-const { ORB }       = require('../../../common/entities')
 
 /**
  * @class
@@ -29,20 +28,19 @@ class Magnetism extends Effect {
   }
 
   /**
-   * @param {Entity} target
+   * @param {Orb}    target
    * @param {number} t  - Timestamp in seconds.
    * @param {number} dt - Timestep in seconds.
    */
   onTick(target, t, dt) {
-    const entities = this.api.queryBox({
+    const orbs = this.api.queryBox({
       minP: Vector.subtract(target.position, V(this.radius, this.radius)),
       maxP: Vector     .add(target.position, V(this.radius, this.radius))
-    }).map(this.api.getEntity)
+    }).map(this.api.getOrb)
 
-    entities.forEach((entity) => {
-      if (entity.type === ORB && entity !== target) {
-        const orb = entity,
-              distance = Math.max(0, Vector.distance(target.position, orb.position) - target.radius - orb.radius)
+    orbs.forEach((orb) => {
+      if (orb !== target) {
+        const distance = Math.max(0, Vector.distance(target.position, orb.position) - target.radius - orb.radius)
 
         if (distance <= this.radius && distance > 0) {
           const value = this.minValue + (distance / this.radius * (this.maxValue - this.minValue)),

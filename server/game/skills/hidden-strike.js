@@ -6,7 +6,6 @@ const Skill = require('./skill')
 
 const { READY, ACTIVE } = require('../../../common/skill-state')
 const { Vector, V } = require('../../../common/vector')
-const { ORB } = require('../../../common/entities')
 
 const MIN_DAMAGE = 0
 const MAX_DAMAGE = 30
@@ -62,17 +61,17 @@ class HiddenStrike extends Skill {
     if (!owner.visible) {
       owner.show()
 
-      const entities = this.api.queryBox({
+      const orbs = this.api.queryBox({
         minP: Vector.subtract(owner.position, V(RADIUS, RADIUS)),
         maxP: Vector.add(owner.position, V(RADIUS, RADIUS))
-      }).map(this.api.getEntity)
+      }).map(this.api.getOrb)
 
-      entities.forEach((entity) => {
-        if (entity.type === ORB && entity !== owner) {
+      orbs.forEach((orb) => {
+        if (orb !== owner) {
           const k = Math.max(1, this.duration / MAX_CAST_DURATION),
                 value = MIN_DAMAGE + k * (MAX_DAMAGE - MIN_DAMAGE)
 
-          entity.hurt(value, owner)
+          orb.hurt(value, owner)
         }
       })
     }

@@ -12,8 +12,8 @@ import PlayoutBuffer from '@client/playoutbuffer'
 import World         from '@client/game/world'
 import Decorator     from '@client/game/decorator'
 
-import * as entities   from '@common/entities'
 import SkillState      from '@common/skill-state'
+import { ORBS }        from '@common/const'
 import { Vector, V }   from '@common/vector'
 import { globalToSVG } from '@common/game'
 
@@ -98,8 +98,8 @@ class Game extends EventEmitter {
         viewport: this.world.viewport
       })
 
-      if (this.world.entityFactory.entities[this.orbID]) {
-        this.emit('orb', this.world.entityFactory.entities[this.orbID])
+      if (this.world.orbFactory.orbs[this.orbID]) {
+        this.emit('orb', this.world.orbFactory.orbs[this.orbID])
       }
     })
 
@@ -153,7 +153,7 @@ class Game extends EventEmitter {
         isPlayer: orbID === this.orbID
       }
 
-      this.world.new(orbID, entities.ORB, options)
+      this.world.new(orbID, ORBS.UNKNOWN, options)
     })
 
     socket.on('remove-orb', (orbID) => {
@@ -264,7 +264,7 @@ class Game extends EventEmitter {
    * @param {number} offset
    */
   parseSkills(buffer, offset = 0) {
-    const parseSkill = (buffer, offset = 0) => {
+    /* const parseSkill = (buffer, offset = 0) => {
       const skill = {
         type: buffer.readUInt8(offset)
       }
@@ -278,7 +278,7 @@ class Game extends EventEmitter {
       return { skill, offset }
     }
 
-    let changed = false
+    let chnnged = false
 
     for (let i = 1; i <= 8; i++) {
       let result = parseSkill(buffer, offset)
@@ -293,7 +293,7 @@ class Game extends EventEmitter {
 
     if (changed) {
       this.emit('skills', this.skills)
-    }
+    } */
   }
 }
 

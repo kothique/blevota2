@@ -32,7 +32,7 @@ class Decorator {
   render(options) {
     const { worldSize, viewport } = options,
           viewBox = getViewBox(this.svg),
-          tileSize = 64
+          tileSize = 256
 
     this.svg.style.backgroundPosition = `${viewBox.minP.x + -viewport.x % tileSize}px ${viewBox.minP.y + -viewport.y % tileSize}px`
     this.svg.style.backgroundSize = `${tileSize}px ${tileSize}px`

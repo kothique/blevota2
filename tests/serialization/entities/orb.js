@@ -16,7 +16,7 @@ describe('Orb entity serialization', () => {
   test('deserialized orb should match the original one', () => {
     const serverOrb = new ServerOrb({
       radius: 50,
-      maxHp: 100,
+      maxHP: 100,
       hp: 80,
       maxMp: 105,
       mp: 30
@@ -32,7 +32,7 @@ describe('Orb entity serialization', () => {
 
     expect(serverLength).toBe(clientLength)
     expect(clientOrb.radius).toBe(50)
-    expect(clientOrb.maxHp).toBe(100)
+    expect(clientOrb.maxHP).toBe(100)
     expect(clientOrb.hp).toBe(80)
     expect(clientOrb.maxMp).toBe(105)
     expect(clientOrb.mp).toBe(30)

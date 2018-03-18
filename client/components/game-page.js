@@ -14,7 +14,7 @@ import Forbidden       from '@client/components/error/forbidden'
 import withAccess      from '@client/components/wrappers/with-access'
 
 import SkillState        from '@common/skill-state'
-import { VISION_RADIUS } from '@common/game'
+import { VISION_RADIUS } from '@common/const'
 
 import '@client/styles/game-page.styl'
 
@@ -44,9 +44,9 @@ class GamePage extends Component {
 
   onGameOrb = (orb) => {
     this.setState({
-      playerMaxHP: orb.maxHp,
+      playerMaxHP: orb.maxHP,
       playerHP: orb.hp,
-      playerMapMP: orb.maxMp,
+      playerMapMP: orb.maxMP,
       playerMP: orb.mp
     })
   }

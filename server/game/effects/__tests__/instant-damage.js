@@ -11,7 +11,7 @@ describe('InstantDamage', () => {
           },
           target = new Orb({
             radius: 30,
-            maxHp: 200,
+            maxHP: 200,
             hp: 43,
             maxMp: 200,
             mp: 100

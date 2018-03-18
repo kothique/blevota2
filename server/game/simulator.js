@@ -8,11 +8,10 @@ const merge = require('lodash/merge')
 const forIn = require('lodash/forIn')
 
 const World = require('./world')
-const Orb = require('./entities/orb')
+const Orb = require('./orbs/orb')
 
 const { Vector, V }     = require('../../common/vector')
-const { VISION_RADIUS } = require('../../common/game')
-const { ORB }           = require('../../common/entities')
+const { VISION_RADIUS } = require('../../common/const')
 
 /**
  * @class
@@ -34,7 +33,7 @@ const Simulator = {
       size: V(3000, 3000)
     })
 
-    this.world.on('death', (orbID) => {
+    this.world.on('orb:death', (orbID) => {
       process.send({
         type: 'DEATH',
         orbID
@@ -68,16 +67,17 @@ const Simulator = {
    * @return {number} - The ID of the new orb.
    */
   newOrb() {
-    const id = this.world.new(this.world.createEntity(Orb, {
-      radius: 20 + Math.random() * 30,
-      maxHp: 100,
+    const id = this.world.new(this.world.createOrb(Orb, {
+      radius: 40 + Math.random() * 20,
+      maxHP: 100,
       hp: 80,
       maxMp: 100,
       mp: 80,
       position: V(
         50 + Math.random() * 700,
         50 + Math.random() * 500
-      )
+      ),
+      mass: 1
     }))
 
     this.controls[id] = {
@@ -138,10 +138,9 @@ const Simulator = {
 
       let integrated = false
       while (this.accumulator >= this.dt) {
-        this.world
-          .applyControls(this.controls)
-          .applyEffects(this.t / 1000, this.dt / 1000)
-          .integrate(this.t / 1000, this.dt / 1000)
+        this.world.applyControls(this.controls)
+        this.world.applyEffects(this.t / 1000, this.dt / 1000)
+        this.world.integrate(this.t / 1000, this.dt / 1000)
         integrated = true
 
         this.t += this.dt
@@ -178,20 +177,17 @@ const Simulator = {
   sendFrames() {
     const frames = Object.create(null)
 
-    forIn(this.world.entities, (entity, id) => {
-      if (entity.type === ORB) {
-        const orb    = entity,
-              skills = orb.skillsToBuffer(),
-              world  = this.world.boxToBuffer({
-                minP: Vector.subtract(orb.position, VISION_RADIUS),
-                maxP: Vector.     add(orb.position, VISION_RADIUS),
-                for:  orb
-              })
+    forIn(this.world.orbs, (orb, id) => {
+      const skills = orb.skillsToBuffer(),
+            world  = this.world.boxToBuffer({
+              minP: Vector.subtract(orb.position, VISION_RADIUS),
+              maxP: Vector.     add(orb.position, VISION_RADIUS),
+              for:  orb
+            })
 
-        frames[id] = {
-          world,
-          skills
-        }
+      frames[id] = {
+        world,
+        skills
       }
     })
 
