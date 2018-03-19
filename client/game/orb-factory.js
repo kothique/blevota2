@@ -47,7 +47,7 @@ class OrbFactory {
 
     let orb = this.orbs[id]
     if (!orb) {
-      orb = this.orb[id] = new constructor(id)
+      orb = this.orbs[id] = new constructor(id)
     }
 
     offset = orb.parse(buffer, offset)
@@ -77,7 +77,7 @@ class OrbFactory {
     if (!constructor) {
       console.warn(`Orb #${type} is not registered`)
 
-      return this.orbs[id] = new Unknown(id, type)
+      return null
     }
 
     let orb = this.orbs[id]

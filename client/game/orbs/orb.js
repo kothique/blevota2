@@ -25,7 +25,7 @@ class Orb {
     this.nodes = {}
 
     this.nodes.outer = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-    this.nodes.outer.setAttributeNS(null, 'fill', 'gray')
+    this.nodes.outer.setAttributeNS(null, 'fill', 'grey')
     this.nodes.outer.setAttributeNS(null, 'cx',   0)
     this.nodes.outer.setAttributeNS(null, 'cy',   0)
     this.nodes.outer.setAttributeNS(null, 'r',    0)

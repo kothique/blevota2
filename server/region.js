@@ -6,6 +6,8 @@ const forIn = require('lodash/forIn')
 const child_process = require('child_process')
 const WebSocket = require('ws')
 
+const { ORBS: { RED, GOLD }, randomOrbType } = require('../common/const')
+
 /**
  * @class
  *
@@ -59,7 +61,7 @@ class Region {
             })
 
             player.socket.emit('orb-id', player.orbID)
-            this.toAllPlayers('new-orb', player.orbID)
+            this.toAllPlayers('new-orb', player.orbID, msg.orbType)
           }
           break
 
@@ -82,11 +84,12 @@ class Region {
    * @param {Socket} socket - The socket.io socket corresponding to the player.
    */
   newPlayer(newSocket) {
-    const { user } = newSocket.handshake
+    const { user } = newSocket.handshake,
+          orbType = randomOrbType()
 
     /** Send all existing orbs to the new player */
     forIn(this.playersByID, (player) => {
-      newSocket.emit('new-orb', player.orbID)
+      newSocket.emit('new-orb', player.orbID, orbType)
     })
 
     newSocket.on('error', () => {
@@ -102,7 +105,7 @@ class Region {
       orbID: null
     }
 
-    this.sendNewOrb(user.id)
+    this.sendNewOrb(user.id, orbType)
   }
 
   /**
@@ -201,11 +204,12 @@ class Region {
    * @private
    * @param {string} id - The player's ID.
    */
-  sendNewOrb(playerID) {
+  sendNewOrb(playerID, orbType) {
     try {
       this.game.send({
         type: 'NEW_ORB',
-        playerID
+        playerID,
+        orbType
       })
     } catch (err) {
       console.log(`Region ${this.name}:`)

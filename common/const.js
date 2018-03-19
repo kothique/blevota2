@@ -9,6 +9,13 @@ module.exports.VISION_RADIUS = VISION_RADIUS
 
 /** @const */
 const ORBS = {
-  UNKNOWN: 0x0
+  UNKNOWN: 0x0,
+  RED:     0x1,
+  GOLD:    0x2,
+  GREEN:   0x3
 }
 module.exports.ORBS = ORBS
+
+/** @return {number} */
+const randomOrbType = () => 1 + Math.floor(Math.random() * (Object.keys(ORBS).length - 1))
+module.exports.randomOrbType = randomOrbType

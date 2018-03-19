@@ -3,15 +3,17 @@
  */
 
 const EventEmitter = require('events')
-const present = require('present')
-const merge = require('lodash/merge')
-const forIn = require('lodash/forIn')
+const present      = require('present')
+const merge        = require('lodash/merge')
+const forIn        = require('lodash/forIn')
 
 const World = require('./world')
-const Orb = require('./orbs/orb')
+const Red   = require('./orbs/red')
+const Gold  = require('./orbs/gold')
+const Green = require('./orbs/green')
 
-const { Vector, V }     = require('../../common/vector')
-const { VISION_RADIUS } = require('../../common/const')
+const { Vector, V }           = require('../../common/vector')
+const { VISION_RADIUS, ORBS } = require('../../common/const')
 
 /**
  * @class
@@ -64,21 +66,54 @@ const Simulator = {
   /**
    * Add a new orb to the simulation.
    *
+   * @param {number} orbType
    * @return {number} - The ID of the new orb.
    */
-  newOrb() {
-    const id = this.world.new(this.world.createOrb(Orb, {
-      radius: 40 + Math.random() * 20,
-      maxHP: 100,
-      hp: 80,
-      maxMp: 100,
-      mp: 80,
-      position: V(
-        50 + Math.random() * 700,
-        50 + Math.random() * 500
-      ),
-      mass: 1
-    }))
+  newOrb(orbType) {
+    let id
+    if (orbType === ORBS.RED) {
+      id = this.world.new(this.world.createOrb(Red, {
+        radius: 40 + Math.random() * 20,
+        maxHP: 100,
+        hp: 80,
+        maxMp: 100,
+        mp: 80,
+        position: V(
+          50 + Math.random() * 700,
+          50 + Math.random() * 500
+        ),
+        mass: 1,
+        maxStamina: 100
+      }))
+    } else if (orbType === ORBS.GOLD) {
+      id = this.world.new(this.world.createOrb(Gold, {
+        radius: 20 + Math.random() * 20,
+        maxHP: 100,
+        hp: 80,
+        maxMp: 100,
+        mp: 80,
+        position: V(
+          50 + Math.random() * 700,
+          50 + Math.random() * 500
+        ),
+        mass: 1,
+        maxMana: 100
+      }))
+    } else if (orbType === ORBS.GREEN) {
+      id = this.world.new(this.world.createOrb(Green, {
+        radius: 30 + Math.random() * 20,
+        maxHP: 100,
+        hp: 80,
+        maxMp: 100,
+        mp: 800,
+        position: V(
+          50 + Math.random() * 700,
+          50 + Math.random() * 500
+        ),
+        mass: 1,
+        maxMana: 100
+      }))
+    }
 
     this.controls[id] = {
       pX: 0,
@@ -202,13 +237,15 @@ const Simulator = {
 process.on('message', (msg) => {
   switch (msg.type) {
     case 'NEW_ORB':
-      const orbID = Simulator.newOrb(),
+      const orbID    = Simulator.newOrb(msg.orbType),
+            orbType  = msg.orbType,
             playerID = msg.playerID
 
       process.send({
         type: 'ORB_CREATED',
-        playerID,
-        orbID
+        orbID,
+        orbType,
+        playerID
       })
       break
     case 'REMOVE_ORB':

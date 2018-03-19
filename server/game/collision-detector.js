@@ -7,9 +7,7 @@ const forIn = require('lodash/forIn')
 
 const { Vector, V } = require('../../common/vector')
 
-/**
- * @class
- */
+/** @class */
 class CollisionDetector {
   /**
    * Create a new collision detector.

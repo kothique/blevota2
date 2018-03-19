@@ -13,7 +13,6 @@ import World         from '@client/game/world'
 import Decorator     from '@client/game/decorator'
 
 import SkillState      from '@common/skill-state'
-import { ORBS }        from '@common/const'
 import { Vector, V }   from '@common/vector'
 import { globalToSVG } from '@common/game'
 
@@ -148,12 +147,12 @@ class Game extends EventEmitter {
       this.orbID = orbID
     })
 
-    socket.on('new-orb', (orbID) => {
+    socket.on('new-orb', (orbID, orbType) => {
       const options = {
         isPlayer: orbID === this.orbID
       }
 
-      this.world.new(orbID, ORBS.UNKNOWN, options)
+      this.world.new(orbID, orbType, options)
     })
 
     socket.on('remove-orb', (orbID) => {

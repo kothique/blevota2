@@ -5,7 +5,7 @@
 import forIn from 'lodash/forIn'
 
 import OrbFactory      from './orb-factory'
-import registerObjects from './registerWorldObjects'
+import registerObjects from './register-world-objects'
 
 import { V, Vector } from '@common/vector'
 
@@ -65,6 +65,7 @@ class World {
         this.svg.removeChild(orb.node)
       }
     })
+    this.orbFactory.empty()
   }
 
   /**
