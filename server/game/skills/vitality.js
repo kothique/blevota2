@@ -28,11 +28,11 @@ class Vitality extends Skill {
       this.timer -= dt
 
       if (this.timer <= 0) {
-        this.state.type  = { type: ACTIVE }
+        this.state = { type: ACTIVE }
       }
     } else if (this.state.type === ACTIVE) {
       if (this.timer + dt > 0) {
-        owner.events.once('damage', (dmg) => {
+        owner.once('damage', (dmg) => {
           this.timer = DELAY
           this.state = { type: READY }
         })

@@ -60,11 +60,11 @@ class World {
 
   /** Remove all orbs. */
   clear() {
-    forIn(this.orbFactory.orbs, (orb) => {
-      if (orb.node) {
-        this.svg.removeChild(orb.node)
-      }
-    })
+    // forIn(this.orbFactory.orbs, (orb) => {
+    //   if (orb.node) {
+    //     this.svg.removeChild(orb.node)
+    //   }
+    // })
     this.orbFactory.empty()
   }
 

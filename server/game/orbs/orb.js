@@ -2,14 +2,18 @@
  * @module server/game/orbs/orb
  */
 
+const EventEmitter = require('events')
+
 const SkillManager = require('../skill-manager')
 
 const { Vector, V }         = require('../../../common/vector')
 const { ORBS: { UNKNOWN } } = require('../../../common/const')
 
 /** @class */
-class Orb {
+class Orb extends EventEmitter {
   constructor(options, orbAPI) {
+    super()
+
     this.api = orbAPI
 
     this.mass            = options.mass
@@ -128,15 +132,38 @@ class Orb {
 
   get visible() { return this._visible }
 
-  set visible(nextVisible) { this._visible = nextVisible }
+  set visible(nextVisible) {
+    if (nextVisible && !this._visible) {
+      this.emit('show')
+    } else if (!nextVisible && this._visible) {
+      this.emit('hide')
+    }
+
+    this._visible = nextVisible
+  }
 
   hide() { this.visible = false }
   show() { this.visible = true }
 
   _setHpBy(nextHP, source = null) {
+    if (nextHP > this._hp) {
+      this.emit('heal', nextHP - this._hp, source)
+    } else if (nextHP < this._hp) {
+      this.emit('damage', this._hp - nextHP, source)
+    }
+
+    if (nextHP > 0 && this._hp <= 0) {
+      this.emit('resurrection', source)
+    } else if (nextHP <= 0 && this._hp > 0) {
+      this.emit('death', source)
+    }
+
     this._hp = nextHP
-    if (this._hp <= 0) {
+    if (this._hp < 0) {
       this._hp = 0
+    }
+    if (this._hp > this.maxHP) {
+      this._hp = this.maxHP
     }
   }
 
