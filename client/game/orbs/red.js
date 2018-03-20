@@ -2,6 +2,8 @@
  * @module client/game/orbs/red
  */
 
+import { List } from 'immutable'
+
 import Orb from './orb'
 
 import { ORBS } from '@common/const'
@@ -24,6 +26,29 @@ class Red extends Orb {
     offset += 2
 
     return offset
+  }
+
+  /**
+   * @param {Buffer} buffer
+   * @param {number} offset
+   * @return {object}
+   */
+  parseSkills(buffer, offset = 0) {
+    let skills = List([
+      [ 'magnetism', 'Q' ],
+      [ 'shield',    'W' ]
+    ]).map(([ name, shortcut ]) => {
+      const result = Orb.parseSkill(buffer, offset)
+
+      offset = result.offset
+
+      return {
+        name, shortcut,
+        state: result.skill
+      }
+    })
+
+    return { offset, skills }
   }
 }
 

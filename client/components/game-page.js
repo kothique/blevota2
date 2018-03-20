@@ -2,9 +2,10 @@
  * @module client/components/game-page
  */
 import React, { Component, Fragment } from 'react'
-import { connect } from 'react-redux'
-import { func, object, string } from 'prop-types'
-import { push } from 'react-router-redux'
+import { connect }                    from 'react-redux'
+import { func, object, string }       from 'prop-types'
+import { push }                       from 'react-router-redux'
+import { Map, List }                  from 'immutable'
 
 import Game            from '@client/game'
 import HUD             from '@client/components/hud'
@@ -20,9 +21,7 @@ import '@client/styles/game-page.styl'
 
 const HOST = ''
 
-/**
- * @class
- */
+/** @class */
 class GamePage extends Component {
   static propTypes = {
     dispatch: func.isRequired,
@@ -34,20 +33,24 @@ class GamePage extends Component {
     super(props)
 
     this.state = {
-      chat: ''
+      skills: List(),
+      bars:   Map(),
+      chat:   ''
     }
   }
 
   onGameSkills = (skills) => {  
-    this.setState(skills)
+    this.setState({ skills })
   }
 
   onGameOrb = (orb) => {
+    const primary   = orb.maxHP === 0 ? 0 : orb.hp / orb.maxHP,
+          sMax      = orb.maxStamina || orb.maxMana,
+          sValue    = orb.stamina || orb.mana,
+          secondary = sMax === 0 ? 0 : sValue / sMax
+
     this.setState({
-      playerMaxHP: orb.maxHP,
-      playerHP: orb.hp,
-      playerMapMP: orb.maxMP,
-      playerMP: orb.mp
+      bars: Map({ primary, secondary })
     })
   }
 
@@ -111,6 +114,7 @@ class GamePage extends Component {
 
   render() {
     const { dispatch, isFetching, user, error } = this.props
+    const { skills, bars, chat }                = this.state
 
     return (
       <main id="game-page">
@@ -122,11 +126,13 @@ class GamePage extends Component {
           viewBox={`0 0 ${VISION_RADIUS.x * 2} ${VISION_RADIUS.y * 2}`}
           preserveAspectRatio="xMidYMid slice">
         </svg>
+
         <div id="gp-bar-top" className="gp-bar"></div>
         <div id="gp-bar-bottom" className="gp-bar"></div>
         <div id="gp-bar-left" className="gp-bar"></div>
         <div id="gp-bar-right" className="gp-bar"></div>
-        <HUD {...this.state} />
+
+        <HUD skills={skills} bars={bars} chat={chat} />
       </main>
     )
   }

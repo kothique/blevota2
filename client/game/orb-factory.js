@@ -71,7 +71,7 @@ class OrbFactory {
    * @param {number}  type
    * @param {?object} options
    */
-  new(id, type, options = undefined) {
+  new(id, type, options = {}) {
     const constructor = this.constructors[type]
 
     if (!constructor) {

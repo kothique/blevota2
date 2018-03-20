@@ -16,18 +16,16 @@ import SkillState      from '@common/skill-state'
 import { Vector, V }   from '@common/vector'
 import { globalToSVG } from '@common/game'
 
-/**
- * @constant
- */
+/** @const */
 const KEYMAP = {
-  'q': 'skill1',
-  'w': 'skill2',
-  'e': 'skill3',
-  'r': 'skill4',
-  'a': 'skill5',
-  's': 'skill6',
-  'd': 'skill7',
-  'f': 'skill8'
+  'q': 0,
+  'w': 1,
+  'e': 2,
+  'r': 3,
+  'a': 4,
+  's': 5,
+  'd': 6,
+  'f': 7
 }
 
 /**
@@ -66,11 +64,14 @@ class Game extends EventEmitter {
         return
       }
 
-      if (frame.skills) {
-        this.parseSkills(frame.skills)
-      }
-
       this.world.parse(frame.world)
+
+      const orb = this.world.orbFactory.orbs[this.orbID]
+
+      if (frame.skills && orb) {
+        const { skills, offset } = orb.parseSkills(frame.skills)
+        this.emit('skills', skills)
+      }
 
       /**
        * Even though this.world.viewport has changed, pointer position has not,
@@ -97,9 +98,7 @@ class Game extends EventEmitter {
         viewport: this.world.viewport
       })
 
-      if (this.world.orbFactory.orbs[this.orbID]) {
-        this.emit('orb', this.world.orbFactory.orbs[this.orbID])
-      }
+      orb && this.emit('orb', orb)
     })
 
     /*
@@ -208,30 +207,30 @@ class Game extends EventEmitter {
   }
 
   onKeyUp = (event) => {
-    const controls = Object.create(null)
+    const skills = [],
+          index = KEYMAP[event.key]
 
-    const skill = KEYMAP[event.key]
-    if (skill) {
-      controls[skill] = false
+    if (index !== undefined) {
+      skills[index] = false
       event.preventDefault()
     }
 
-    if (Object.keys(controls).length !== 0) {
-      this.sendControls(controls)
+    if (skills.length !== 0) {
+      this.sendControls({ skills })
     }
   }
 
   onKeyDown = (event) => {
-    const controls = Object.create(null)
+    const skills = [],
+          index = KEYMAP[event.key]
 
-    const skill = KEYMAP[event.key]
-    if (skill) {
-      controls[skill] = true
+    if (index !== undefined) {
+      skills[index] = true
       event.preventDefault()
     }
 
-    if (Object.keys(controls).length !== 0) {
-      this.sendControls(controls)
+    if (skills.length !== 0) {
+      this.sendControls({ skills })
     }
   }
 
@@ -254,45 +253,6 @@ class Game extends EventEmitter {
 
     this.world.clear()
     this.socket.disconnect()
-  }
-
-  /**
-   * Read skills from a bfufer to render them.
-   *
-   * @param {Buffer} buffer
-   * @param {number} offset
-   */
-  parseSkills(buffer, offset = 0) {
-    /* const parseSkill = (buffer, offset = 0) => {
-      const skill = {
-        type: buffer.readUInt8(offset)
-      }
-      offset += 1
-
-      if (skill.type === SkillState.COOLDOWN) {
-        skill.value = buffer.readUInt16BE(offset)
-        offset += 2
-      }
-
-      return { skill, offset }
-    }
-
-    let chnnged = false
-
-    for (let i = 1; i <= 8; i++) {
-      let result = parseSkill(buffer, offset)
-      if (this.skills[`skill${i}`] &&
-          result.skill.type !== this.skills[`skill${i}`].type) {
-        changed = true
-      }
-
-      this.skills[`skill${i}`] = result.skill
-      offset = result.offset
-    }
-
-    if (changed) {
-      this.emit('skills', this.skills)
-    } */
   }
 }
 

@@ -51,7 +51,8 @@ class Region {
 
         case 'ORB_CREATED':
           if (player = this.playersByID[msg.playerID]) {
-            player.orbID = msg.orbID
+            player.orbID   = msg.orbID
+            player.orbType = msg.orbType
 
             this.playersByOrbID[player.orbID] = player
 
@@ -89,7 +90,7 @@ class Region {
 
     /** Send all existing orbs to the new player */
     forIn(this.playersByID, (player) => {
-      newSocket.emit('new-orb', player.orbID, orbType)
+      newSocket.emit('new-orb', player.orbID, player.orbType)
     })
 
     newSocket.on('error', () => {
@@ -124,10 +125,11 @@ class Region {
       delete this.playersByOrbID[player.orbID]
 
       this.sendRemoveOrb(player.orbID)
-      player.orbID = null
+      player.orbID   = null
+      player.orbType = null
 
       setTimeout(() => {
-        this.sendNewOrb(playerID)
+        this.sendNewOrb(playerID, randomOrbType())
       }, delay)
     }
   }

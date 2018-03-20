@@ -119,14 +119,7 @@ const Simulator = {
       pX: 0,
       pY: 0,
       move: false,
-      skill1: false,
-      skill2: false,
-      skill3: false,
-      skill4: false,
-      skill5: false,
-      skill6: false,
-      skill7: false,
-      skill8: false,
+      skills: []
     }
 
     return id

@@ -35,7 +35,7 @@ class World {
    * @param {number}  type
    * @param {?object} options
    */
-  new(id, type, options = undefined) {
+  new(id, type, options = {}) {
     const orb = this.orbFactory.new(id, type, options)
     if (orb.node) {
       this.svg.appendChild(orb.node)
@@ -112,9 +112,9 @@ class World {
    */
   render() {
     forIn(this.orbFactory.orbs, (orb) => {
-      if (!orb.reserved) {
+      // if (!orb.reserved) {
         orb.render(this.viewport)
-      }
+      // }
     })
   }
 

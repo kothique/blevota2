@@ -1,0 +1,12 @@
+@import './_variables'
+
+#chat-box
+  position fixed
+  height hud-height
+  right 8px
+  bottom 8px
+  left "calc(50% + %s / 2 + 2px + %s)" % (hud-height hud-height)
+  overflow hidden
+  overflow-y scroll
+  padding 4px
+  font-family monospace

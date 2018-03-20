@@ -2,7 +2,10 @@
  * @module client/game/orbs/orb
  */
 
+import { List } from 'immutable'
+
 import { Vector, V } from '@common/vector'
+import { COOLDOWN }  from '@common/skill-state'
 
 /** @class */
 class Orb {
@@ -50,7 +53,7 @@ class Orb {
   }
 
   parse(buffer, offset = 0) {
-    this.changed = true
+    this.rendered = false
 
     this.previous.position = this.position.clone()
 
@@ -69,6 +72,10 @@ class Orb {
     this.visible = buffer.readUInt8(offset++)
 
     return offset
+  }
+
+  parseSkills(buffer, offset = 0) {
+    return { offset, skills: List() }
   }
 
   render(viewport = V(0, 0)) {
@@ -103,6 +110,20 @@ class Orb {
     const { prev, curr, next } = timestmap
 
     /** @todo */
+  }
+
+  static parseSkill = (buffer, offset = 0) => {
+    const skill = {
+      type: buffer.readUInt8(offset)
+    }
+    offset += 1
+
+    if (skill.type === COOLDOWN) {
+      skill.value = buffer.readUInt16BE(offset)
+      offset += 2
+    }
+
+    return { skill, offset }
   }
 }
 

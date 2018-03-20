@@ -2,96 +2,36 @@
  * @module client/components/hud
  */
 
-import React, { Component } from 'react'
-import { push } from 'react-router-redux'
-import { connect } from 'react-redux'
-import { object, number, string } from 'prop-types'
+import React, { Component }   from 'react'
+import { string, instanceOf } from 'prop-types'
+import { Map, List }          from 'immutable'
 
-import SkillIcon  from './skill-icon'
-import SkillState from '@common/skill-state'
+import ControlBox from '@client/components/hud/control-box'
+import ChatBox    from '@client/components/hud/chat-box'
+import BarBox     from '@client/components/hud/bar-box'
+import SkillBox   from '@client/components/hud/skill-box'
 
-import '@client/styles/hud.styl'
-
-/**
- * @class
- */
+/** @class */
 class HUD extends Component {
   static propTypes = {
-    skill1: object,
-    skill2: object,
-    skill3: object,
-    skill4: object,
-    skill5: object,
-    skill6: object,
-    skill7: object,
-    skill8: object,
-    playerMaxHP: number,
-    playerHP:    number,
-    playerMaxMP: number,
-    playerMP:    number,
-    chat:        string
-  }
-   
-  static defaultProps = {
-    skill1: { type: SkillState.READY },
-    skill2: { type: SkillState.READY },
-    skill3: { type: SkillState.READY },
-    skill4: { type: SkillState.READY },
-    skill5: { type: SkillState.READY },
-    skill7: { type: SkillState.READY },
-    skill8: { type: SkillState.READY },
-    playerMaxHP: 0,
-    playerHP:    0,
-    playerMaxMP: 0,
-    playerMP:    0,
-    chat:        ''
+    skills: instanceOf(List).isRequired,
+    bars:   instanceOf(Map).isRequired,
+    chat:   string.isRequired
   }
 
   render() {
-    const { dispatch } = this.props
-    const { skill1, skill2, skill3, skill4,
-            skill5, skill6, skill7, skill8,
-            playerRadius, playerMaxHP, playerHP, playerMaxMP, playerMP,
-            chat } = this.props
+    const { skills, bars, chat } = this.props
 
     return (
       <div id="hud" className="unselectable">
-        <img id="hud-quit" src="/images/icons/quit.svg"
-          onClick={() => dispatch(push('/regions'))} />
+        <ControlBox />
+        <ChatBox chat={chat} />
 
-        <div id="hud-skill-bar-left">
-          <SkillIcon id="hud-skill-1" state={skill1} shortcut="Q" />
-          <SkillIcon id="hud-skill-2" state={skill2} shortcut="W" />
-          <SkillIcon id="hud-skill-5" state={skill5} shortcut="A" />
-          <SkillIcon id="hud-skill-6" state={skill6} shortcut="S" />
-        </div>
-        <svg id="hud-orb"
-          version="1.1"
-          baseProfile="full"
-          xmlns="http://www.w3.org/2000/svg">
-
-          <circle
-            r="48px" cx="62px" cy="62px"
-            fill="rgb(0, 101, 255)" />
-          <circle
-            r={`${0.8 * 48}px`} cx="62px" cy="62px"
-            fill="rgb(0, 218, 255)"
-            fillOpacity={playerMP / playerMaxMP || 1} />
-          <circle
-            r={`${0.5 * 48}px`} cx="62px" cy="62px"
-            fill="rgb(243, 101, 255)"
-            fillOpacity={playerHP / playerMaxHP || 1} />
-        </svg>
-        <div id="hud-skill-bar-right">
-          <SkillIcon id="hud-skill-3" state={skill3} shortcut="E" />
-          <SkillIcon id="hud-skill-4" state={skill4} shortcut="R" />
-          <SkillIcon id="hud-skill-7" state={skill7} shortcut="D" />
-          <SkillIcon id="hud-skill-8" state={skill8} shortcut="F" />
-        </div>
-        <div id="hud-chat" dangerouslySetInnerHTML={{ __html: chat }}></div>
+        <BarBox bars={bars} />
+        <SkillBox skills={skills} />
       </div>
     )
   }
 }
 
-export default connect()(HUD)
+export default HUD

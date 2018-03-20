@@ -2,8 +2,6 @@
  * @module server/game/orbs/orb
  */
 
-const forIn = require('lodash/forIn')
-
 const SkillManager = require('../skill-manager')
 
 const { Vector, V }         = require('../../../common/vector')
@@ -29,14 +27,13 @@ class Orb {
 
     this.effects  = []
 
-    this.skills       = options.skills || {}
-    this.skillManager = new SkillManager(this, this.skills)
+    this.skillManager = new SkillManager(this)
   }
 
   applyControls(controls) {
-    const { pX, pY, move } = controls
+    const { pX, pY, move, skills } = controls
 
-    this.skillManager.handleControls(controls)
+    this.skillManager.handleControls(skills)
 
     if (move && this.moveForce) {
       this.force.add(
@@ -59,7 +56,7 @@ class Orb {
   }
 
   applyEffects(t, dt) {
-    forIn(this.skills, (skill) => {
+    this.skillManager.skills.forEach(skill => {
       skill.onTick(this, t, dt)
     })
 
@@ -107,7 +104,7 @@ class Orb {
     const buffer = Buffer.allocUnsafe(this.skillsBinaryLength)
     let offset = 0
 
-    forIn(this.skills, (skill) => {
+    this.skillManager.skills.forEach(skill => {
       skill.serialize(buffer, offset)
       offset += skill.binaryLength
     })
@@ -118,7 +115,7 @@ class Orb {
   get skillsBinaryLength() {
     let length = 0
 
-    forIn(this.skills, (skill) => {
+    this.skillManager.skills.forEach(skill => {
       length += skill.binaryLength
     })
 

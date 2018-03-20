@@ -28,6 +28,7 @@
     "express": "^4.16.2",
     "history": "^4.7.2",
     "hoist-non-react-statics": "^2.5.0",
+    "immutable": "^3.8.2",
     "jsonwebtoken": "^8.1.1",
     "lodash": "^4.17.4",
     "mongodb": "^3.0.1",

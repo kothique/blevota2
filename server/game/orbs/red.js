@@ -2,19 +2,21 @@
  * @module server/game/orbs/red
  */
 
-const Orb = require('./orb')
+const Orb       = require('./orb')
+const Magnetism = require('../skills/magnetism')
+const Shield    = require('../skills/shield')
 
 const { ORBS: { RED } } = require('../../../common/const')
 
 /** @class */
 class Red extends Orb {
   constructor(options, orbAPI) {
-    super({
-      ...options,
-      skills: {
+    super(options, orbAPI)
 
-      }
-    }, orbAPI)
+    this.skillManager.skills = [
+      this.api.createSkill(Magnetism),
+      this.api.createSkill(Shield)
+    ]
 
     this.maxStamina = options.maxStamina
     this.stamina    = options.maxStamina
