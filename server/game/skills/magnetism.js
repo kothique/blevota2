@@ -1,5 +1,5 @@
 /**
- * @module server/game/skill/pull
+ * @module server/game/skills/magnetism
  */
 
 const Skill = require('./skill')
@@ -37,7 +37,7 @@ class Magnetism extends Skill {
 
       orbs.forEach((orb) => {
         if (orb !== owner) {
-          const distance = Math.max(0, Vector.distance(owner.position, orb.position))
+          const distance =  Vector.distance(owner.position, orb.position)
 
           if (distance <= RADIUS && distance > 0) {
             const value = MIN_VALUE + (distance / RADIUS * (MAX_VALUE - MIN_VALUE)),

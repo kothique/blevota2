@@ -6,6 +6,7 @@ const Orb       = require('./orb')
 const Magnetism = require('../skills/magnetism')
 const Shield    = require('../skills/shield')
 const Vitality  = require('../skills/vitality')
+const Attack    = require('../skills/attack')
 
 const { ORBS: { RED } } = require('../../../common/const')
 
@@ -17,7 +18,8 @@ class Red extends Orb {
     this.skillManager.skills = [
       this.api.createSkill(Magnetism),
       this.api.createSkill(Shield),
-      this.api.createSkill(Vitality)
+      this.api.createSkill(Vitality),
+      this.api.createSkill(Attack)
     ]
 
     this.maxStamina = options.maxStamina

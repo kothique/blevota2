@@ -6,16 +6,19 @@ const Skill = require('./skill')
 
 const { ACTIVE, READY } = require('../../../common/skill-state')
 
-const DELAY      = 1.0
+const DELAY      = 2.0
 const HP_RESTORE = 0.05
 
 /** @class */
 class Vitality extends Skill {
+  /**
+   * @param {object} options
+   * @param {object} skillAPI
+   */
   constructor(options, skillAPI) {
     super(options, skillAPI)
 
-    this.state = { type: READY }
-    this.timer = DELAY
+    this.refresh()
   }
 
   /**
@@ -31,15 +34,19 @@ class Vitality extends Skill {
         this.state = { type: ACTIVE }
       }
     } else if (this.state.type === ACTIVE) {
-      if (this.timer + dt > 0) {
-        owner.once('damage', (dmg) => {
-          this.timer = DELAY
-          this.state = { type: READY }
-        })
+      if (this.firstTick) {
+        this.firstTick = false
+        owner.once('damage', (dmg) => { this.refresh() })
       }
 
       owner.hp += owner.maxHP * HP_RESTORE * dt
     }
+  }
+
+  refresh() {
+    this.state     = { type: READY }
+    this.timer     = DELAY
+    this.firstTick = true
   }
 }
 

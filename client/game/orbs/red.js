@@ -37,7 +37,8 @@ class Red extends Orb {
     let skills = List([
       [ 'magnetism', 'Q'  ],
       [ 'shield',    'W'  ],
-      [ 'vitality'        ]
+      [ 'vitality'        ],
+      [ 'attack',    'R'  ]
     ]).map(([ name, shortcut ]) => {
       const result = Orb.parseSkill(buffer, offset)
 
