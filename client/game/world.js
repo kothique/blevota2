@@ -112,9 +112,9 @@ class World {
    */
   render() {
     forIn(this.orbFactory.orbs, (orb) => {
-      // if (!orb.reserved) {
+      if (!orb.reserved) {
         orb.render(this.viewport)
-      // }
+      }
     })
   }
 

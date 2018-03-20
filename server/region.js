@@ -106,6 +106,8 @@ class Region {
       orbID: null
     }
 
+    this.toAllPlayers('event:join', { user })
+
     this.sendNewOrb(user.id, orbType)
   }
 
@@ -145,6 +147,8 @@ class Region {
     if (player) {
       forIn(this.playersByID, ({ socket }) => {
         socket.emit('remove-orb', player.orbID)
+
+        socket.emit('event:leave', { user: socket.handshake.user })
       })
 
       delete this.playersByOrbID[player.orbID]

@@ -5,11 +5,9 @@
 ### Client
 
 #### UI
-* show distance to border
-* game page
-  * skill icons
-* user profile
 * **mobile menu**
+* show distance to border
+* user profile
 
 ---
 

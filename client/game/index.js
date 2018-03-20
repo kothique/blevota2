@@ -28,9 +28,7 @@ const KEYMAP = {
   'f': 7
 }
 
-/**
- * @class
- */
+/** @class */
 class Game extends EventEmitter {
   constructor(options) {
     super()
@@ -158,10 +156,16 @@ class Game extends EventEmitter {
       this.world.remove(orbID)
     })
 
-    socket.on('event:death', (data) => {
-      const { id, username } = data.user
+    socket.on('event:join', (data) => {
+      this.emit('event', 'Player ' + _.escape(data.user.username) + ' joined the game <br />')
+    })
 
-      this.emit('event', 'Player <strong>' + _.escape(username) + '</strong> died :( <br />')
+    socket.on('event:leave', (data) => {
+      this.emit('event', 'Player ' + _.escape(data.user.username) + ' left <br />')
+    })
+
+    socket.on('event:death', (data) => {
+      this.emit('event', 'Player ' + _.escape(data.user.username) + ' died :( <br />')
     })
   }
 
