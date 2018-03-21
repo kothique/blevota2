@@ -42,7 +42,6 @@ export default class PlayoutBuffer extends EventEmitter {
   }
 
   start = () => {
-    this.begin = present()
     this.stop = false
 
     /**
@@ -72,12 +71,12 @@ export default class PlayoutBuffer extends EventEmitter {
       return frames
     }
 
-    const nextFrame = () => {
+    let previousTimestamp = null
+
+    const nextFrame = (currentTimestamp) => {
       if (this.stop) {
         return
       }
-
-      const currentTimestamp = present() - this.begin
 
       const {
         prev: previousFrame,
@@ -87,13 +86,24 @@ export default class PlayoutBuffer extends EventEmitter {
       this.emit('frame', {
         previousFrame,
         frame,
-        currentTimestamp
+        currentTimestamp,
+        dt: currentTimestamp - previousTimestamp
       })
+
+      previousTimestamp = currentTimestamp
 
       window.requestAnimationFrame(nextFrame)
     }
 
-    window.requestAnimationFrame(nextFrame)
+    const start = (currentTimestamp) => {
+      previousTimestamp = currentTimestamp
+
+      nextFrame(currentTimestamp)
+      window.requestAnimationFrame(nextFrame)
+    }
+
+
+    window.requestAnimationFrame(start)
   }
 
   stop = () => {

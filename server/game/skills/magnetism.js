@@ -59,6 +59,19 @@ class Magnetism extends Skill {
   onUp(owner) {
     this.state = { type: READY }
   }
+
+  serializeForOrb(buffer, offset = 0) {
+    buffer.writeUInt8(this.state.type === ACTIVE, offset++)
+
+    if (this.state.type === ACTIVE) {
+      buffer.writeUInt16BE(RADIUS, offset)
+      offset += 2
+    }
+  }
+
+  get binaryLengthForOrb() {
+    return 1 + (this.state.type === ACTIVE ? 2 : 0)
+  }
 }
 
 module.exports = Magnetism

@@ -100,30 +100,33 @@ class Orb extends EventEmitter {
     offset += 8
 
     buffer.writeUInt8(this.visible, offset++)
+
+    this.skillManager.skills.forEach(skill => {
+      skill.serializeForOrb(buffer, offset)
+      offset += skill.binaryLengthForOrb
+    })
   }
 
-  get binaryLength() { return 8 * 5 + 1 }
+  get binaryLength() {
+    const skillsLength = this.skillManager.skills.reduce((acc, skill) => acc + skill.binaryLengthForOrb, 0)
+
+    return 8 * 5 + 1 + skillsLength
+  }
 
   skillsToBuffer() {
     const buffer = Buffer.allocUnsafe(this.skillsBinaryLength)
     let offset = 0
 
     this.skillManager.skills.forEach(skill => {
-      skill.serialize(buffer, offset)
-      offset += skill.binaryLength
+      skill.serializeForSkillBox(buffer, offset)
+      offset += skill.binaryLengthForSkillBox
     })
 
     return buffer
   }
 
   get skillsBinaryLength() {
-    let length = 0
-
-    this.skillManager.skills.forEach(skill => {
-      length += skill.binaryLength
-    })
-
-    return length
+    return this.skillManager.skills.reduce((acc, skill) => acc + skill.binaryLengthForSkillBox, 0)
   }
 
   get type() { return UNKNOWN }

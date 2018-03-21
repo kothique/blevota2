@@ -8,7 +8,7 @@ import { Buffer } from 'buffer-browserify'
 import _ from 'lodash'
 
 import Keyboard      from '@client/keyboard'
-import PlayoutBuffer from '@client/playoutbuffer'
+import PlayoutBuffer from '@client/playout-buffer'
 import World         from '@client/game/world'
 import Decorator     from '@client/game/decorator'
 
@@ -57,7 +57,7 @@ class Game extends EventEmitter {
      * Configure playout buffer.
      */
     this.buffer = new PlayoutBuffer()
-    this.buffer.on('frame', ({ previousFrame, frame, currentTimestamp }) => {
+    this.buffer.on('frame', ({ previousFrame, frame, currentTimestamp, dt }) => {
       if (!frame) {
         return
       }
@@ -90,7 +90,7 @@ class Game extends EventEmitter {
       //   })
       // }
 
-      this.world.render()
+      this.world.render(currentTimestamp, dt)
       this.decorator.render({
         worldSize: this.world.size,
         viewport: this.world.viewport

@@ -4,7 +4,6 @@
 
 /**
  * @class
- * @abstract
  */
 class Effect {
   /**
@@ -22,6 +21,7 @@ class Effect {
    * Called when the effect is received by some orb.
    *
    * @param {Orb} target
+   * @virtual
    */
   onReceive(target) {
     // does nothing
@@ -33,6 +33,7 @@ class Effect {
    * @param {Orb} target
    * @param {number} t
    * @param {number} dt
+   * @virtual
    */
   onTick(target, t, dt) {
     // does nothing
@@ -42,20 +43,17 @@ class Effect {
    * Called when removed from its orb.
    *
    * @param {Orb} target
+   * @virtual
    */
   onRemove(target) {
     // does nothing
   }
 
   /**
-   * Mark the effect to be removed at the next tick.
-   *
-   * @chainable
+   * Mark the effect to be removed.
    */
   die() {
     this.alive = false
-
-    return true
   }
 }
 

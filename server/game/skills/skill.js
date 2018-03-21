@@ -35,13 +35,10 @@ class Skill {
   onUp(owner) {}
 
   /**
-   * Write the skill to a buffer.
-   *
    * @param {Buffer}  buffer
    * @param {?number} offset
-   * @chainable
    */
-  serialize(buffer, offset = 0) {
+  serializeForSkillBox(buffer, offset = 0) {
     buffer.writeUInt8(this.state.type, offset)
     offset++
 
@@ -49,18 +46,18 @@ class Skill {
       buffer.writeUInt16BE(this.state.value, offset)
       offset += 2
     }
-
-    return this
   }
 
-  /**
-   * The size of the skill serialized.
-   *
-   * @return {number}
-   */
-  get binaryLength() {
+  /** @return {number} */
+  get binaryLengthForSkillBox() {
     return 1 + 2 * (this.state.type === state.COOLDOWN)
   }
+
+  /** @virtual */
+  serializeForOrb(buffer, offset = 0) {}
+
+  /** @virtual */
+  get binaryLengthForOrb() { return 0}
 }
 
 module.exports = Skill

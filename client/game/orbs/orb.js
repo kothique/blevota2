@@ -78,9 +78,10 @@ class Orb {
     return { offset, skills: List() }
   }
 
-  render(viewport = V(0, 0)) {
+  /** @return {bool} - Whether the orb was rendered. */
+  render(viewport, t, dt) {
     if (this.rendered) {
-      return
+      return false
     }
     this.rendered = true
 
@@ -94,6 +95,8 @@ class Orb {
     this.nodes.outer.setAttributeNS(null, 'fill-opacity', hpValue / 2)
 
     this.node.setAttributeNS(null, 'transform', `translate(${position.x} ${position.y})`)
+
+    return true
   }
 
   reserve() {

@@ -110,10 +110,10 @@ class World {
   /**
    * Update SVG attributes.
    */
-  render() {
+  render(t, dt) {
     forIn(this.orbFactory.orbs, (orb) => {
       if (!orb.reserved) {
-        orb.render(this.viewport)
+        orb.render(this.viewport, t, dt)
       }
     })
   }

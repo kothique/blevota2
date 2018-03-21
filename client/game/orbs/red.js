@@ -8,16 +8,55 @@ import Orb from './orb'
 
 import { ORBS } from '@common/const'
 
+const MAGNETISM_DURATION = 500
+
 /** @class */
 class Red extends Orb {
   constructor(id, options = {}) {
     super(id, options)
 
     this.nodes.middle.setAttributeNS(null, 'fill', 'rgb(174, 17, 31)')
+
+    /** Magnetism Skill */
+    this.magnetism = {
+      prevOn:   false,
+      on:       false,
+      radius:   0,
+      progress: 0,
+      startAnimation: () => {
+        this.magnetism.progress = 0
+      },
+      animate: (dt) => {
+        this.magnetism.progress += dt / MAGNETISM_DURATION
+        if (this.magnetism.progress > 1) {
+          this.magnetism.progress = 0
+        }
+
+        this.nodes.magnetism.setAttributeNS(null, 'r', this.magnetism.radius * (1 - this.magnetism.progress))
+      },
+      stopAnimation: () => {}
+    }
+    this.nodes.magnetism = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+    this.nodes.magnetism.setAttributeNS(null, 'fill', 'none')
+    this.nodes.magnetism.setAttributeNS(null, 'stroke', 'rgb(174, 17, 31)')
+    this.nodes.magnetism.setAttributeNS(null, 'stroke-opacity', 0.7)
+    this.nodes.magnetism.setAttributeNS(null, 'stroke-width', 2)
+    this.nodes.magnetism.setAttributeNS(null, 'cx', 0)
+    this.nodes.magnetism.setAttributeNS(null, 'cy', 0)
+    this.nodes.magnetism.setAttributeNS(null, 'r', 0)
+    this.nodes.magnetism.setAttributeNS(null, 'visibility', 'hidden')
+    this.node.insertBefore(this.nodes.magnetism, this.node.firstChild)
   }
 
   parse(buffer, offset = 0) {
     offset = super.parse(buffer, offset)
+
+    this.magnetism.prevOn = this.magnetism.on
+    this.magnetism.on = buffer.readUInt8(offset++)
+    if (this.magnetism.on) {
+      this.magnetism.radius = buffer.readUInt16BE(offset)
+      offset += 2
+    }
 
     this.maxStamina = buffer.readUInt16BE(offset)
     offset += 2
@@ -26,6 +65,26 @@ class Red extends Orb {
     offset += 2
 
     return offset
+  }
+
+  render(viewport, t, dt) {
+    if (super.render(viewport, t, dt)) {
+      /** Magnetism On */
+      if (!this.magnetism.prevOn && this.magnetism.on) {
+        this.nodes.magnetism.setAttributeNS(null, 'visibility', 'visible')
+        this.magnetism.startAnimation()
+      }
+      
+      /** Magnetism Off */
+      else if (this.magnetism.prevOn && !this.magnetism.on) {
+        this.nodes.magnetism.setAttributeNS(null, 'visibility', 'hidden')
+        this.magnetism.stopAnimation()
+      }
+
+      if (this.magnetism.on) {
+        this.magnetism.animate(dt)
+      }
+    }
   }
 
   /**
