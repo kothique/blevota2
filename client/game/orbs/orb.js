@@ -74,7 +74,7 @@ class Orb {
     return offset
   }
 
-  parseSkills(buffer, offset = 0) {
+  parseSkillsForSkillBox(buffer, offset = 0) {
     return { offset, skills: List() }
   }
 
@@ -85,15 +85,14 @@ class Orb {
     }
     this.rendered = true
 
-    const hpValue  = this.maxHP ? this.hp / this.maxHP : 0,
-          position = Vector.subtract(this.position, viewport)
-
     this.nodes.outer.setAttributeNS(null, 'r', this.radius)
     this.nodes.middle.setAttributeNS(null, 'r', 0.9 * this.radius)
     this.nodes.inner.setAttributeNS(null, 'r', 0.6 * this.radius)
 
-    this.nodes.outer.setAttributeNS(null, 'fill-opacity', hpValue / 2)
+    const hpValue  = this.maxHP ? this.hp / this.maxHP : 0,
+          position = Vector.subtract(this.position, viewport)
 
+    this.nodes.outer.setAttributeNS(null, 'fill-opacity', hpValue / 2)
     this.node.setAttributeNS(null, 'transform', `translate(${position.x} ${position.y})`)
 
     return true

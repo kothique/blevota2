@@ -19,13 +19,7 @@ import { globalToSVG } from '@common/game'
 /** @const */
 const KEYMAP = {
   'q': 0,
-  'w': 1,
-  'e': 2,
-  'r': 3,
-  'a': 4,
-  's': 5,
-  'd': 6,
-  'f': 7
+  'w': 1
 }
 
 /** @class */
@@ -41,17 +35,17 @@ class Game extends EventEmitter {
 
     this.orbID  = null
     this.lastP  = null
-    this.skills = Object.create(null)
 
     this.world     = new World({ svg })
     this.decorator = new Decorator({ svg })
 
-    document.addEventListener('mousemove',  this.onMouseMove)
-    document.addEventListener('mouseup',    this.onMouseUp)
-    document.addEventListener('mousedown',  this.onMouseDown)
-    document.addEventListener('mouseleave', this.onMouseLeave)
-    document.addEventListener('keyup',      this.onKeyUp)
-    document.addEventListener('keydown',    this.onKeyDown)
+    document.addEventListener('mousemove',   this.onMouseMove)
+    document.addEventListener('mouseup',     this.onMouseUp)
+    document.addEventListener('mousedown',   this.onMouseDown)
+    document.addEventListener('mouseleave',  this.onMouseLeave)
+    document.addEventListener('contextmenu', this.onContextMenu)
+    document.addEventListener('keyup',       this.onKeyUp)
+    document.addEventListener('keydown',     this.onKeyDown)
 
     /**
      * Configure playout buffer.
@@ -67,7 +61,7 @@ class Game extends EventEmitter {
       const orb = this.world.orbFactory.orbs[this.orbID]
 
       if (frame.skills && orb) {
-        const { skills, offset } = orb.parseSkills(frame.skills)
+        const { skills, offset } = orb.parseSkillsForSkillBox(frame.skills)
         this.emit('skills', skills)
       }
 
@@ -187,6 +181,8 @@ class Game extends EventEmitter {
 
     if (button === 0) {
       controls.move = false
+    } else if (button === 2) {
+      controls.skills = [null, null, null, false]
     }
 
     this.sendControls(controls)
@@ -200,14 +196,23 @@ class Game extends EventEmitter {
     }
 
     if (button === 0) {
-      controls.move = true
+      controls.move   = true
+    } else if (button === 2) {
+      controls.skills = [null, null, null, true]
     }
 
     this.sendControls(controls)
   }
 
   onMouseLeave = () => {
-    this.sendControls({ move: false })
+    this.sendControls({ move: false, attack: false })
+  }
+
+  onContextMenu = (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+
+    return false
   }
 
   onKeyUp = (event) => {
@@ -250,10 +255,13 @@ class Game extends EventEmitter {
   }
 
   end = () => {
-    document.body.removeEventListener('mousemove',  this.onMouseMove)
-    document.body.removeEventListener('mouseup',    this.onMouseUp)
-    document.body.removeEventListener('mousedown',  this.onMouseDown)
-    document.body.removeEventListener('mouseleave', this.onMouseLeave)
+    document.removeEventListener('mousemove',   this.onMouseMove)
+    document.removeEventListener('mouseup',     this.onMouseUp)
+    document.removeEventListener('mousedown',   this.onMouseDown)
+    document.removeEventListener('mouseleave',  this.onMouseLeave)
+    document.removeEventListener('contextmenu', this.onContextMenu)
+    document.removeEventListener('keyup',       this.onKeyUp)
+    document.removeEventListener('keydown',     this.onKeyDown)
 
     this.world.clear()
     this.socket.disconnect()

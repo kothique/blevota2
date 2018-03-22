@@ -48,7 +48,7 @@ const Simulator = {
 
     this.continue = true
 
-    this.controls = Object.create(null)
+    this.controls = {}
   },
 
   /**

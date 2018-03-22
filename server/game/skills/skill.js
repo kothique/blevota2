@@ -57,7 +57,7 @@ class Skill {
   serializeForOrb(buffer, offset = 0) {}
 
   /** @virtual */
-  get binaryLengthForOrb() { return 0}
+  get binaryLengthForOrb() { return 0 }
 }
 
 module.exports = Skill
