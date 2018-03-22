@@ -25,6 +25,7 @@ class Red extends Orb {
       progress: 0,
       startAnimation: () => {
         this.magnetism.progress = 0
+        this.nodes.magnetism.setAttributeNS(null, 'visibility', 'visible')
       },
       animate: (dt) => {
         this.magnetism.progress += dt / MAGNETISM_DURATION
@@ -34,7 +35,9 @@ class Red extends Orb {
 
         this.nodes.magnetism.setAttributeNS(null, 'r', this.magnetism.radius * (1 - this.magnetism.progress))
       },
-      stopAnimation: () => {}
+      endAnimation: () => {
+        this.nodes.magnetism.setAttributeNS(null, 'visibility', 'hidden')
+      }
     }
     this.nodes.magnetism = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     this.nodes.magnetism.setAttributeNS(null, 'fill', 'none')
@@ -46,6 +49,22 @@ class Red extends Orb {
     this.nodes.magnetism.setAttributeNS(null, 'r', 0)
     this.nodes.magnetism.setAttributeNS(null, 'visibility', 'hidden')
     this.node.insertBefore(this.nodes.magnetism, this.node.firstChild)
+
+    /** Shield Skill */
+    this.shield = {
+      prevOn: false,
+      on:     false,
+      startAnimation: ()   => this.nodes.shield.setAttributeNS(null, 'visibility', 'visible'),
+      animate:        (dt) => {},
+      endAnimation:   ()   => this.nodes.shield.setAttributeNS(null, 'visibility', 'hidden')
+    }
+    this.nodes.shield = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+    this.nodes.shield.setAttributeNS(null, 'fill', `url(#shield-fill)`)
+    this.nodes.shield.setAttributeNS(null, 'cx', 0)
+    this.nodes.shield.setAttributeNS(null, 'cy', 0)
+    this.nodes.shield.setAttributeNS(null, 'r', 0)
+    this.nodes.shield.setAttributeNS(null, 'visibility', 'hidden')
+    this.node.insertBefore(this.nodes.shield, this.nodes.inner)
   }
 
   parse(buffer, offset = 0) {
@@ -58,6 +77,9 @@ class Red extends Orb {
       offset += 2
     }
 
+    this.shield.prevOn = this.shield.on
+    this.shield.on = buffer.readUInt8(offset++)
+
     this.maxStamina = buffer.readUInt16BE(offset)
     offset += 2
 
@@ -69,21 +91,24 @@ class Red extends Orb {
 
   render(viewport, t, dt) {
     if (super.render(viewport, t, dt)) {
-      /** Magnetism On */
-      if (!this.magnetism.prevOn && this.magnetism.on) {
-        this.nodes.magnetism.setAttributeNS(null, 'visibility', 'visible')
-        this.magnetism.startAnimation()
-      }
-      
-      /** Magnetism Off */
-      else if (this.magnetism.prevOn && !this.magnetism.on) {
-        this.nodes.magnetism.setAttributeNS(null, 'visibility', 'hidden')
-        this.magnetism.stopAnimation()
-      }
+      Array.of(
+        'magnetism',
+        'shield'
+      ).forEach(name => {
+        const skill = this[name]
 
-      if (this.magnetism.on) {
-        this.magnetism.animate(dt)
-      }
+        if (!this[name].prevOn && this[name].on) {
+          this[name].startAnimation()
+        } else if (this[name].prevOn && !this[name].on) {
+          this[name].endAnimation()
+        }
+
+        if (this[name].on) {
+          this[name].animate(dt)
+        }
+      })
+
+      this.nodes.shield.setAttributeNS(null, 'r', this.nodes.middle.getAttributeNS(null, 'r'))
     }
   }
 

@@ -35,7 +35,7 @@ class Magnetism extends Skill {
         maxP: Vector     .add(owner.position, V(RADIUS, RADIUS))
       }).map(this.api.getOrb)
 
-      orbs.forEach((orb) => {
+      orbs.forEach(orb => {
         if (orb !== owner) {
           const distance =  Vector.distance(owner.position, orb.position)
 

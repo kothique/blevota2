@@ -125,6 +125,15 @@ class GamePage extends Component {
           xmlns="http://www.w3.org/2000/svg"
           viewBox={`0 0 ${VISION_RADIUS.x * 2} ${VISION_RADIUS.y * 2}`}
           preserveAspectRatio="xMidYMid slice">
+
+          <defs>
+            <pattern id="shield-fill" patternContentUnits="objectBoundingBox"
+              width="0.2" height="0.2" patternTransform="rotate(45)">
+
+              <line x1="0.1" y="0" x2="0.1" y2="0.2"
+                stroke="blue" strokeOpacity="0.2" strokeWidth="0.1" />
+            </pattern>
+          </defs>
         </svg>
 
         <div id="gp-bar-top" className="gp-bar"></div>

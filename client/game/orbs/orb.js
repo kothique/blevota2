@@ -100,13 +100,17 @@ class Orb {
   }
 
   reserve() {
-    this.reserved = true
-    this.node.setAttributeNS(null, 'visibility', 'hidden')
+    if (!this.reserved) {
+      this.reserved = true
+      this.node.setAttributeNS(null, 'visibility', 'hidden')
+    }
   }
 
   return() {
-    this.reserved = false
-    this.node.setAttributeNS(null, 'visibility', 'visible')
+    if (this.reserved) {
+      this.reserved = false
+      this.node.setAttributeNS(null, 'visibility', 'visible')
+    }
   }
 
   extrapolate(timestamp) {

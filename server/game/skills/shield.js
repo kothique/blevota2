@@ -28,6 +28,12 @@ class Shield extends Skill {
 
     owner.shield -= VALUE
   }
+
+  serializeForOrb(buffer, offset = 0) {
+    buffer.writeUInt8(this.state.type === ACTIVE, offset++)
+  }
+
+  get binaryLengthForOrb() { return 1 }
 }
 
 module.exports = Shield
