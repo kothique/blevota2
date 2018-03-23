@@ -17,7 +17,7 @@ class Orb extends EventEmitter {
     this.api = orbAPI
 
     this.mass            = options.mass
-    this.moveForce       = options.moveForce       || 0.1
+    this.moveForce       = options.moveForce       || 0.05
     this.dragForceFactor = options.dragForceFactor || 1
     this.position        = options.position        || V(0, 0)
     this.velocity        = options.velocity        || V(0, 0)
