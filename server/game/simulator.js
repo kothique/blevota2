@@ -111,7 +111,7 @@ const Simulator = {
           50 + Math.random() * 500
         ),
         mass: 1,
-        maxMana: 100
+        maxStamina: 100
       }))
     }
 

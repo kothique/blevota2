@@ -41,9 +41,20 @@ class World extends EventEmitter {
     }
 
     this.skillAPI = this.effectAPI = {
-      queryBox: this.detector.queryBox.bind(this.detector),
+      createEffect: this.createEffect.bind(this),
       getOrb: (id) => this.orbs[id],
-      createEffect: this.createEffect.bind(this)
+
+      queryBox: this.detector.queryBox.bind(this.detector),
+      querySquare: ({ centerP, side }) => this.detector.queryBox({
+        minP: Vector.subtract(centerP, V(side, side).divide(2)),
+        maxP: Vector     .add(centerP, V(side, side).divide(2))
+      }),
+
+      getOrbsInCircle: ({ centerP, radius }) => this.skillAPI.querySquare({
+        centerP, side: radius * 2
+      })
+      .map(id => this.orbs[id])
+      .filter(orb => Vector.distance(orb.position, centerP) - orb.radius <= radius)
     }
   }
 
@@ -56,6 +67,7 @@ class World extends EventEmitter {
   new(orb) {
     const id = this.nextID++
     this.orbs[id] = orb
+    orb.id = id
 
     return id
   }

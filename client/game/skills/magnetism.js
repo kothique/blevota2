@@ -26,12 +26,12 @@ class Magnetism extends Skill {
     this.node.insertBefore(this.nodes.magnetism, this.node.firstChild)
   }
 
-  startAnimation(t) {
+  startAnimation(viewport, t) {
     this.progress = 0
     this.nodes.magnetism.setAttributeNS(null, 'visibility', 'visible')
   }  
 
-  animate(t, dt) {
+  animate(viewport, t, dt) {
     this.progress += dt / MAGNETISM_DURATION
     if (this.progress > 1) {
       this.progress = 0
@@ -40,7 +40,7 @@ class Magnetism extends Skill {
     this.nodes.magnetism.setAttributeNS(null, 'r', this.radius * (1 - this.progress))
   }
 
-  endAnimation(t) {
+  endAnimation(viewport, t) {
     this.nodes.magnetism.setAttributeNS(null, 'visibility', 'hidden')
   }
 

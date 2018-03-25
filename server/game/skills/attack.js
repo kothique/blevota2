@@ -33,16 +33,14 @@ class Attack extends Skill {
       }
 
       this.radius = this.timer / CYCLE_DURATION * MAX_RADIUS
-      const orbs = this.api.queryBox({
-              minP: Vector.subtract(owner.position, V(this.radius, this.radius)),
-              maxP: Vector     .add(owner.position, V(this.radius, this.radius))
-            }).map(this.api.getOrb)
-
-      orbs.forEach((orb) => {
+      this.api.querySquare({
+        centerP: owner.position,
+        side:    this.radius * 2
+      }).map(this.api.getOrb).forEach(orb => {
         if (orb !== owner) {
           const distance = Vector.distance(owner.position, orb.position)
 
-          if (Math.abs(distance - this.radius) < orb.radius) {
+          if (Math.abs(distance - this.radius) <= orb.radius) {
             orb.hurt(DAMAGE * dt, owner)
           }
         }

@@ -11,8 +11,12 @@ class Gold extends Orb {
   constructor(id, options = {}) {
     super(id, options)
 
-    this.nodes.middle.setAttributeNS(null, 'fill', 'rgb(245, 200, 14)')
+    this.maxMana = 0
+    this.mana    = 0
   }
+
+  /** @override */
+  get color() { return 'rgb(245, 200, 14)' }
 
   parse(buffer, offset = 0) {
     offset = super.parse(buffer, offset)

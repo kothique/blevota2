@@ -10,10 +10,8 @@ const { Vector, V }     = require('../../../common/vector')
 const RADIUS = 200
 const DAMAGE = 0.2
 
-/**
- * @class
- */
-class DamageAura extends Skill {
+/** @class */ 
+ class DamageAura extends Skill {
   onDown(owner) {
     if (this.state.type === READY) {
       this.state = { type: ACTIVE }
@@ -22,16 +20,8 @@ class DamageAura extends Skill {
 
   onTick(owner, t, dt) {
     if (this.state.type === ACTIVE) {
-      const orbs = this.api.queryBox({
-        minP: Vector.subtract(owner.position, V(RADIUS, RADIUS)),
-        maxP: Vector.add(owner.position, V(RADIUS, RADIUS))
-      }).map(this.api.getOrb)
-
-      orbs.forEach((orb) => {
-        if (orb !== owner) {
-          orb.hurt(DAMAGE, owner)
-        }
-      })
+      this.api.getOrbsInCircle({ centerP: owner.position, radius:  RADIUS })
+        .forEach(orb => if (orb !== owner) orb.hurt(DAMAGE, owner))
     }
   }
 

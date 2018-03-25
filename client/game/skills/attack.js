@@ -28,7 +28,7 @@ class Attack extends Skill {
     this.nodes.attack.setAttributeNS(null, 'visibility', 'visible')
   }
 
-  animate(t, dt) {
+  animate(viewport, t, dt) {
     this.nodes.attack.setAttributeNS(null, 'r', this.radius)
   }
 

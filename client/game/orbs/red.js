@@ -16,19 +16,21 @@ class Red extends Orb {
   constructor(id, options = {}) {
     super(id, options)
 
-    this.nodes.middle.setAttributeNS(null, 'fill', 'rgb(174, 17, 31)')
-
     this.skills = [
-      new Magnetism({ owner: this }),
-      new    Shield({ owner: this }),
-      new    Attack({ owner: this })
+      this.api.createSkill(Magnetism, { owner: this }),
+      this.api.createSkill(Shield,    { owner: this }),
+      this.api.createSkill(Attack,    { owner: this })
     ]
+
+    this.maxStamina = 0
+    this.stmaina    = 0
   }
+
+  /** @override */
+  get color() { return 'rgb(174, 17, 31)' }
 
   parse(buffer, offset = 0) {
     offset = super.parse(buffer, offset)
-
-    this.skills.forEach(skill => offset = skill.parse(buffer, offset))
 
     this.maxStamina = buffer.readUInt16BE(offset)
     offset += 2
@@ -41,7 +43,6 @@ class Red extends Orb {
 
   render(viewport, t, dt) {
     if (super.render(viewport, t, dt)) {
-      this.skills.forEach(skill => skill.render(t, dt))
       this.nodes.shield.setAttributeNS(null, 'r', this.nodes.middle.getAttributeNS(null, 'r'))
 
       return true

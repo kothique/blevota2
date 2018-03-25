@@ -9,6 +9,8 @@ class Skill {
    * @param {Orb}    options.owner
    */
   constructor(options) {
+    this.api = options.skillAPI
+
     this.owner = options.owner
     this.node  = options.owner.node
     this.nodes = options.owner.nodes
@@ -20,15 +22,15 @@ class Skill {
    * @param {number} t
    * @param {number} dt
    */
-  render(t, dt) {
+  render(viewport, t, dt) {
     if (!this.prevOn && this.on) {
-      this.startAnimation(t)
+      this.startAnimation(viewport, t)
     } else if (this.prevOn && !this.on) {
-      this.endAnimation(t)
+      this.endAnimation(viewport, t)
     }
 
     if (this.on) {
-      this.animate(t, dt)
+      this.animate(viewport, t, dt)
     }
   }
 

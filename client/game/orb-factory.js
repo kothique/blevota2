@@ -38,19 +38,8 @@ class OrbFactory {
     const type = buffer.readUInt8(offset)
     offset += 1
 
-    const constructor = this.constructors[type]
-    if (!constructor) {
-      console.error(`Orb #${type} is not registered`)
-
-      return { orb: null, offset }
-    }
-
-    let orb = this.orbs[id]
-    if (!orb) {
-      orb = this.orbs[id] = new constructor(id)
-    }
-
-    offset = orb.parse(buffer, offset)
+    const orb = this.new(id, type)
+    if (orb) offset = orb.parse(buffer, offset)
 
     return { orb, offset }
   }
@@ -80,9 +69,20 @@ class OrbFactory {
       return null
     }
 
+    options.orbAPI = {
+      createSkill: (constr, options = {}) => {
+        options.skillAPI = {
+          getOrbs: () => this.orbs
+        }
+
+        return new constr(options)
+      }
+    }
+
     let orb = this.orbs[id]
     if (!orb) {
       orb = this.orbs[id] = new constructor(id, options)
+      orb.id = id
     }
 
     return orb

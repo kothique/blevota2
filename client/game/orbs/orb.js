@@ -9,8 +9,9 @@ import { COOLDOWN }  from '@common/skill-state'
 
 /** @class */
 class Orb {
-  constructor(id, options = {}) {
+  constructor(id, options) {
     this.id = id
+    this.api = options.orbAPI
 
     this.position = V(0, 0)
     this.previous = {
@@ -25,6 +26,8 @@ class Orb {
     this.hp      = 0
     this.visible = true
 
+    this.skills = []
+
     this.nodes = {}
 
     this.nodes.outer = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
@@ -34,10 +37,10 @@ class Orb {
     this.nodes.outer.setAttributeNS(null, 'r',    0)
 
     this.nodes.middle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-    this.nodes.middle.setAttributeNS(null, 'fill', 'rgb(0, 218, 255)')
-    this.nodes.middle.setAttributeNS(null, 'cx',   0)
-    this.nodes.middle.setAttributeNS(null, 'cy',   0)
-    this.nodes.middle.setAttributeNS(null, 'r',    0)
+    this.nodes.middle.setAttributeNS(null, 'fill',   this.color)
+    this.nodes.middle.setAttributeNS(null, 'cx',     0)
+    this.nodes.middle.setAttributeNS(null, 'cy',     0)
+    this.nodes.middle.setAttributeNS(null, 'r',      0)
 
     this.nodes.inner = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     this.nodes.inner.setAttributeNS(null, 'fill', 'rgb(0, 0, 0)')
@@ -71,6 +74,8 @@ class Orb {
 
     this.visible = buffer.readUInt8(offset++)
 
+    this.skills.forEach(skill => offset = skill.parse(buffer, offset))
+
     return offset
   }
 
@@ -89,11 +94,21 @@ class Orb {
     this.nodes.middle.setAttributeNS(null, 'r', 0.9 * this.radius)
     this.nodes.inner.setAttributeNS(null, 'r', 0.6 * this.radius)
 
+    if (!this.visible) {
+      this.nodes.inner.setAttributeNS(null, 'visibility', 'hidden')
+      this.nodes.middle.setAttributeNS(null, 'fill-opacity', 0.3)
+    } else {
+      this.nodes.inner.setAttributeNS(null, 'visibility', 'visible')
+      this.nodes.middle.setAttributeNS(null, 'fill-opacity', 1)
+    }
+
     const hpValue  = this.maxHP ? this.hp / this.maxHP : 0,
           position = Vector.subtract(this.position, viewport)
 
     this.nodes.outer.setAttributeNS(null, 'fill-opacity', hpValue / 2)
     this.node.setAttributeNS(null, 'transform', `translate(${position.x} ${position.y})`)
+
+    this.skills.forEach(skill => skill.render(viewport, t, dt))
 
     return true
   }

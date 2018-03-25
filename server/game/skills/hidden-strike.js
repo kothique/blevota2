@@ -16,6 +16,13 @@ const RADIUS = 200
  * @class
  */
 class HiddenStrike extends Skill {
+  constructor(options, skillAPI) {
+    super(options, skillAPI)
+
+    this.duration = 0
+    this.targets  = []
+  }
+
   /**
    * Start casting.
    *
@@ -23,9 +30,10 @@ class HiddenStrike extends Skill {
    */
   onDown(owner) {
     if (this.state.type === READY && !owner.visible) {
-      this.state = { type: ACTIVE }
+      this.state    = { type: ACTIVE }
+
       this.duration = 0
-      owner.casting = true
+      this.targets  = []
     }
   }
 
@@ -34,9 +42,9 @@ class HiddenStrike extends Skill {
       this.duration += dt
 
       if (this.duration >= MAX_CAST_DURATION || owner.visible) {
-        this.state = { type: READY }
         this.release(owner)
-        owner.casting = false
+      } else {
+        this.setTargets(owner)
       }
     }
   }
@@ -48,34 +56,45 @@ class HiddenStrike extends Skill {
    */
   onUp(owner) {
     if (this.state.type === ACTIVE) {
-      this.state = { type: READY }
       this.release(owner)
-      owner.casting = false
     }
   }
 
   release(owner) {
     this.state = { type: READY }
-    owner.casting = false
 
     if (!owner.visible) {
       owner.show()
 
-      const orbs = this.api.queryBox({
-        minP: Vector.subtract(owner.position, V(RADIUS, RADIUS)),
-        maxP: Vector.add(owner.position, V(RADIUS, RADIUS))
-      }).map(this.api.getOrb)
+      this.api.getOrbsInCircle({ centerP: owner.position, radius:  RADIUS })
+        .forEach(orb => {
+          if (orb !== owner) {
+            const k     = Math.max(1, this.duration / MAX_CAST_DURATION),
+                  value = MIN_DAMAGE + k * (MAX_DAMAGE - MIN_DAMAGE)
 
-      orbs.forEach((orb) => {
-        if (orb !== owner) {
-          const k = Math.max(1, this.duration / MAX_CAST_DURATION),
-                value = MIN_DAMAGE + k * (MAX_DAMAGE - MIN_DAMAGE)
-
-          orb.hurt(value, owner)
-        }
-      })
+            orb.hurt(value, owner)
+          }
+        })
     }
   }
+
+  setTargets(owner) {
+    this.targets = []
+    this.api.getOrbsInCircle({ centerP: owner.position, radius: RADIUS })
+      .forEach(orb => { if (orb !== owner && orb.visible) this.targets.push(orb.id) })
+  }
+
+  serializeForOrb(buffer, offset = 0) {
+    buffer.writeUInt8(this.state.type === ACTIVE, offset++)
+
+    buffer.writeUInt8(Math.min(255, this.targets.length), offset++)
+    this.targets.forEach(id => {
+      buffer.writeUInt16BE(id, offset)
+      offset += 2
+    })
+  }
+
+  get binaryLengthForOrb() { return 1 + 1 + Math.min(255, this.targets.length) * 2 }
 }
 
 module.exports = HiddenStrike
