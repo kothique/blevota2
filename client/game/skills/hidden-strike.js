@@ -32,6 +32,19 @@ class HiddenStrike extends Skill {
       initial:  5,
       step:     2
     })
+
+    this.nodes.hiddenStrike = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+    this.nodes.hiddenStrike.setAttributeNS(null, 'fill', 'none')
+    this.nodes.hiddenStrike.setAttributeNS(null, 'stroke', 'white')
+    this.nodes.hiddenStrike.setAttributeNS(null, 'stroke-opacity', 0.3)
+    this.nodes.hiddenStrike.setAttributeNS(null, 'stroke-dasharray', '5 5')
+    this.nodes.hiddenStrike.setAttributeNS(null, 'visibility', 'hidden')
+    this.node.insertBefore(this.nodes.hiddenStrike, this.nodes.outer)
+  }
+
+  /** @override */
+  startAnimation(viewport, t) {
+    this.nodes.hiddenStrike.setAttributeNS(null, 'visibility', 'visible')
   }
 
   /** @override */
@@ -52,12 +65,16 @@ class HiddenStrike extends Skill {
 
   /** @override */
   endAnimation(viewport, t) {
+    this.nodes.hiddenStrike.setAttributeNS(null, 'visibility', 'hidden')
     this.linePool.returnAll()
   }
 
   /** @override */
   parse(buffer, offset = 0) {
     offset = super.parse(buffer, offset)
+
+    this.nodes.hiddenStrike.setAttributeNS(null, 'r', buffer.readUInt16BE(offset))
+    offset += 2
 
     this.targets = []
 

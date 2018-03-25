@@ -87,6 +87,9 @@ class HiddenStrike extends Skill {
   serializeForOrb(buffer, offset = 0) {
     buffer.writeUInt8(this.state.type === ACTIVE, offset++)
 
+    buffer.writeUInt16BE(RADIUS, offset)
+    offset += 2
+
     buffer.writeUInt8(Math.min(255, this.targets.length), offset++)
     this.targets.forEach(id => {
       buffer.writeUInt16BE(id, offset)
@@ -94,7 +97,7 @@ class HiddenStrike extends Skill {
     })
   }
 
-  get binaryLengthForOrb() { return 1 + 1 + Math.min(255, this.targets.length) * 2 }
+  get binaryLengthForOrb() { return 1 + 2 + 1 + Math.min(255, this.targets.length) * 2 }
 }
 
 module.exports = HiddenStrike
