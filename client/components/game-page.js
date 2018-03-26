@@ -134,6 +134,13 @@ class GamePage extends Component {
                 stroke="blue" strokeOpacity="0.2" strokeWidth="0.1" />
             </pattern>
 
+            <pattern id="immunity-fill" patternContentUnits="objectBoundingBox"
+              width="0.15" height="0.15" patternTransform="rotate(60)">
+
+              <line x1="0" y="0.01" x2="0.15" y2="0.01" strokeWidth="0.07" stroke="blue" strokeOpacity="0.2" />
+              <line x1="0.01" y="0" x2="0.01" y2="0.15" strokeWidth="0.07" stroke="blue" strokeOpacity="0.2" />
+            </pattern>
+
             <pattern id="bg-fill" width="128" height="128" patternUnits="userSpaceOnUse">
               <line x1="128" y1="0" x2="128" y2="128" strokeWidth="3" strokeDasharray="5 5" stroke="rgb(216, 112, 130)" strokeOpacity="0.3" />
               <line x1="0" y1="128" x2="128" y2="128" strokeWidth="3" strokeDasharray="5 5" stroke="rgb(216, 112, 130)" strokeOpacity="0.3" />

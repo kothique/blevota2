@@ -23,11 +23,13 @@ class Orb extends EventEmitter {
     this.velocity        = options.velocity        || V(0, 0)
     this.force           = options.force           || V(0, 0)
 
-    this.radius   = options.radius
-    this.maxHP    = options.maxHP
-    this._hp      = options.hp
-    this._visible = true
-    this._shield  = 0
+    this.radius       = options.radius
+    this.maxHP        = options.maxHP
+    this._hp          = options.hp
+    this._visible     = true
+    this._shield      = 0
+    this.damageImmune = false
+    this.spellImmune  = false
 
     this.effects  = []
 
@@ -137,6 +139,8 @@ class Orb extends EventEmitter {
     if (nextHP > this._hp) {
       this.emit('heal', nextHP - this._hp, source)
     } else if (nextHP < this._hp) {
+      if (this.damageImmune) return
+
       this.emit('damage', this._hp - nextHP, source)
     }
 

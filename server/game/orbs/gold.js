@@ -2,7 +2,8 @@
  * @module server/game/orbs/gold
  */
 
-const Orb = require('./orb')
+const Orb      = require('./orb')
+const Immunity = require('../skills/immunity')
 
 const { ORBS: { GOLD } } = require('../../../common/const')
 
@@ -10,6 +11,10 @@ const { ORBS: { GOLD } } = require('../../../common/const')
 class Gold extends Orb {
   constructor(options, orbAPI) {
     super(options, orbAPI)
+
+    this.skillManager.skills = [
+      this.api.createSkill(Immunity)
+    ]
 
     this.maxMana = options.maxMana
     this.mana    = options.maxMana

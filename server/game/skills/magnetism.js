@@ -43,7 +43,7 @@ class Magnetism extends Skill {
             const value = MIN_VALUE + (distance / RADIUS * (MAX_VALUE - MIN_VALUE)),
                   force = Vector.subtract(owner.position, orb.position).setLength(value)
 
-            orb.force.add(force)
+            if (!orb.spellImmune) orb.force.add(force)
           }
         }
       })

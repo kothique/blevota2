@@ -101,7 +101,7 @@ class World {
       const result = this.orbFactory.deserialize(buffer, offset)
 
       /* Only show received orbs. */
-      result.orb.return()
+      result.orb && result.orb.return()
 
       offset = result.offset
     }

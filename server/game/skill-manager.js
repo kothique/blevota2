@@ -32,8 +32,6 @@ class SkillManager {
   handleControls(controls) {
     const { attack, skills } = controls
 
-    console.log(controls)
-
     skills.forEach((state, index) => {
       if (!this.controls.skills[index] && state === true) {
         const skill = this.skills[index]
