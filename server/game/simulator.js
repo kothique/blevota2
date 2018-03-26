@@ -116,9 +116,10 @@ const Simulator = {
     }
 
     this.controls[id] = {
-      pX: 0,
-      pY: 0,
-      move: false,
+      pX:     0,
+      pY:     0,
+      move:   false,
+      attack: false,
       skills: []
     }
 

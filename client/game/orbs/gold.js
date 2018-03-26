@@ -2,7 +2,10 @@
  * @module client/game/orbs/gold
  */
 
-import Orb from './orb'
+import { List } from 'immutable'
+
+import Orb    from './orb'
+import Attack from '@client/game/skills/attack'
 
 import { ORBS } from '@common/const'
 
@@ -10,6 +13,10 @@ import { ORBS } from '@common/const'
 class Gold extends Orb {
   constructor(id, options = {}) {
     super(id, options)
+
+    this.skills = [
+      this.api.createSkill(Attack, { owner: this })
+    ]
 
     this.maxMana = 0
     this.mana    = 0
@@ -28,6 +35,23 @@ class Gold extends Orb {
     offset += 2
 
     return offset
+  }
+
+  parseSkillsForSkillBox(buffer, offset = 0) {
+    let skills = List([
+      [ 'attack',        'RMB'  ]
+    ]).map(([ name, shortcut ]) => {
+      const result = Orb.parseSkill(buffer, offset)
+
+      offset = result.offset
+
+      return {
+        name, shortcut,
+        state: result.skill
+      }
+    })
+
+    return { offset, skills }
   }
 }
 

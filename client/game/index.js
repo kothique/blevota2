@@ -19,7 +19,9 @@ import { globalToSVG } from '@common/game'
 /** @const */
 const KEYMAP = {
   'q': 0,
-  'w': 1
+  'w': 1,
+  'e': 2,
+  'r': 3
 }
 
 /** @class */
@@ -182,7 +184,7 @@ class Game extends EventEmitter {
     if (button === 0) {
       controls.move = false
     } else if (button === 2) {
-      controls.skills = [null, null, null, false]
+      controls.attack = false
     }
 
     this.sendControls(controls)
@@ -198,7 +200,7 @@ class Game extends EventEmitter {
     if (button === 0) {
       controls.move   = true
     } else if (button === 2) {
-      controls.skills = [null, null, null, true]
+      controls.attack = true
     }
 
     this.sendControls(controls)

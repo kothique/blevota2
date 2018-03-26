@@ -5,6 +5,8 @@
 const Orb          = require('./orb')
 const Invisibility = require('../skills/invisibility')
 const HiddenStrike = require('../skills/hidden-strike')
+const LetLoose     = require('../skills/let-loose')
+const HoldOn       = require('../skills/hold-on')
 
 const { ORBS: { GREEN } } = require('../../../common/const')
 
@@ -15,7 +17,9 @@ class Green extends Orb {
 
     this.skillManager.skills = [
       this.api.createSkill(Invisibility),
-      this.api.createSkill(HiddenStrike)
+      this.api.createSkill(HiddenStrike),
+      this.api.createSkill(LetLoose),
+      this.api.createSkill(HoldOn)
     ]
 
     this.maxStamina = options.maxStamina

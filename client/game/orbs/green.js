@@ -6,6 +6,9 @@ import { List } from 'immutable'
 
 import Orb          from './orb'
 import HiddenStrike from '../skills/hidden-strike'
+import LetLoose     from '../skills/let-loose'
+import HoldOn       from '../skills/hold-on'
+import Attack       from '../skills/attack'
 
 import { ORBS } from '@common/const'
 
@@ -15,7 +18,10 @@ class Green extends Orb {
     super(id, options)
 
     this.skills = [
-      this.api.createSkill(HiddenStrike, { owner: this })
+      this.api.createSkill(HiddenStrike, { owner: this }),
+      this.api.createSkill(LetLoose,     { owner: this }),
+      this.api.createSkill(HoldOn,       { owner: this }),
+      this.api.createSkill(Attack,       { owner: this })
     ]
 
     this.maxStamina = 0
@@ -44,9 +50,11 @@ class Green extends Orb {
    */
   parseSkillsForSkillBox(buffer, offset = 0) {
     let skills = List([
-      [ 'invisibility',  'Q' ],
-      [ 'hidden-strike', 'W' ],
-      // [ 'attack',    'RMB'  ]
+      [ 'invisibility',  'Q'    ],
+      [ 'hidden-strike', 'W'    ],
+      [ 'let-loose',     'E'    ],
+      [ 'hold-on',       'R'    ],
+      [ 'attack',        'RMB'  ]
     ]).map(([ name, shortcut ]) => {
       const result = Orb.parseSkill(buffer, offset)
 

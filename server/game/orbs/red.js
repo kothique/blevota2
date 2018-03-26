@@ -18,8 +18,7 @@ class Red extends Orb {
     this.skillManager.skills = [
       this.api.createSkill(Magnetism),
       this.api.createSkill(Shield),
-      this.api.createSkill(Vitality),
-      this.api.createSkill(Attack)
+      this.api.createSkill(Vitality)
     ]
 
     this.maxStamina = options.maxStamina

@@ -22,6 +22,10 @@ class Shield extends Skill {
     this.nodes.shield.setAttributeNS(null, 'visibility', 'visible')
   }
 
+  animate(t, dt) {
+    this.nodes.shield.setAttributeNS(null, 'r', this.nodes.middle.getAttributeNS(null, 'r'))
+  }
+
   endAnimation(t) {
     this.nodes.shield.setAttributeNS(null, 'visibility', 'hidden')
   }

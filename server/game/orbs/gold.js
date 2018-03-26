@@ -9,12 +9,7 @@ const { ORBS: { GOLD } } = require('../../../common/const')
 /** @class */
 class Gold extends Orb {
   constructor(options, orbAPI) {
-    super({
-      ...options,
-      skills: {
-
-      }
-    }, orbAPI)
+    super(options, orbAPI)
 
     this.maxMana = options.maxMana
     this.mana    = options.maxMana

@@ -35,9 +35,9 @@ class Orb extends EventEmitter {
   }
 
   applyControls(controls) {
-    const { pX, pY, move, skills } = controls
+    const { pX, pY, move, attack, skills } = controls
 
-    this.skillManager.handleControls(skills)
+    this.skillManager.handleControls({ attack, skills })
 
     if (move && this.moveForce) {
       this.force.add(
@@ -60,9 +60,7 @@ class Orb extends EventEmitter {
   }
 
   applyEffects(t, dt) {
-    this.skillManager.skills.forEach(skill => {
-      skill.onTick(this, t, dt)
-    })
+    this.skillManager.tickSkills(t, dt)
 
     this.effects.forEach((effect) => {
       effect.onTick(this, t, dt)
@@ -101,33 +99,20 @@ class Orb extends EventEmitter {
 
     buffer.writeUInt8(this.visible, offset++)
 
-    this.skillManager.skills.forEach(skill => {
-      skill.serializeForOrb(buffer, offset)
-      offset += skill.binaryLengthForOrb
-    })
+    this.skillManager.serializeForOrb(buffer, offset)
+    offset += this.skillManager.binaryLengthForOrb
   }
 
-  get binaryLength() {
-    const skillsLength = this.skillManager.skills.reduce((acc, skill) => acc + skill.binaryLengthForOrb, 0)
-
-    return 8 * 5 + 1 + skillsLength
-  }
+  get binaryLength() { return 8 * 5 + 1 + this.skillManager.binaryLengthForOrb }
 
   skillsToBuffer() {
-    const buffer = Buffer.allocUnsafe(this.skillsBinaryLength)
-    let offset = 0
-
-    this.skillManager.skills.forEach(skill => {
-      skill.serializeForSkillBox(buffer, offset)
-      offset += skill.binaryLengthForSkillBox
-    })
+    const buffer = Buffer.allocUnsafe(this.skillManager.binaryLengthForSkillBox)
+    this.skillManager.serializeForSkillBox(buffer)
 
     return buffer
   }
 
-  get skillsBinaryLength() {
-    return this.skillManager.skills.reduce((acc, skill) => acc + skill.binaryLengthForSkillBox, 0)
-  }
+  get skillsBinaryLength() { return this.skillManager.binaryLengthForSkillBox }
 
   get type() { return UNKNOWN }
 

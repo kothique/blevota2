@@ -4,7 +4,12 @@
 
 ### Client
 
+### Game
+* **animation**
+* **bugs**
+
 #### UI
+* **complete redesign**
 * **mobile menu**
 * show distance to border
 * user profile

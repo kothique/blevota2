@@ -41,16 +41,6 @@ class Red extends Orb {
     return offset
   }
 
-  render(viewport, t, dt) {
-    if (super.render(viewport, t, dt)) {
-      this.nodes.shield.setAttributeNS(null, 'r', this.nodes.middle.getAttributeNS(null, 'r'))
-
-      return true
-    }
-
-    return false
-  }
-
   /**
    * @param {Buffer} buffer
    * @param {number} offset
