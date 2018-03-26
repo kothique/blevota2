@@ -5,6 +5,7 @@
 const Orb        = require('./orb')
 const Immunity   = require('../skills/immunity')
 const Reflection = require('../skills/reflection')
+const Vision     = require('../skills/vision')
 
 const { ORBS: { GOLD } } = require('../../../common/const')
 
@@ -15,7 +16,8 @@ class Gold extends Orb {
 
     this.skillManager.skills = [
       this.api.createSkill(Immunity),
-      this.api.createSkill(Reflection)
+      this.api.createSkill(Reflection),
+      this.api.createSkill(Vision)
     ]
 
     this.maxMana = options.maxMana

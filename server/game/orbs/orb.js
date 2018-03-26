@@ -26,7 +26,8 @@ class Orb extends EventEmitter {
     this.radius        = options.radius
     this.maxHP         = options.maxHP
     this._hp           = options.hp
-    this._visible      = true
+    this._invisible    = 0
+    this._revealed     = 0
     this._shield       = 0
     this._damageImmune = 0
     this._spellImmune  = 0
@@ -63,6 +64,8 @@ class Orb extends EventEmitter {
 
   applyEffects(t, dt) {
     this.skillManager.tickSkills(t, dt)
+
+    this.revealed = false
 
     this.effects.forEach((effect) => {
       effect.onTick(this, t, dt)
@@ -120,16 +123,19 @@ class Orb extends EventEmitter {
 
   get alive() { return this.hp > 0 }
 
-  get visible() { return this._visible }
+  get visible() { return this._invisible === 0 }
 
   set visible(nextVisible) {
-    if (nextVisible && !this._visible) {
+    if (nextVisible && !this.visible) {
       this.emit('show')
-    } else if (!nextVisible && this._visible) {
+    } else if (!nextVisible && this.visible) {
       this.emit('hide')
     }
 
-    this._visible = nextVisible
+    nextVisible ? this._invisible-- : this._invisible++
+
+    if (this._invisible < 0)
+      this._invisible = 0
   }
 
   hide() { this.visible = false }
@@ -193,6 +199,15 @@ class Orb extends EventEmitter {
 
     if (this._spellImmune < 0)
       this._spellImmune = 0
+  }
+
+  get revealed() { return this._revealed > 0 }
+
+  set revealed(nextRevealed) {
+    nextRevealed ? this._revealed++ : this._revealed--
+
+    if (this._revealed < 0)
+      this._revealed = 0
   }
 }
 

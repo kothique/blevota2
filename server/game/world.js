@@ -304,7 +304,7 @@ class World extends EventEmitter {
 
         return { id, orb, length: orb.binaryLength }
       })
-      .filter(({ orb }) => orb.visible || orb === box.for)
+      .filter(({ orb }) => orb.visible || orb.revealed || orb === box.for)
 
     const orbsLength = orbs.reduce((acc, { length }) => acc + 2 + 1 + length, 0),
           buffer     = Buffer.allocUnsafe(5 * 2 + orbsLength)

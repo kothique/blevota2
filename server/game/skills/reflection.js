@@ -75,10 +75,14 @@ class Reflection extends Skill {
 
   serializeForOrb(buffer, offset = 0) {
     buffer.writeUInt8(this.state.type === ACTIVE,       offset++)
+
+    buffer.writeUInt16BE(RADIUS, offset)
+    offset += 2
+
     buffer.writeUInt8(Math.min(1, this.progress) * 255, offset++)
   }
 
-  get binaryLengthForOrb() { return 2 }
+  get binaryLengthForOrb() { return 1 + 2 + 1 }
 }
 
 module.exports = Reflection

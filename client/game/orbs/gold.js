@@ -45,6 +45,7 @@ class Gold extends Orb {
     let skills = List([
       [ 'immunity',      'Q'    ],
       [ 'reflection',    'W'    ],
+      [ 'vision'                ],
       [ 'attack',        'RMB'  ]
     ]).map(([ name, shortcut ]) => {
       const result = Orb.parseSkill(buffer, offset)
