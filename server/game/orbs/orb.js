@@ -23,13 +23,13 @@ class Orb extends EventEmitter {
     this.velocity        = options.velocity        || V(0, 0)
     this.force           = options.force           || V(0, 0)
 
-    this.radius       = options.radius
-    this.maxHP        = options.maxHP
-    this._hp          = options.hp
-    this._visible     = true
-    this._shield      = 0
-    this.damageImmune = false
-    this.spellImmune  = false
+    this.radius        = options.radius
+    this.maxHP         = options.maxHP
+    this._hp           = options.hp
+    this._visible      = true
+    this._shield       = 0
+    this._damageImmune = 0
+    this._spellImmune  = 0
 
     this.effects  = []
 
@@ -139,9 +139,9 @@ class Orb extends EventEmitter {
     if (nextHP > this._hp) {
       this.emit('heal', nextHP - this._hp, source)
     } else if (nextHP < this._hp) {
-      if (this.damageImmune) return
-
       this.emit('damage', this._hp - nextHP, source)
+
+      if (this.damageImmune) return
     }
 
     if (nextHP > 0 && this._hp <= 0) {
@@ -176,6 +176,24 @@ class Orb extends EventEmitter {
   get shield() { return this._shield }
 
   set shield(nextShield) { this._shield = nextShield }
+
+  get damageImmune() { return this._damageImmune > 0 }
+
+  set damageImmune(nextDamageImmune) {
+    nextDamageImmune ? this._damageImmune++ : this._damageImmune--
+
+    if (this._damageImmune < 0)
+      this._damageImmune = 0
+  }
+
+  get spellImmune() { return this._spellImmune }
+
+  set spellImmune(nextSpellImmune) {
+    nextSpellImmune ? this._spellImmune++ : this._spellImmune--
+
+    if (this._spellImmune < 0)
+      this._spellImmune = 0
+  }
 }
 
 module.exports = Orb

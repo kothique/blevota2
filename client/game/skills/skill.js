@@ -45,7 +45,7 @@ class Skill {
    * @param {number} dt
    * @virtual
    */
-  animate(t, dt) {}
+  animate(viewport, t, dt) {}
 
 
   /**

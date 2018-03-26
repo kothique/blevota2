@@ -22,7 +22,7 @@ class Shield extends Skill {
     this.nodes.shield.setAttributeNS(null, 'visibility', 'visible')
   }
 
-  animate(t, dt) {
+  animate(viewport, t, dt) {
     this.nodes.shield.setAttributeNS(null, 'r', this.nodes.middle.getAttributeNS(null, 'r'))
   }
 
