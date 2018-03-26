@@ -141,6 +141,20 @@ class GamePage extends Component {
               <line x1="0.01" y="0" x2="0.01" y2="0.15" strokeWidth="0.07" stroke="blue" strokeOpacity="0.2" />
             </pattern>
 
+            <radialGradient id="let-loose-gradient" patternContentUnits="objectBoundingBox"
+              cx="0.5" cy="0.5" r="0.5">
+
+              <stop offset="0%"   stopColor="rgb(51, 51, 204)" />
+              <stop offset="100%" stopOpacity="0" />
+            </radialGradient>
+
+            <radialGradient id="hold-on-gradient" patternContentUnits="objectBoundingBox"
+              cx="0.5" cy="0.5" r="0.5">
+
+              <stop offset="0%"   stopColor="rgb(174, 17, 31)" />
+              <stop offset="100%" stopOpacity="0.2" />
+            </radialGradient>
+
             <pattern id="bg-fill" width="128" height="128" patternUnits="userSpaceOnUse">
               <line x1="128" y1="0" x2="128" y2="128" strokeWidth="3" strokeDasharray="5 5" stroke="rgb(216, 112, 130)" strokeOpacity="0.3" />
               <line x1="0" y1="128" x2="128" y2="128" strokeWidth="3" strokeDasharray="5 5" stroke="rgb(216, 112, 130)" strokeOpacity="0.3" />
